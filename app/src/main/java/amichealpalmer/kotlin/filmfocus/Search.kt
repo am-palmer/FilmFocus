@@ -13,7 +13,6 @@ class Search(val apikey: String) { // only supports search by title right now TO
     val OMDBurl = "https://www.omdbapi.com/"
     private var resultList = ArrayList<Result>()
 
-    //https://www.omdbapi.com/?s=ghost&apikey=d0231b9b
     // simplify this later. there's probably a better way to do it
 
 
@@ -30,7 +29,7 @@ class Search(val apikey: String) { // only supports search by title right now TO
         if (result == null) {
             Log.e(
                 TAG,
-                ".onJSONDownloadComplete: Null JSONObject - failure to catch in GetOMDBJsonData?"
+                ".onJSONDownloadComplete: Null JSONObject - failure in GetOMDBJsonData?"
             )
             // Display a toast message maybe?
         } else {
