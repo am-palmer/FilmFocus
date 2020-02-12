@@ -4,6 +4,7 @@ import java.net.URL
 
 class Film(
     val title: String, // e.g. Guardians of the Galaxy Vol. 2
+    val imdbID: String,
     val year: String, // e.g. 2017
     val rated: String, // PG-13
     val released: String, // 05 May 2017
@@ -19,4 +20,9 @@ class Film(
     val metascore: String, // 67
     val imdbRating: String, // 7.6
     val type: String // movie
-)
+
+) {
+    override fun toString(): String {
+        return "Film(title='$title', imdbID='$imdbID' year='$year', rated='$rated', released='$released', runtime='$runtime', genre='$genre', director='$director', actors='$actors', plot='$plot', language='$language', country='$country', awards='$awards', posterURL='$posterURL', metascore='$metascore', imdbRating='$imdbRating', type='$type')"
+    }
+}

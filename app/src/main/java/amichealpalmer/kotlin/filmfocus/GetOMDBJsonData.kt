@@ -2,6 +2,7 @@ package amichealpalmer.kotlin.filmfocus
 
 import org.json.JSONObject
 import amichealpalmer.kotlin.filmfocus.R.*
+import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import org.json.JSONException
@@ -17,7 +18,12 @@ enum class DownloadStatus { // Track status of download
     OK, IDLE, NOT_INITIALIZED, FAILED_OR_EMPTY, PERMISSIONS_ERROR, ERROR
 }
 
-class GetOMDBJsonData(val listener: Search) : AsyncTask<String, Void, JSONObject?>() {
+enum class ResultType { // The possible return JSON structures we expect
+    SEARCH_RESULT_LIST, FILM_INFORMATION
+}
+
+class GetOMDBJsonData(val listener: Search, val apikey: String, val resultType: ResultType) :
+    AsyncTask<String, Void, JSONObject?>() { // todo: singleton pattern?
     // Example input query is "https://www.omdbapi.com/?s=ghost". We then append the API key to form a valid URL
 
     private val TAG = "GetOMDBJsonData"
@@ -25,7 +31,8 @@ class GetOMDBJsonData(val listener: Search) : AsyncTask<String, Void, JSONObject
     private var downloadStatus = DownloadStatus.IDLE
 
     override fun onPostExecute(result: JSONObject?) {
-        listener.onJSONDownloadComplete(result) // Pass the JSONObject? back to the listener (Search)
+        Log.d(TAG, ".onPostExecute called, returning result to listener ${listener.toString()}")
+        listener.onJSONDownloadComplete(result, resultType) // Pass the JSONObject? back to the listener (Search)
     }
 
     override fun doInBackground(vararg params: String?): JSONObject? {
@@ -36,16 +43,19 @@ class GetOMDBJsonData(val listener: Search) : AsyncTask<String, Void, JSONObject
             return null
         }
 
-        val APIKEY: String?
-        try {
-            APIKEY = System.getenv("OMDB_API_KEY")
-        } catch (e: NullPointerException) {
-            downloadStatus = DownloadStatus.PERMISSIONS_ERROR
-            Log.e(TAG, "Failed to retreive OMDB API key environment variable")
-            return null
-        }
+//        val APIKEY: String?
+//        try {
+//           // APIKEY = System.getenv("OMDB_API_KEY") // Currently fetched from the system env.
+//            // Todo: stronger api key protections
+//            val APIKEY = R.string.OMDB_API_KEY
+//            Log.d(TAG, "Fetched API Key: $APIKEY")
+//        } catch (e: NullPointerException) {
+//            downloadStatus = DownloadStatus.PERMISSIONS_ERROR
+//            Log.e(TAG, "Failed to retreive OMDB API key environment variable")
+//            return null
+//        }
 
-        val searchURL = params[0] + "&apikey=$APIKEY"
+        val searchURL = params[0] + "&apikey=${apikey}"
         var rawData: String
         // Attempt to retreive raw data and store as String object
         try {
@@ -81,7 +91,7 @@ class GetOMDBJsonData(val listener: Search) : AsyncTask<String, Void, JSONObject
             jsonData = JSONObject(rawData)
         } catch (e: JSONException) {
             e.printStackTrace()
-            Log.e(TAG, ".doInBacgkround: Error processing JSON data.")
+            Log.e(TAG, ".doInBackground: Error processing JSON data.")
             cancel(true)
             // call to the listener .onerror(e)
         }

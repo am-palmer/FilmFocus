@@ -10,6 +10,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+   // private val apikey = getString(R.string.OMDB_API_KEY)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -19,6 +21,9 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+
+        val search = Search(getString(R.string.OMDB_API_KEY))
+        search.searchByTitleKeyword("spiderman")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
