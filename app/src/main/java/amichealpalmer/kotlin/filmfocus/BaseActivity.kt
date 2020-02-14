@@ -1,6 +1,7 @@
 package amichealpalmer.kotlin.filmfocus
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,10 @@ internal const val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
 @SuppressLint("Registered")
 open class BaseActivity : AppCompatActivity() { // todo: abstract this class
     private val TAG = "BaseActivity"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     internal fun activateToolbar(enableHome: Boolean) {
         Log.d(TAG, ".activateToolbar")

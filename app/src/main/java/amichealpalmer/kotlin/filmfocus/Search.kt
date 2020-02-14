@@ -6,7 +6,7 @@ import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
 
-class Search(val apikey: String) { // only supports search by title right now TODO: implement search by other values i.e. search by actor or director (if omdb supports it)
+class Search(val apikey: String, val listener: MainActivity) { // only supports search by title right now TODO: implement search by other values i.e. search by actor or director (if omdb supports it)
     // OMDB returns a JSON set of results containing the search string (by title)
 
     val TAG = "Search"
@@ -29,9 +29,12 @@ class Search(val apikey: String) { // only supports search by title right now TO
     }
 
     fun onFilmInfoDownloadComplete(film: Film){ // Called from our GetJSONFilm class once .doInBackground finishes executing
-        /// ???
+        /// todo implement better functionality, prevent mud balling
         Log.d(TAG, ".onFilmInfoDownloadComplete called.")
         Log.d(TAG, "FILM DATA: ${film}")
+        Log.d(TAG, "passing object to listener")
+       // FilmDetailsActivity(film)
+        listener.inflateFilmInformation(film)
     }
 
 

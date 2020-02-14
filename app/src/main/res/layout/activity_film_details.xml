@@ -13,6 +13,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="TextView"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="The Princess Bride" />
@@ -22,7 +23,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="TextView"
+        android:text="DIRECTED BY"
         app:layout_constraintStart_toStartOf="@+id/activity_film_details_tv_title"
         app:layout_constraintTop_toBottomOf="@+id/activity_film_details_tv_title"
         tools:text="DIRECTED BY" />
@@ -129,7 +130,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="TextView"
+        android:text="IMDB"
         app:layout_constraintStart_toStartOf="@+id/activity_film_details_tv_genre"
         app:layout_constraintTop_toBottomOf="@+id/activity_film_details_tv_genre"
         tools:text="IMDB" />
@@ -149,7 +150,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="TextView"
+        android:text="METACRITIC"
         app:layout_constraintBaseline_toBaselineOf="@+id/activity_film_details_tv_imdbScore"
         app:layout_constraintStart_toEndOf="@+id/activity_film_details_tv_imdbScore"
         tools:text="METACRITIC" />
@@ -168,10 +169,10 @@
         android:id="@+id/activity_film_details_tv_language"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="TextView"
-        app:layout_constraintBaseline_toBaselineOf="@+id/activity_film_details_tv_metacriticScore"
-        app:layout_constraintStart_toEndOf="@+id/activity_film_details_tv_metacriticScore"
+        app:layout_constraintStart_toStartOf="@+id/activity_film_details_tv_IMDB"
+        app:layout_constraintTop_toBottomOf="@+id/activity_film_details_tv_IMDB"
         tools:text="English" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

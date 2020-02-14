@@ -1,26 +1,32 @@
 package amichealpalmer.kotlin.filmfocus
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_film_details.*
 
-class FilmDetailsActivity : BaseActivity() {
+class FilmDetailsActivity() : BaseActivity() {
     // Display film details in activity_film_details
 
+    private val TAG = "FilmDetailsActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, ".onCreate started")
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_film_details)
 
-        activateToolbar(true) //?
+//        activateToolbar(true) //?
 
         // Get details from intent
         val film = intent.extras?.getParcelable<Film>(
             FILM_DETAILS_TRANSFER
         ) as Film
-
+        Log.d(TAG, "retrieved film information: ${film}")
+        Log.d(TAG, "film title: ${film.title}")
         // Set text fields
+        Log.d(TAG, "Setting text fields for the layout")
         activity_film_details_tv_title.text = film.title
         activity_film_details_tv_director.text = film.director
         activity_film_details_tv_year.text = film.year
@@ -35,10 +41,16 @@ class FilmDetailsActivity : BaseActivity() {
 
 
         // Load the poster
+        Log.d(TAG, "Picasso: setting poster url for the layout")
         Picasso.get().load(film.posterURL).error(R.drawable.placeholder_imageloading)
             .placeholder(R.drawable.placeholder_imageloading).into(activity_film_details_iv_poster)
 
+        Log.d(TAG, ".onCreate finished")
     }
+
+
+
+
 
 
 }

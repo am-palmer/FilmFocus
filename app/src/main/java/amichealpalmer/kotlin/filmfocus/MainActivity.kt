@@ -1,5 +1,6 @@
 package amichealpalmer.kotlin.filmfocus
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
@@ -9,19 +10,22 @@ import android.view.MenuItem
 
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
-    // private val apikey = getString(R.string.OMDB_API_KEY)
+
     val TAG = "MainActivity"
+    val testFilm = Film("", "","", "","", "","", "","", "","", "", "", "", "", "", "")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        // todo: debug async tasks -> process trapped somewhere
         setSupportActionBar(toolbar)
         Log.d(TAG, "Set content view done")
+        Log.d(TAG, "test call of FilmDetailsActivity")
+       // FilmDetailsActivity(testFilm)
 
-        fab.setOnClickListener { view ->
+        fab.setOnClickListener { view -> // todo action button
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
@@ -33,12 +37,10 @@ class MainActivity : AppCompatActivity() {
 //
         // Test block for film lookup
         Log.d(TAG, "Now starting test film lookup")
-        val search = Search(getString(R.string.OMDB_API_KEY)) // Search should be a singleton?
+        val search = Search(getString(R.string.OMDB_API_KEY), this) // Search should be a singleton?
         search.getFilmByID("tt0083658")
-
-
-        // setContentView(R.layout.activity_film_details)
-
+        // Test block for the film layout
+        // Pass a film to the filmdetailsactivity class
 
         Log.d(TAG, ".onCreate finished")
     }
@@ -57,5 +59,15 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    fun inflateFilmInformation(film: Film){
+        Log.d(TAG, ".inflateFilmInformation starts")
+        //setContentView(R.layout.activity_film_details)
+        //FilmDetailsActivity(film)
+        val intent = Intent(this, FilmDetailsActivity::class.java)
+        intent.putExtra(FILM_DETAILS_TRANSFER, film)
+        startActivity(intent)
+        Log.d(TAG, ".inflateFilmInformation called")
     }
 }
