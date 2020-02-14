@@ -10,142 +10,31 @@ class Search(val apikey: String) { // only supports search by title right now TO
     // OMDB returns a JSON set of results containing the search string (by title)
 
     val TAG = "Search"
-    val OMDBurl = "https://www.omdbapi.com/"
-    private var resultList = ArrayList<Result>()
-
-    // simplify this later. there's probably a better way to do it
-
-
-    // make a call to the api with a generic class which returns us the JSON data
+    var resultList = ArrayList<GetJSONSearch.Result?>() // Todo better way to do this
 
     fun searchByTitleKeyword(titleContains: String) {
+        Log.d(TAG, ".searchByTitleKeyword starts")
         val query = "?s=$titleContains" // Indicates search by title
-        // val OMDBurl = "https://www.omdbapi.com/"
-        val getOMDBJsonData =
-            GetOMDBJsonData(this, apikey, ResultType.SEARCH_RESULT_LIST).execute(OMDBurl + query)
+        GetJSONSearch(this, apikey).execute(query) // Call class handling API search queries
     }
 
-    fun onJSONDownloadComplete(result: JSONObject?, resultType: ResultType) {
-        if (result == null) {
-            Log.e(
-                TAG,
-                ".onJSONDownloadComplete: Null JSONObject - failure in GetOMDBJsonData?"
-            )
-            // Display a toast message maybe?
-        } else {
-            // use when?
-            if (resultType == ResultType.SEARCH_RESULT_LIST)
-            // parse json object and make result objects
-            // May want to split this into a helper class?
-            // Call our helper method to make results
-                createResultsFromJSON(result!!)
-        }
-        if (resultType == ResultType.FILM_INFORMATION) {
-            // construct a film object
-            createFilmFromJSON(result!!)
-        }
-
-
+    fun onResultListDownloadComplete(resultList: ArrayList<GetJSONSearch.Result?>) {
+        this.resultList = resultList // We have list of results for search term
+        Log.d(TAG, ".onJSONDownloadComplete: retrieved and set list of search results of size ${resultList.size}")
     }
 
-    // todo: seperate out json parsing logic from search class
 
-    private fun createFilmFromJSON(jsonItem: JSONObject) { // should be returned somewhere
-        Log.d(TAG, ".createFilmFromJSON starting")
-
-        try {
-            val title = jsonItem.getString("Title")
-            val year = jsonItem.getString("Year")
-            val rated = jsonItem.getString("Rated")
-            val released = jsonItem.getString("Released")
-            val runtime = jsonItem.getString("Runtime")
-            val genre = jsonItem.getString("Genre")
-            val director = jsonItem.getString("Director")
-            //val writer = jsonItem.getString("Writer")
-            val actors = jsonItem.getString("Actors")
-            val plot = jsonItem.getString("Plot")
-            val language = jsonItem.getString("Language")
-            val country = jsonItem.getString("Country")
-            val awards = jsonItem.getString("Awards")
-            val imdbID = jsonItem.getString("imdbID")
-            val type = jsonItem.getString("Type")
-            val posterURL = jsonItem.getString("Poster")
-            val metascore = jsonItem.getString("Metascore")
-            val imdbRating = jsonItem.getString("imdbRating")
-            val film = Film(
-                title,
-                imdbID,
-                year,
-                rated,
-                released,
-                runtime,
-                genre,
-                director,
-                actors,
-                plot,
-                language,
-                country,
-                awards,
-                posterURL,
-                metascore,
-                imdbRating,
-                type
-            )
-            Log.d(TAG, "Film item constructed: $film")
-
-        } catch (e: JSONException) {
-            e.printStackTrace()
-            Log.e(TAG, ".createFilmFromJSON: Error processing JSON data. ${e.message}")
-        }
-
-        // return film ?
+    fun getFilmByID(imdbID: String){
+        GetJSONFilm(this, apikey).execute(imdbID)
     }
 
-    private fun createResultsFromJSON(result: JSONObject) { // should be returned somewhere
-        Log.d(TAG, ".createResultsFromJSON starting")
-
-        try {
-            val itemsArray = result.getJSONArray("Search")
-            for (i in 0 until itemsArray.length()) {
-                val jsonItem = itemsArray.getJSONObject(i)
-                val title = jsonItem.getString("Title")
-                val year = jsonItem.getString("Year")
-                val imdbID = jsonItem.getString("imdbID")
-                val type = jsonItem.getString("Type")
-                val posterURL = jsonItem.getString("Poster")
-                val searchResult = Result(title, year, imdbID, type, posterURL)
-                Log.d(TAG, "New search result item constructed: $searchResult")
-                resultList.add(searchResult)
-            }
-        } catch (e: JSONException) {
-            e.printStackTrace()
-            Log.e(TAG, ".createResultsFromJSON: Error processing JSON data. ${e.message}")
-        }
-        // test call todo remove
-        resultList.get(0).getMovieFromSearchResult()
+    fun onFilmInfoDownloadComplete(film: Film){ // Called from our GetJSONFilm class once .doInBackground finishes executing
+        /// ???
+        Log.d(TAG, ".onFilmInfoDownloadComplete called.")
+        Log.d(TAG, "FILM DATA: ${film}")
     }
 
-    inner class Result(
-        val title: String,
-        val year: String,
-        val imdbID: String,
-        val type: String,
-        val posterURL: String
-    ) {
-        override fun toString(): String {
-            return "Result(title='$title', year='$year', imdbID='$imdbID')"
-        }
 
-        fun getMovieFromSearchResult() {
-            // Use the imdbID to retrieve more information about the specific search result
-            searchByFilmID(imdbID)
-        }
-    } // Results are simple objects which don't provide as much information as Film objects. When we want to view more information about a film - for example when a user taps a result - we will have to do a search (likely by imdbID)
-
-    fun searchByFilmID(imdbID: String) {
-        val query = "?i=$imdbID" // i= Search by IMDB id.
-        GetOMDBJsonData(this, apikey, ResultType.FILM_INFORMATION).execute(OMDBurl + query)
-    }
 }
 
 

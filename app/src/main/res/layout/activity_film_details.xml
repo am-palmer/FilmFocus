@@ -50,7 +50,7 @@
 
     <TextView
         android:id="@+id/activity_film_details_tv_runtime"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="TextView"
@@ -83,13 +83,23 @@
         tools:text="While home sick in bed, a young boy's grandfather reads him the story of a farmboy-turned-pirate who encounters numerous obstacles, enemies and allies in his quest to be reunited with his true love. " />
 
     <TextView
+        android:id="@+id/activity_film_details_tv_awards"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/activity_film_details_tv_plot"
+        app:layout_constraintTop_toBottomOf="@+id/activity_film_details_tv_plot"
+        tools:text="7 wins and 9 nominations" />
+
+    <TextView
         android:id="@+id/activity_film_details_tv_STARRING"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="STARRING"
         app:layout_constraintStart_toStartOf="@+id/activity_film_details_tv_plot"
-        app:layout_constraintTop_toBottomOf="@+id/activity_film_details_tv_plot"
+        app:layout_constraintTop_toBottomOf="@+id/activity_film_details_tv_awards"
         tools:text="STARRING" />
 
     <TextView
@@ -105,34 +115,13 @@
         tools:text="Cary Elwes, Robin Wright, Mandy Patinkin, Andre the Giant" />
 
     <TextView
-        android:id="@+id/activity_film_details_tv_WRITTENBY"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="WRITTEN BY"
-        app:layout_constraintStart_toStartOf="@+id/activity_film_details_tv_STARRING"
-        app:layout_constraintTop_toBottomOf="@+id/activity_film_details_tv_cast"
-        tools:text="WRITTEN BY " />
-
-    <TextView
-        android:id="@+id/activity_film_details_tv_writer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="TextView"
-        app:layout_constraintBaseline_toBaselineOf="@+id/activity_film_details_tv_WRITTENBY"
-        app:layout_constraintStart_toEndOf="@+id/activity_film_details_tv_WRITTENBY"
-        tools:text="William Goldman" />
-
-    <TextView
         android:id="@+id/activity_film_details_tv_genre"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/activity_film_details_tv_WRITTENBY"
-        app:layout_constraintTop_toBottomOf="@+id/activity_film_details_tv_writer"
+        app:layout_constraintStart_toStartOf="@+id/activity_film_details_tv_STARRING"
+        app:layout_constraintTop_toBottomOf="@+id/activity_film_details_tv_cast"
         tools:text="Adventure, Fantasy, Comedy, Family" />
 
     <TextView
@@ -174,5 +163,15 @@
         app:layout_constraintBaseline_toBaselineOf="@+id/activity_film_details_tv_METACRITIC"
         app:layout_constraintStart_toEndOf="@+id/activity_film_details_tv_METACRITIC"
         tools:text="77" />
+
+    <TextView
+        android:id="@+id/activity_film_details_tv_language"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="TextView"
+        app:layout_constraintBaseline_toBaselineOf="@+id/activity_film_details_tv_metacriticScore"
+        app:layout_constraintStart_toEndOf="@+id/activity_film_details_tv_metacriticScore"
+        tools:text="English" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

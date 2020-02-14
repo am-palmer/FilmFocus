@@ -1,5 +1,7 @@
 package amichealpalmer.kotlin.filmfocus
 
+import android.os.Parcel
+import android.os.Parcelable
 import java.net.URL
 
 class Film(
@@ -21,8 +23,63 @@ class Film(
     val imdbRating: String, // 7.6
     val type: String // movie
 
-) {
+) : Parcelable {
+
+    constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!,
+        parcel.readString()!!
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(title)
+        parcel.writeString(imdbID)
+        parcel.writeString(year)
+        parcel.writeString(rated)
+        parcel.writeString(released)
+        parcel.writeString(runtime)
+        parcel.writeString(genre)
+        parcel.writeString(director)
+        parcel.writeString(actors)
+        parcel.writeString(plot)
+        parcel.writeString(language)
+        parcel.writeString(country)
+        parcel.writeString(awards)
+        parcel.writeString(posterURL)
+        parcel.writeString(metascore)
+        parcel.writeString(imdbRating)
+        parcel.writeString(type)
+    }
+
     override fun toString(): String {
         return "Film(title='$title', imdbID='$imdbID' year='$year', rated='$rated', released='$released', runtime='$runtime', genre='$genre', director='$director', actors='$actors', plot='$plot', language='$language', country='$country', awards='$awards', posterURL='$posterURL', metascore='$metascore', imdbRating='$imdbRating', type='$type')"
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Film> {
+        override fun createFromParcel(parcel: Parcel): Film {
+            return Film(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Film?> {
+            return arrayOfNulls(size)
+        }
     }
 }
