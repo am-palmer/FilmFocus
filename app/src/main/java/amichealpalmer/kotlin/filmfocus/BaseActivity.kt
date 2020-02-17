@@ -14,10 +14,6 @@ internal const val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
 open class BaseActivity : AppCompatActivity() { // todo: abstract this class
     private val TAG = "BaseActivity"
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     internal fun activateToolbar(enableHome: Boolean) {
         Log.d(TAG, ".activateToolbar")
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/film_item_cardview_id"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_width="120dp"
+    android:layout_height="190dp"
+    xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="5dp"
+    cardview:cardCornerRadius="4dp"
+    tools:context=".FilmDetailsActivity"> <!-- TODO don't use hardcode values if possible -->
+
+    <ImageView
+        android:id="@+id/film_poster_id"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#2d2d2d"
+        android:scaleType="centerCrop"></ImageView>
+
+</androidx.cardview.widget.CardView>

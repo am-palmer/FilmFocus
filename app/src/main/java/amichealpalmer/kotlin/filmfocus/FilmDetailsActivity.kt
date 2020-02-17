@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_film_details.*
 
-class FilmDetailsActivity() : BaseActivity() {
+class FilmDetailsActivity : BaseActivity() {
     // Display film details in activity_film_details
 
     private val TAG = "FilmDetailsActivity"
