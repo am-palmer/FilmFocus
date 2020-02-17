@@ -4,8 +4,8 @@ import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
 
-class GetJSONFilm(val listener: Search, val apikey: String) :
-    GetJSONBase<Film?>() { // Retrieve OMDB JSON Film Data and return it to the calling class.
+class GetJSONFilm(val listener: FilmSearch, val apikey: String) :
+        GetJSONBase<Film?>() { // Retrieve OMDB JSON Film Data and return it to the calling class.
 
     val TAG = "GetJSONFilm"
 
@@ -60,23 +60,23 @@ class GetJSONFilm(val listener: Search, val apikey: String) :
             val metascore = jsonItem.getString("Metascore")
             val imdbRating = jsonItem.getString("imdbRating")
             film = Film(
-                title,
-                imdbID,
-                year,
-                rated,
-                released,
-                runtime,
-                genre,
-                director,
-                actors,
-                plot,
-                language,
-                country,
-                awards,
-                posterURL,
-                metascore,
-                imdbRating,
-                type
+                    title,
+                    imdbID,
+                    year,
+                    rated,
+                    released,
+                    runtime,
+                    genre,
+                    director,
+                    actors,
+                    plot,
+                    language,
+                    country,
+                    awards,
+                    posterURL,
+                    metascore,
+                    imdbRating,
+                    type
             )
             Log.d(TAG, "Film item constructed: $film")
 

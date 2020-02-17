@@ -17,12 +17,25 @@ class FilmDetailsActivity : BaseActivity() {
 
         setContentView(R.layout.activity_film_details)
 
+        // Get imdbID from intent, use it to get film details
+        val imdbID = intent.extras?.getString("imdbID")
+        if (imdbID != null) {
+            FilmSearch(this).getFilmByID(imdbID)
+        } else {
+            Log.e(TAG, ".onCreate: failed to retrieve imdbID from intent extras.")
+        }
+
 //        activateToolbar(true) //?
 
         // Get details from intent
-        val film = intent.extras?.getParcelable<Film>(
-            FILM_DETAILS_TRANSFER
-        ) as Film
+//        val film = intent.extras?.getParcelable<Film>(
+//            FILM_DETAILS_TRANSFER
+//        ) as Film
+
+    }
+
+
+    fun onFilmInfoDownload(film: Film) { // todo: a different interface for tv shows. they have different values. will need a TVShow object
         Log.d(TAG, "retrieved film information: ${film}")
         Log.d(TAG, "film title: ${film.title}")
         // Set text fields
@@ -43,14 +56,10 @@ class FilmDetailsActivity : BaseActivity() {
         // Load the poster
         Log.d(TAG, "Picasso: setting poster url for the layout")
         Picasso.get().load(film.posterURL).error(R.drawable.placeholder_imageloading)
-            .placeholder(R.drawable.placeholder_imageloading).into(activity_film_details_iv_poster)
+                .placeholder(R.drawable.placeholder_imageloading).into(activity_film_details_iv_poster)
 
         Log.d(TAG, ".onCreate finished")
     }
-
-
-
-
 
 
 }

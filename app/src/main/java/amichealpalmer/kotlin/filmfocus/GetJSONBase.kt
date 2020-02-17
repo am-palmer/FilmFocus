@@ -23,7 +23,7 @@ abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
     abstract override fun doInBackground(vararg params: String): T
 
     fun getJSONDataObject(apikey: String, query: String): JSONObject? { // Helper method getting JSON data for a query todo improve handling of exceptions so we aren't just flinging null objects around
-        val omdbUrl = "https://www.omdbapi.com/" // todo make this an xml resource
+        val omdbUrl = "https://www.omdbapi.com/" // make this an xml resource?
         Log.d(TAG, ".doInBackground started")
         // Todo: handle errors better
         // val defaultList = ArrayList<GetJSONSearch.Result?>() // Not a good solution...

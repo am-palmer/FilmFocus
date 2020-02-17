@@ -12,46 +12,38 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.browse_films.*
 
+// todo: see trello
 
 class MainActivity : BaseActivity() {
 
 
     val TAG = "MainActivity"
-    val testFilm = Film("", "","", "","", "","", "","", "","", "", "", "", "", "", "")
-
+    val testFilm = Film("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         Log.d(TAG, "Set content view done")
-        Log.d(TAG, "test call of FilmDetailsActivity")
-       // FilmDetailsActivity(testFilm)
+        //   Log.d(TAG, "test call of FilmDetailsActivity")
+        // FilmDetailsActivity(testFilm)
 
-        fab.setOnClickListener { view -> // todo action button
+        fab.setOnClickListener { view ->
+            // todo action button
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+                    .setAction("Action", null).show()
         }
 
         // Test block for search
         Log.d(TAG, "Now starting test search")
-        val search = Search(getString(R.string.OMDB_API_KEY), this)
-        search.searchByTitleKeyword("trek")
+        val search = Search(this)
+        search.searchByTitleKeyword("star")
 //
         // Test block for film lookup
 //        Log.d(TAG, "Now starting test film lookup")
 //        val search = Search(getString(R.string.OMDB_API_KEY), this) // Search should be a singleton?
 //        search.getFilmByID("tt0083658")
 
-
-        // Test block for the film layout
-        // Pass a film to the filmdetailsactivity class
-
-
-
-
-
-       // val list: List<String>
 
         Log.d(TAG, ".onCreate finished")
     }
@@ -62,7 +54,7 @@ class MainActivity : BaseActivity() {
         return true
     }
 
-    fun displaySearchResults(resultList: List<GetJSONSearch.Result>){ // todo: possibly move to search class
+    fun displaySearchResults(resultList: List<GetJSONSearch.Result>) { // todo: create class for this
         // Testing results view
         //val myrv = findViewById(R.id.recyclerview_id) as RecyclerView
         Log.d(TAG, ".displaySearchResults called. Attempting to display search result list")
@@ -83,14 +75,14 @@ class MainActivity : BaseActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-    fun inflateFilmInformation(film: Film){
-        Log.d(TAG, ".inflateFilmInformation starts")
-        //setContentView(R.layout.activity_film_details)
-        //FilmDetailsActivity(film)
-        val intent = Intent(this, FilmDetailsActivity::class.java)
-        intent.putExtra(FILM_DETAILS_TRANSFER, film)
-        startActivity(intent)
-        Log.d(TAG, ".inflateFilmInformation called")
-    }
+//
+//    fun inflateFilmInformation(film: Film){
+//        Log.d(TAG, ".inflateFilmInformation starts")
+//        //setContentView(R.layout.activity_film_details)
+//        //FilmDetailsActivity(film)
+//        val intent = Intent(this, FilmDetailsActivity::class.java)
+//        intent.putExtra(FILM_DETAILS_TRANSFER, film)
+//        startActivity(intent)
+//        Log.d(TAG, ".inflateFilmInformation called")
+//    }
 }
