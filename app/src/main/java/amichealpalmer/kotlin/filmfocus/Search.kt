@@ -1,14 +1,20 @@
 package amichealpalmer.kotlin.filmfocus
 
+import android.app.Activity
+import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.Movie
+import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONException
 import org.json.JSONObject
 
 // Handles searches which return ArrayLists of Result objects
 
-class Search(val listener: MainActivity) { // only supports search by title right now TODO: implement search by other values i.e. search by actor or director (if omdb supports it)
+// todo: make search an object
+class Search(val listener: SearchResultsActivity) { // only supports search by title right now TODO: implement search by other values i.e. search by actor or director (if omdb supports it)
     // OMDB returns a JSON set of results containing the search string (by title)
 
     val TAG = "Search"
