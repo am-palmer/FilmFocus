@@ -30,6 +30,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
         Log.d(TAG, "Set content view done")
         //   Log.d(TAG, "test call of FilmDetailsActivity")
         // FilmDetailsActivity(testFilm)
@@ -61,9 +62,18 @@ class MainActivity : BaseActivity() {
         // Associating searchable configuration with the SearchView
         val componentName = ComponentName(this, SearchResultsActivity::class.java)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        (menu.findItem(R.id.search).actionView as SearchView).apply {
-            setSearchableInfo(searchManager.getSearchableInfo(componentName))
-        }
+
+        // Configuring the SearchView
+        val searchView = menu.findItem(R.id.search).actionView as SearchView
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        searchView.isIconifiedByDefault = false
+        searchView.requestFocus()
+//        (menu.findItem(R.id.search).actionView as SearchView).apply {
+//            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+//
+//            requestFocus()
+//        }
+
 
         return true
     }
@@ -81,19 +91,27 @@ class MainActivity : BaseActivity() {
 
 }
 
-class SearchResultsActivity : Activity() { // todo: own class. make the search less buggy -> pressing back too much?
+class SearchResultsActivity : Activity() { // todo: own class. fix double search -> check xml is defined properly
 
     private val TAG = "SearchResultsActivity"
     private val search = Search(this)
 
+    companion object Mutex {
+        var mutex = 0
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG, ".onCreate called")
-        handleIntent(intent)
+        if (mutex > 0) { // Attempting to solve inexplicable double call when searching
+            return
+        } else {
+            super.onCreate(savedInstanceState)
+            Log.d(TAG, ".onCreate called")
+            handleIntent(intent)
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
-       // super.onNewIntent(intent)
+        // super.onNewIntent(intent)
         Log.d(TAG, ".onNewIntent called")
         handleIntent(intent)
     }
@@ -103,15 +121,20 @@ class SearchResultsActivity : Activity() { // todo: own class. make the search l
     }
 
     private fun handleIntent(intent: Intent) {
-        Log.d(TAG, ".handleIntent started")
-        if (Intent.ACTION_SEARCH == intent.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            Log.d(TAG, ".handleIntent: received new search query: $query")
-            // todo: search with the query
-            search.searchByTitleKeyword(query)
+        if (mutex > 0) {
 
         } else {
-            Log.d(TAG, "intent.action != Intent.ACTION_SEARCH")
+            mutex++
+            Log.d(TAG, ".handleIntent started")
+            if (Intent.ACTION_SEARCH == intent.action) {
+                val query = intent.getStringExtra(SearchManager.QUERY)
+                Log.d(TAG, ".handleIntent: received new search query: $query")
+                // todo: search with the query
+                search.searchByTitleKeyword(query)
+
+            } else {
+                Log.d(TAG, "intent.action != Intent.ACTION_SEARCH")
+            }
         }
     }
 
@@ -126,6 +149,9 @@ class SearchResultsActivity : Activity() { // todo: own class. make the search l
         recyclerView.layoutManager = GridLayoutManager(this, 3)
         recyclerView.adapter = myAdapter
         //setContentView(R.layout.activity_main)
+        if (mutex > 0) {
+            mutex = 0
+        }
         Log.d(TAG, ".displaySearchResults complete")
     }
 }
