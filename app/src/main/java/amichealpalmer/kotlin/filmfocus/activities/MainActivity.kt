@@ -56,7 +56,7 @@ class MainActivity : BaseActivity() {
     }
 
     // todo: test watchlist w/ this function
-    fun createTestWatchlist(){
+    fun createTestWatchlist() {
         var resultList = ArrayList<FilmThumbnail>()
 
 
@@ -67,9 +67,6 @@ class MainActivity : BaseActivity() {
         resultList.add(FilmThumbnail("The Fly", "", "tt0091064", "", "https://upload.wikimedia.org/wikipedia/en/a/aa/Fly_poster.jpg"))
 
         // Pass the 'results' to the watchlist activity
-//        val watchlistactivity = WatchlistActivity(resultList, "default", this)
-  //      setContentView(R.layout.browse_films)
-    //    watchlistactivity.displayWatchlist()
         intent = Intent(this, WatchlistActivity::class.java)
         intent.putParcelableArrayListExtra("thumbs", resultList)
         //intent.putExtra("displaycontext", DisplayContext.WATCHLIST)
