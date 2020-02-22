@@ -1,5 +1,7 @@
-package amichealpalmer.kotlin.filmfocus
+package amichealpalmer.kotlin.filmfocus.data.json
 
+import amichealpalmer.kotlin.filmfocus.data.Film
+import amichealpalmer.kotlin.filmfocus.helpers.FilmSearch
 import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject

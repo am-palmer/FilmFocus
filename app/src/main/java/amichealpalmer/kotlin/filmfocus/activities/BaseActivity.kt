@@ -1,7 +1,7 @@
-package amichealpalmer.kotlin.filmfocus
+package amichealpalmer.kotlin.filmfocus.activities
 
+import amichealpalmer.kotlin.filmfocus.R
 import android.annotation.SuppressLint
-import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity

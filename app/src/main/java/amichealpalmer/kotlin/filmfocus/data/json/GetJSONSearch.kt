@@ -1,33 +1,26 @@
-package amichealpalmer.kotlin.filmfocus
+package amichealpalmer.kotlin.filmfocus.data.json
 
+import amichealpalmer.kotlin.filmfocus.activities.SearchActivity
+import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import org.json.JSONObject
-import amichealpalmer.kotlin.filmfocus.R.*
-import android.content.Context
-import android.os.AsyncTask
 import android.util.Log
 import org.json.JSONException
-import java.io.IOException
-import java.lang.Exception
-import java.lang.NullPointerException
-import java.net.MalformedURLException
-import java.net.URL
 
 // Retrieve OMDB JSON Search Data and return it to the calling class.
 
-class GetJSONSearch(val listener: Search, val apikey: String) :
-    GetJSONBase<ArrayList<GetJSONSearch.Result?>>() { // Example input query is "?s=ghost". We then append the website and API key to form a valid URL (in the super class helper method)
+class GetJSONSearch(val listener: SearchActivity, val apikey: String) :
+        GetJSONBase<ArrayList<FilmThumbnail?>>() { // Example input query is "?s=ghost". We then append the website and API key to form a valid URL (in the super class helper method)
 
     private val TAG = "GetJSONSearch"
 
-
-    override fun onPostExecute(result: ArrayList<Result?>) {
+    override fun onPostExecute(result: ArrayList<FilmThumbnail?>) {
         Log.d(TAG, ".onPostExecute starts")
-        listener.onResultListDownloadComplete(result)
+        listener.displaySearchResults(result)
     }
 
-    private fun createResultsFromJSON(result: JSONObject): ArrayList<Result?> { // JSONObject is turned into an ArrayList<Result>
+    private fun createResultsFromJSON(result: JSONObject): ArrayList<FilmThumbnail?> { // JSONObject is turned into an ArrayList<Result>
         Log.d(TAG, ".createResultsFromJSON starting with raw input JSON data")
-        var resultList = ArrayList<Result?>()
+        var resultList = ArrayList<FilmThumbnail?>()
         try {
             val itemsArray = result.getJSONArray("Search")
             for (i in 0 until itemsArray.length()) {
@@ -37,7 +30,7 @@ class GetJSONSearch(val listener: Search, val apikey: String) :
                 val imdbID = jsonItem.getString("imdbID")
                 val type = jsonItem.getString("Type")
                 val posterURL = jsonItem.getString("Poster")
-                val searchResult = Result(title, year, imdbID, type, posterURL)
+                val searchResult = FilmThumbnail(title, year, imdbID, type, posterURL)
                 Log.d(TAG, "New search result item constructed: $searchResult")
                 resultList.add(searchResult)
             }
@@ -48,21 +41,9 @@ class GetJSONSearch(val listener: Search, val apikey: String) :
         return resultList
     }
 
-    inner class Result( // Simple objects holding data for each search result
-        val title: String,
-        val year: String,
-        val imdbID: String,
-        val type: String,
-        val posterURL: String
-    ) {
-        override fun toString(): String {
-            return "Result(title='$title', year='$year', imdbID='$imdbID')"
-        }
-    }
-
-    override fun doInBackground(vararg params: String): ArrayList<Result?> { // params[0] should contain our query
+    override fun doInBackground(vararg params: String): ArrayList<FilmThumbnail?> { // params[0] should contain our query
         Log.d(TAG, ".doInBackground started")
-        var defaultResult = ArrayList<Result?>() // todo better handling of nullability
+        var defaultResult = ArrayList<FilmThumbnail?>() // todo better handling of nullability
 
         // Get our JSON object from the parent class
         Log.d(TAG, "calling super.getJSONDataObject and passing our search query")
@@ -75,9 +56,6 @@ class GetJSONSearch(val listener: Search, val apikey: String) :
             Log.d(TAG, "JSONResult is null")
             return defaultResult
         }
-
-//        Log.d(TAG, ".doInBackground finished")
-//        return resultList
 
     }
 

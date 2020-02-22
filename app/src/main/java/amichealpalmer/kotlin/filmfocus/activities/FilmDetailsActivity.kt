@@ -1,8 +1,10 @@
-package amichealpalmer.kotlin.filmfocus
+package amichealpalmer.kotlin.filmfocus.activities
 
+import amichealpalmer.kotlin.filmfocus.data.Film
+import amichealpalmer.kotlin.filmfocus.helpers.FilmSearch
+import amichealpalmer.kotlin.filmfocus.R
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_film_details.*
 

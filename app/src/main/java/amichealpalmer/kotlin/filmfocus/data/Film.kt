@@ -1,8 +1,7 @@
-package amichealpalmer.kotlin.filmfocus
+package amichealpalmer.kotlin.filmfocus.data
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.net.URL
 
 class Film(
     val title: String, // e.g. Guardians of the Galaxy Vol. 2

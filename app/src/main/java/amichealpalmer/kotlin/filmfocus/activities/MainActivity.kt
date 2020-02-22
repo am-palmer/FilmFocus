@@ -1,7 +1,9 @@
-package amichealpalmer.kotlin.filmfocus
+package amichealpalmer.kotlin.filmfocus.activities
 
 //import android.R
-import android.app.Activity
+import amichealpalmer.kotlin.filmfocus.data.Film
+import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.R
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
@@ -11,11 +13,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.browse_films.*
 
 // todo: see trello
 
@@ -50,8 +49,32 @@ class MainActivity : BaseActivity() {
 //        val search = Search(getString(R.string.OMDB_API_KEY), this) // Search should be a singleton?
 //        search.getFilmByID("tt0083658")
 
+        // test watchlist create
+        createTestWatchlist()
 
         Log.d(TAG, ".onCreate finished")
+    }
+
+    // todo: test watchlist w/ this function
+    fun createTestWatchlist(){
+        var resultList = ArrayList<FilmThumbnail>()
+
+
+        // Add some 'results' to the list
+        resultList.add(FilmThumbnail("Blade Runner", "", "tt0083658", "", "https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Blade_Runner_(1982_poster).png/220px-Blade_Runner_(1982_poster).png"))
+        resultList.add(FilmThumbnail("Predator", "", "tt0093773", "", "https://upload.wikimedia.org/wikipedia/en/9/95/Predator_Movie.jpg"))
+        resultList.add(FilmThumbnail("The Thing", "", "tt0084787", "", "https://upload.wikimedia.org/wikipedia/en/a/a6/The_Thing_(1982)_theatrical_poster.jpg"))
+        resultList.add(FilmThumbnail("The Fly", "", "tt0091064", "", "https://upload.wikimedia.org/wikipedia/en/a/aa/Fly_poster.jpg"))
+
+        // Pass the 'results' to the watchlist activity
+//        val watchlistactivity = WatchlistActivity(resultList, "default", this)
+  //      setContentView(R.layout.browse_films)
+    //    watchlistactivity.displayWatchlist()
+        intent = Intent(this, WatchlistActivity::class.java)
+        intent.putParcelableArrayListExtra("thumbs", resultList)
+        //intent.putExtra("displaycontext", DisplayContext.WATCHLIST)
+        startActivity(intent)
+
     }
 
 
@@ -60,7 +83,7 @@ class MainActivity : BaseActivity() {
         menuInflater.inflate(R.menu.options_menu, menu)
 
         // Associating searchable configuration with the SearchView
-        val componentName = ComponentName(this, SearchResultsActivity::class.java)
+        val componentName = ComponentName(this, SearchActivity::class.java)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
 
         // Configuring the SearchView
@@ -91,70 +114,6 @@ class MainActivity : BaseActivity() {
 
 }
 
-class SearchResultsActivity : Activity() { // todo: own class. fix double search -> check xml is defined properly
-
-    private val TAG = "SearchResultsActivity"
-    private val search = Search(this)
-
-    companion object Mutex {
-        var mutex = 0
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        if (mutex > 0) { // Attempting to solve inexplicable double call when searching
-            return
-        } else {
-            super.onCreate(savedInstanceState)
-            Log.d(TAG, ".onCreate called")
-            handleIntent(intent)
-        }
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        // super.onNewIntent(intent)
-        Log.d(TAG, ".onNewIntent called")
-        handleIntent(intent)
-    }
-
-    fun testSearch(query: String) {
-        search.searchByTitleKeyword(query)
-    }
-
-    private fun handleIntent(intent: Intent) {
-        if (mutex > 0) {
-
-        } else {
-            mutex++
-            Log.d(TAG, ".handleIntent started")
-            if (Intent.ACTION_SEARCH == intent.action) {
-                val query = intent.getStringExtra(SearchManager.QUERY)
-                Log.d(TAG, ".handleIntent: received new search query: $query")
-                // todo: search with the query
-                search.searchByTitleKeyword(query)
-
-            } else {
-                Log.d(TAG, "intent.action != Intent.ACTION_SEARCH")
-            }
-        }
-    }
-
-    fun displaySearchResults(resultList: List<GetJSONSearch.Result>) { // todo: the result display is screwy. browse films should include app bar?
-        // Testing results view
-        //val myrv = findViewById(R.id.recyclerview_id) as RecyclerView
-        Log.d(TAG, ".displaySearchResults called. Attempting to display search result list")
-        setContentView(R.layout.browse_films)// todo: inflate instead?
-        //layoutInflater.inflate(R.layout.browse_films, )
-        val myAdapter = BrowseRecyclerAdapter(this, resultList) // cast may cause issues if so modify class
-        val recyclerView = findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
-        recyclerView.layoutManager = GridLayoutManager(this, 3)
-        recyclerView.adapter = myAdapter
-        //setContentView(R.layout.activity_main)
-        if (mutex > 0) {
-            mutex = 0
-        }
-        Log.d(TAG, ".displaySearchResults complete")
-    }
-}
 //
 //    fun inflateFilmInformation(film: Film){
 //        Log.d(TAG, ".inflateFilmInformation starts")

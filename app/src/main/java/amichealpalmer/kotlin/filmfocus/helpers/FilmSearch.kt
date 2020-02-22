@@ -1,10 +1,14 @@
-package amichealpalmer.kotlin.filmfocus
+package amichealpalmer.kotlin.filmfocus.helpers
 
+import amichealpalmer.kotlin.filmfocus.data.Film
+import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.activities.FilmDetailsActivity
+import amichealpalmer.kotlin.filmfocus.data.json.GetJSONFilm
 import android.util.Log
 
 
 // Uses an IMDB id to get results about a film
-
+//todo: roll into getjson film
 class FilmSearch(val listener: FilmDetailsActivity) {
 
     private val TAG = "FilmSearch"
