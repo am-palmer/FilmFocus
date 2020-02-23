@@ -25,6 +25,7 @@ class BrowseRecyclerAdapter(
 ) : RecyclerView.Adapter<BrowseRecyclerAdapter.HelperViewHolder>() {
 
     private val TAG = "BrowseRecyclerAdapter"
+    var position = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelperViewHolder {
         Log.d(TAG, ".onCreateViewHolder called")
@@ -41,13 +42,21 @@ class BrowseRecyclerAdapter(
         Picasso.get().load(resultList[position].posterURL).error(R.drawable.placeholder_imageloading)
                 .placeholder(R.drawable.placeholder_imageloading).into(holder.poster)
 
+        holder.itemView.setOnLongClickListener {
+            this.position = (holder.position) // todo: fix
+            false }
+    }
+
+    override fun onViewRecycled(holder: HelperViewHolder) {
+        // may not be required
+        holder.itemView.setOnLongClickListener(null)
+        super.onViewRecycled(holder)
 
     }
 
-    fun getItem(position: Int): FilmThumbnail{
+    fun getItem(position: Int): FilmThumbnail {
         return resultList[position]
     }
-
 
 
     override fun getItemCount(): Int {
@@ -60,7 +69,7 @@ class BrowseRecyclerAdapter(
         val cardView: CardView = view.findViewById(R.id.film_item_cardview_id)
 
         init {
-            cardView.setOnClickListener{
+            cardView.setOnClickListener {
                 val intent = Intent(context, FilmDetailsActivity::class.java)
                 intent.putExtra("imdbID", resultList[adapterPosition].imdbID)
                 context.startActivity(intent)
@@ -71,14 +80,12 @@ class BrowseRecyclerAdapter(
 
         }
 
-        override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) { // does not return true and performs normal click. todo fix
-        Log.d(TAG, ".onCreateContextMenu called.")
+        override fun onCreateContextMenu(menu: ContextMenu?, v: View, menuInfo: ContextMenu.ContextMenuInfo?) { // does not return true and performs normal click. todo fix
+            Log.d(TAG, ".onCreateContextMenu called.")
             val inflater = MenuInflater(context)
             inflater.inflate(R.menu.film_thumbnail_context_menu, menu)
 
         }
-
-
 
 
     }

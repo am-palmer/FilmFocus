@@ -14,6 +14,7 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.lang.Exception
 
 //var watchlist: ArrayList<FilmThumbnail>, val name: String, val listener: MainActivity
 class WatchlistActivity() : Activity() {
@@ -36,20 +37,27 @@ class WatchlistActivity() : Activity() {
         recyclerView = findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
         recyclerView!!.layoutManager = GridLayoutManager(this, 3)
         recyclerView!!.adapter = BrowseRecyclerAdapter(this, watchlist)
-      // registerForContextMenu()
+
 
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, ".onContextItemSelected called")
-
+        Log.d(TAG, "item: ${item}")
+        val adapter = recyclerView!!.adapter as BrowseRecyclerAdapter
+        var position = -1
+        try {
+            position = adapter.position
+        } catch (e: Exception) { // too general
+            Log.d(TAG, e.localizedMessage, e)
+            return super.onContextItemSelected(item)
+        }
         when (item.itemId) {
             R.id.film_thumbnail_context_menu_option1 -> Toast.makeText(this, "Option 1", Toast.LENGTH_SHORT).show()
             R.id.film_thumbnail_context_menu_option2 -> {
-               // removeFilmFromWatchlist(
-                val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
-                val position = info.position
-                val adapter = recyclerView!!.adapter as BrowseRecyclerAdapter
+                // removeFilmFromWatchlist(
+                //val info = item.menuInfo as AdapterView.AdapterContextMenuInfo // todo: why the hell is this null?
+                //val position = info.position
                 removeFilmFromWatchlist(adapter.getItem(position))
                 Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
             }
@@ -62,7 +70,7 @@ class WatchlistActivity() : Activity() {
     private fun removeFilmFromWatchlist(film: FilmThumbnail) {
         watchlist.remove(film) // todo: this change has to be stored somewhere
         // Recall display
-       displayWatchlist() // todo: destroys entire ui, try to refresh instead?
+        displayWatchlist() // todo: destroys entire ui, try to refresh instead?
     }
 
 }
