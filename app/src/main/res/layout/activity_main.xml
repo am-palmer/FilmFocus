@@ -39,14 +39,14 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- The navigation drawer that comes from the left -->
-    <!-- Note that `android:layout_gravity` needs to be set to 'start' -->
+    <!-- The navigation drawer, opens from left-hand side of screen. headerLayout points to the xml layout which is the header of the nav view -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nvView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@android:color/white"
+        app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_view" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

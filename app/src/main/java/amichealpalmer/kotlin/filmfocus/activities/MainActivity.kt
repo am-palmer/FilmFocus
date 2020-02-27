@@ -11,6 +11,7 @@ import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -37,19 +38,23 @@ class MainActivity : BaseActivity() {
 
     private lateinit var mDrawer: DrawerLayout
     private lateinit var drawerToggle: ActionBarDrawerToggle
-
+    private lateinit var toolbar: androidx.appcompat.widget.Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(drawer_layout.toolbar)
+        toolbar = findViewById(R.id.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         mDrawer = findViewById(R.id.drawer_layout)
+        drawerToggle = setupDrawerToggle()
+        drawerToggle.isDrawerIndicatorEnabled = true
+        drawerToggle.syncState()
         val nvDrawer = findViewById<NavigationView>(R.id.nvView)
         setupDrawerContent(nvDrawer)
 
-        Log.d(TAG, "Set content view done")
+        Log.d(TAG, "Set content view / navigation drawer done")
 
         fab.setOnClickListener { view ->
             // todo action button
@@ -96,6 +101,26 @@ class MainActivity : BaseActivity() {
         title = menuItem.title
         // Close the navigation drawer
         mDrawer.closeDrawers()
+    }
+
+    // `onPostCreate` called when activity start-up is complete after `onStart()`
+// NOTE 1: Make sure to override the method with only a single `Bundle` argument
+// Note 2: Make sure you implement the correct `onPostCreate(Bundle savedInstanceState)` method.
+// There are 2 signatures and only `onPostCreate(Bundle state)` shows the hamburger icon.
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        drawerToggle.syncState()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Pass any configuration change to the drawer toggles
+        drawerToggle.onConfigurationChanged(newConfig)
+    }
+
+    fun setupDrawerToggle(): ActionBarDrawerToggle {
+        return ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close)
     }
 
 
@@ -147,6 +172,8 @@ class MainActivity : BaseActivity() {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        if (drawerToggle.onOptionsItemSelected(item)) return true
+
         return when (item.itemId) {
             //R.id.action_settings -> true
             android.R.id.home -> {
