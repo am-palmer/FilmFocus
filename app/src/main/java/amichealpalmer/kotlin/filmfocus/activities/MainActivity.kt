@@ -40,22 +40,17 @@ class MainActivity : BaseActivity() {
                     .setAction("Action", null).show()
         }
 
-        // Test block for search
-        //Log.d(TAG, "Now starting test search")
-        //SearchResultsActivity.testSearch("spiderman") todo: fix
-//
-        // Test block for film lookup
-//        Log.d(TAG, "Now starting test film lookup")
-//        val search = Search(getString(R.string.OMDB_API_KEY), this) // Search should be a singleton?
-//        search.getFilmByID("tt0083658")
-
         // test watchlist create
+        Log.d(TAG, ".onCreate: testing load of watchlist")
         createTestWatchlist()
+
+        //Log.d(TAG, ".onCreate: load fragment into activity_main.xml")
+
 
         Log.d(TAG, ".onCreate finished")
     }
 
-    // todo: test watchlist w/ this function
+    // todo: convert watchlist to fragment then test watchlist w/ this function
     fun createTestWatchlist() {
         var resultList = ArrayList<FilmThumbnail>()
 
@@ -69,7 +64,6 @@ class MainActivity : BaseActivity() {
         // Pass the 'results' to the watchlist activity
         intent = Intent(this, WatchlistActivity::class.java)
         intent.putParcelableArrayListExtra("thumbs", resultList)
-        //intent.putExtra("displaycontext", DisplayContext.WATCHLIST)
         startActivity(intent)
 
     }
@@ -77,6 +71,7 @@ class MainActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
+        Log.d(TAG, ".onCreateOptionsMenu called")
         menuInflater.inflate(R.menu.options_menu, menu)
 
         // Associating searchable configuration with the SearchView
@@ -93,7 +88,6 @@ class MainActivity : BaseActivity() {
 //
 //            requestFocus()
 //        }
-
 
         return true
     }

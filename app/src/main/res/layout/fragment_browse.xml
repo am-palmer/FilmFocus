@@ -8,10 +8,9 @@
     android:padding="8dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/fragment_browse_container"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/browse_films_recyclerview_id"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
 
 </LinearLayout>

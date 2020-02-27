@@ -4,6 +4,7 @@ import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.fragments.BrowseFragment
 import android.app.Activity
 import android.app.SearchManager
 import android.content.Intent
@@ -16,11 +17,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.lang.Exception
 
-//var watchlist: ArrayList<FilmThumbnail>, val name: String, val listener: MainActivity
-class WatchlistActivity() : Activity() {
+class WatchlistActivity : BrowseActivity() {
 
     private val TAG = "WatchlistActivity"
-    private var watchlist = ArrayList<FilmThumbnail>()
+    private lateinit var watchlist: ArrayList<FilmThumbnail>
 
     private var recyclerView: RecyclerView? = null
 
@@ -31,15 +31,16 @@ class WatchlistActivity() : Activity() {
     }
 
     private fun displayWatchlist() {
-        Log.d(TAG, ".displayWatchlist called. getting FilmThumbnail list from intent")
-        //val thumbs = intent.getParcelableArrayListExtra<FilmThumbnail>("thumbs")
-        setContentView(R.layout.browse_films)// todo: inflate instead?
-        recyclerView = findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
-        recyclerView!!.layoutManager = GridLayoutManager(this, 3)
-        recyclerView!!.adapter = BrowseRecyclerAdapter(this, watchlist)
-
+//        Log.d(TAG, ".displayWatchlist called. getting FilmThumbnail list from intent")
+//        setContentView(R.layout.browse_films)// todo: inflate instead?
+//        recyclerView = findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
+//        recyclerView!!.layoutManager = GridLayoutManager(this, 3)
+//        recyclerView!!.adapter = BrowseRecyclerAdapter(this, watchlist)
+        // Make a super call to display the resultList
+        super.displayBrowseFragment(watchlist as ArrayList<FilmThumbnail?>)
 
     }
+
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, ".onContextItemSelected called")

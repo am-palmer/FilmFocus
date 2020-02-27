@@ -3,18 +3,21 @@ package amichealpalmer.kotlin.filmfocus.adapters
 
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.activities.FilmDetailsActivity
-import amichealpalmer.kotlin.filmfocus.data.Film
+import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
+import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
+import amichealpalmer.kotlin.filmfocus.fragments.FilmDetailsFragment
+import android.app.FragmentTransaction
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import android.view.*
 //import android.support.v7.widget.CardView
 //import android.support.v7.widget.RecyclerView
 import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
@@ -43,7 +46,7 @@ class BrowseRecyclerAdapter(
                 .placeholder(R.drawable.placeholder_imageloading).into(holder.poster)
 
         holder.itemView.setOnLongClickListener {
-            this.position = (holder.position) // todo: fix
+            this.position = (holder.adapterPosition)
             false }
     }
 
@@ -70,10 +73,19 @@ class BrowseRecyclerAdapter(
 
         init {
             cardView.setOnClickListener {
-                val intent = Intent(context, FilmDetailsActivity::class.java)
-                intent.putExtra("imdbID", resultList[adapterPosition].imdbID)
-                context.startActivity(intent)
+                //val intent = Intent(context, FilmDetailsFragment::class.java)
+                //intent.putExtra("imdbID", resultList[adapterPosition].imdbID)
+                //context.startActivity(intent)
 
+                // Using fragment
+                val fragment = FilmDetailsFragment()
+                val bundle = Bundle()
+                bundle.putString("imdbID", resultList[adapterPosition].imdbID)
+                fragment.arguments = bundle
+                val manager = (context as BrowseActivity).supportFragmentManager.beginTransaction()
+                manager.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                manager.addToBackStack(null)
+                manager.replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
             }
 
             cardView.setOnCreateContextMenuListener(this)
