@@ -15,7 +15,7 @@ class GetJSONSearch(val listener: SearchActivity, val apikey: String) :
 
     override fun onPostExecute(result: ArrayList<FilmThumbnail?>) {
         Log.d(TAG, ".onPostExecute starts")
-        listener.displaySearchResults(result)
+        listener.onSearchResultsDownload(result)
     }
 
     private fun createResultsFromJSON(result: JSONObject): ArrayList<FilmThumbnail?> { // JSONObject is turned into an ArrayList<Result>

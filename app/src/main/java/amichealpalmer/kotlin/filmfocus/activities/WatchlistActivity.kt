@@ -13,11 +13,12 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.lang.Exception
 
-class WatchlistActivity : BrowseActivity() {
+class WatchlistActivity : FragmentActivity() { // todo: convert to fragment
 
     private val TAG = "WatchlistActivity"
     private lateinit var watchlist: ArrayList<FilmThumbnail>
@@ -31,13 +32,7 @@ class WatchlistActivity : BrowseActivity() {
     }
 
     private fun displayWatchlist() {
-//        Log.d(TAG, ".displayWatchlist called. getting FilmThumbnail list from intent")
-//        setContentView(R.layout.browse_films)// todo: inflate instead?
-//        recyclerView = findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
-//        recyclerView!!.layoutManager = GridLayoutManager(this, 3)
-//        recyclerView!!.adapter = BrowseRecyclerAdapter(this, watchlist)
-        // Make a super call to display the resultList
-        super.displayBrowseFragment(watchlist as ArrayList<FilmThumbnail?>)
+        //super.displayBrowseFragment(watchlist as ArrayList<FilmThumbnail?>)
 
     }
 

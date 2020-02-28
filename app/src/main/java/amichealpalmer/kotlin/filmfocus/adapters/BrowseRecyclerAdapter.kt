@@ -3,9 +3,10 @@ package amichealpalmer.kotlin.filmfocus.adapters
 
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
-import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
+//import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
+//import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
 import amichealpalmer.kotlin.filmfocus.fragments.FilmDetailsFragment
+import android.app.Activity
 import android.app.FragmentTransaction
 import android.content.Context
 import android.content.Intent
@@ -82,7 +83,7 @@ class BrowseRecyclerAdapter(
                 val bundle = Bundle()
                 bundle.putString("imdbID", resultList[adapterPosition].imdbID)
                 fragment.arguments = bundle
-                val manager = (context as BrowseActivity).supportFragmentManager.beginTransaction()
+                val manager = (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                 manager.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 manager.addToBackStack(null)
                 manager.replace(R.id.main_frame_layout_fragment_holder, fragment).commit()

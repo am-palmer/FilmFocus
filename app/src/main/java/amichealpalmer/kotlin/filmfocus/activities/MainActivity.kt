@@ -7,6 +7,8 @@ import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.fragments.BrowseFragment
 import amichealpalmer.kotlin.filmfocus.fragments.WatchlistFragment
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
@@ -16,8 +18,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.SearchView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -29,8 +34,10 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 
 // todo: see trello
 
-class MainActivity : BaseActivity() {
+class MainActivity : AppCompatActivity() {
 
+    internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
+    internal val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
 
     val TAG = "MainActivity"
     val testFilm = Film("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
@@ -69,6 +76,14 @@ class MainActivity : BaseActivity() {
         Log.d(TAG, ".onCreate finished")
     }
 
+    @SuppressLint("RestrictedApi")
+    internal fun activateToolbar(enableHome: Boolean) {
+        Log.d(TAG, ".activateToolbar")
+
+        var toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDefaultDisplayHomeAsUpEnabled(enableHome)
+    }
 
     private fun setupDrawerContent(navigationView: NavigationView) {
         Log.d(TAG, ".setupDrawerContent: setting nav view itemselectedlistener")
@@ -87,11 +102,22 @@ class MainActivity : BaseActivity() {
             // R.id.nav_third_fragment -> ThirdFragment::class.java
             else -> BrowseFragment::class.java
         }
+
+        // Test code, todo replace with proper retreival functionality
+
+        if (fragmentClass == WatchlistFragment::class.java) {
+            fragment = fragmentClass.newInstance()
+            val bundle = Bundle()
+            bundle.putParcelableArrayList("", createTestWatchlist())
+            fragment.arguments = bundle
+        }
+
         try {
             fragment = fragmentClass.newInstance() as Fragment // not gonna work?
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
         // Insert the fragment by replacing any existing fragment
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment!!).commit()
@@ -104,9 +130,9 @@ class MainActivity : BaseActivity() {
     }
 
     // `onPostCreate` called when activity start-up is complete after `onStart()`
-// NOTE 1: Make sure to override the method with only a single `Bundle` argument
-// Note 2: Make sure you implement the correct `onPostCreate(Bundle savedInstanceState)` method.
-// There are 2 signatures and only `onPostCreate(Bundle state)` shows the hamburger icon.
+    // NOTE 1: Make sure to override the method with only a single `Bundle` argument
+    // Note 2: Make sure you implement the correct `onPostCreate(Bundle savedInstanceState)` method.
+    // There are 2 signatures and only `onPostCreate(Bundle state)` shows the hamburger icon.
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         // Sync the toggle state after onRestoreInstanceState has occurred.
@@ -125,7 +151,7 @@ class MainActivity : BaseActivity() {
 
 
     // todo: convert watchlist to fragment then test watchlist w/ this function
-    fun createTestWatchlist() {
+    fun createTestWatchlist(): ArrayList<FilmThumbnail> {
         var resultList = ArrayList<FilmThumbnail>()
 
 
@@ -136,9 +162,11 @@ class MainActivity : BaseActivity() {
         resultList.add(FilmThumbnail("The Fly", "", "tt0091064", "", "https://upload.wikimedia.org/wikipedia/en/a/aa/Fly_poster.jpg"))
 
         // Pass the 'results' to the watchlist activity
-        intent = Intent(this, WatchlistActivity::class.java)
-        intent.putParcelableArrayListExtra("thumbs", resultList)
-        startActivity(intent)
+//        intent = Intent(this, WatchlistActivity::class.java)
+//        intent.putParcelableArrayListExtra("thumbs", resultList)
+//        startActivity(intent)
+        return resultList
+
 
     }
 
@@ -157,11 +185,6 @@ class MainActivity : BaseActivity() {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         searchView.isIconifiedByDefault = false
         searchView.requestFocus()
-//        (menu.findItem(R.id.search).actionView as SearchView).apply {
-//            setSearchableInfo(searchManager.getSearchableInfo(componentName))
-//
-//            requestFocus()
-//        }
 
         return true
     }

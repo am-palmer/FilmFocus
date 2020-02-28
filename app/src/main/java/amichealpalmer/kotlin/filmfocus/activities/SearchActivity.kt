@@ -16,7 +16,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class SearchActivity : BrowseActivity() { // Handles searches made with the search bar
+class SearchActivity : FragmentActivity() { // Handles searches made with the search bar
 
     private val TAG = "SearchActivity"
 
@@ -44,8 +44,22 @@ class SearchActivity : BrowseActivity() { // Handles searches made with the sear
         GetJSONSearch(this, (this.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API search queries
     }
 
-    fun displaySearchResults(resultList: ArrayList<FilmThumbnail?>) {
-        super.displayBrowseFragment(resultList)
+    fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {
+        Log.d(TAG, ".onSearchResultsDownload: JSON search calls listener")
+        displayBrowseFragment(resultList)
+    }
+
+    private fun displayBrowseFragment(resultList: ArrayList<FilmThumbnail?>) {
+        Log.d(TAG, ".displayResults: building fragment and replacing main_frame_layout_fragment_holder FrameLayout")
+        // Build fragment, pass in data.
+        setContentView(R.layout.content_main)
+        val fragment = BrowseFragment()
+        var args = Bundle()
+        args.putParcelableArrayList("resultList", resultList)
+        fragment.arguments = args
+        var transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.main_frame_layout_fragment_holder, fragment)
+        transaction.commit()
     }
 
 }
