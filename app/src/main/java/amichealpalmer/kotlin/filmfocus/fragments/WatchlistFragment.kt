@@ -27,6 +27,8 @@ class WatchlistFragment : Fragment() {
 
     private var listener: OnFragmentInteractionListener? = null
 
+
+
     private val TAG = "WatchlistFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {

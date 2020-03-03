@@ -1,21 +1,20 @@
 package amichealpalmer.kotlin.filmfocus.fragments
 
-import android.content.Context
+import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.data.Film
+import amichealpalmer.kotlin.filmfocus.helpers.FilmSearch
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
-import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.data.Film
-import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.helpers.FilmSearch
-import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_film_details.*
 import kotlinx.android.synthetic.main.fragment_film_details.view.*
+
 
 private const val ARG_PARAM1 = "imdbID"
 
@@ -49,6 +48,16 @@ class FilmDetailsFragment : Fragment() {
         FilmSearch(this).getFilmByID(imdbID)
 
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as AppCompatActivity?)!!.supportActionBar!!.hide()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (activity as AppCompatActivity?)!!.supportActionBar!!.show()
     }
 
     fun onFilmInfoDownload(film: Film) { // Sub-optimal?

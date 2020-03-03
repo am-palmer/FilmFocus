@@ -34,7 +34,10 @@
                 android:layout_height="wrap_content" />
 
             <!-- The main content view where fragments are loaded -->
-            <include layout="@layout/content_main"></include>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/main_frame_layout_fragment_holder"/>
         </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
