@@ -9,11 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 
 import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
+import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
+import android.util.Log
+import android.view.MenuItem
+import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val ARG_LIST = "watchlist"
 
 /**
  * A simple [Fragment] subclass.
@@ -23,76 +27,98 @@ private const val ARG_PARAM2 = "param2"
  * Use the [WatchlistFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class WatchlistFragment : Fragment() {
 
-    private var listener: OnFragmentInteractionListener? = null
+enum class FILM_CONTEXT_ACTION_TYPE{
+    WATCHLIST_REMOVE, WATCHLIST_MARK_WATCHED
+}
 
+class WatchlistFragment : Fragment() { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses
 
-
+    //private var listener: OnFragmentInteractionListener? = null
     private val TAG = "WatchlistFragment"
+    internal var callback: onFilmSelectedListener? = null
+    private lateinit var watchlist: ArrayList<FilmThumbnail>
+    lateinit var recyclerView: RecyclerView
+
+    fun setOnFilmSelectedListener(callback: onFilmSelectedListener) {
+        this.callback = callback
+    }
+
+    interface onFilmSelectedListener {
+        fun onFilmSelected(position: Int, type: FILM_CONTEXT_ACTION_TYPE)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, ".onCreate called")
+        if (arguments != null) {
+            Log.d(TAG, ".onCreateView: arguments != null. setting resultList var")
+            watchlist = arguments!!.getParcelableArrayList<FilmThumbnail>(ARG_LIST) as ArrayList<FilmThumbnail>
+        } else {
+            Log.d(TAG, ".onCreateView: arguments is null")
+        }
         super.onCreate(savedInstanceState)
     }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_watchlist, container, false)
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
+        Log.d(TAG, ".onCreateView called")
+        var view = inflater.inflate(R.layout.fragment_browse, container, false)
+        recyclerView = view.findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
+        recyclerView.layoutManager = GridLayoutManager(activity, 3)
+        recyclerView.adapter = BrowseRecyclerAdapter(activity!!, watchlist)
+        return view
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            listener = context
+        if (context is onFilmSelectedListener) {
+            callback = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException(context.toString() + " must implement onFilmSelectedListener")
         }
     }
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
+        callback = null
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        Log.d(TAG, ".onContextItemSelected called")
+        Log.d(TAG, "item: ${item}")
+        val adapter = recyclerView!!.adapter as BrowseRecyclerAdapter
+        var position = -1
+        try {
+            position = adapter.position
+        } catch (e: java.lang.Exception) { // too general
+            Log.d(TAG, e.localizedMessage, e)
+            return super.onContextItemSelected(item)
+        }
+        when (item.itemId) {
+            R.id.film_thumbnail_context_menu_option1 -> true //Toast.makeText(this, "Option 1", Toast.LENGTH_SHORT).show()
+            R.id.film_thumbnail_context_menu_option2 -> {
+
+                //watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
+                //Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
+            }
+            else -> true
+        }
+
+        return super.onContextItemSelected(item)
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment WatchlistFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-                WatchlistFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
-                    }
-                }
+        //val ARG_PARAM = "resultList"
+
+        fun newInstance(resultList: ArrayList<FilmThumbnail>): WatchlistFragment {
+            val fragment = WatchlistFragment()
+            val args = Bundle()
+            args.putParcelableArrayList(ARG_LIST, resultList)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }

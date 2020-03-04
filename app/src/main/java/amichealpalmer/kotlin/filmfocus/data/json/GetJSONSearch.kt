@@ -1,7 +1,7 @@
 package amichealpalmer.kotlin.filmfocus.data.json
 
 import amichealpalmer.kotlin.filmfocus.activities.MainActivity
-import amichealpalmer.kotlin.filmfocus.activities.SearchActivity
+//import amichealpalmer.kotlin.filmfocus.activities.SearchActivity
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import org.json.JSONObject
 import android.util.Log

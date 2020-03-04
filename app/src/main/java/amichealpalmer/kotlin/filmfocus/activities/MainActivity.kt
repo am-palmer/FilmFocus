@@ -3,31 +3,33 @@ package amichealpalmer.kotlin.filmfocus.activities
 //import android.R
 
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.data.Film
+import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.data.json.GetJSONSearch
+//import amichealpalmer.kotlin.filmfocus.fragments.ACTION_TYPE
 import amichealpalmer.kotlin.filmfocus.fragments.BrowseFragment
+import amichealpalmer.kotlin.filmfocus.fragments.FILM_CONTEXT_ACTION_TYPE
 import amichealpalmer.kotlin.filmfocus.fragments.WatchlistFragment
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -36,15 +38,18 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 
 // todo: see trello
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListener { // todo: disperse as much logic into the fragments as possible
 
     internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
     internal val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
 
     val TAG = "MainActivity"
     //val testFilm = Film("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
+    private lateinit var watchlist: ArrayList<FilmThumbnail>
+    //private var recyclerView: RecyclerView? = null
 
 
+    private var currentFragment: Fragment? = null // search or watchlist
     private lateinit var mDrawer: DrawerLayout
     private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
@@ -72,9 +77,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         // test watchlist create
-        //Log.d(TAG, ".onCreate: testing load of watchlist")
-        //createTestWatchlist()
-
+        Log.d(TAG, ".onCreate: testing load of watchlist")
+        watchlist = createTestWatchlist()
+        watchlistHelper().inflateWatchlistFragment(watchlist)
         Log.d(TAG, ".onCreate finished")
     }
 
@@ -154,15 +159,15 @@ class MainActivity : AppCompatActivity() {
         if (fragmentClass == WatchlistFragment::class.java) {
             fragment = fragmentClass.newInstance()
             val bundle = Bundle()
-            bundle.putParcelableArrayList("", createTestWatchlist())
+            bundle.putParcelableArrayList("watchlist", watchlist)
             fragment.arguments = bundle
         }
 
-        try {
-            fragment = fragmentClass.newInstance() as Fragment // not gonna work?
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+//        try {
+//            fragment = fragmentClass.newInstance() as Fragment // not gonna work?
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
 
         // Insert the fragment by replacing any existing fragment
         val fragmentManager = supportFragmentManager
@@ -183,8 +188,8 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, ".onNewIntent called")
         if (Intent.ACTION_SEARCH == intent!!.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
-            Log.d(TAG, ".handleIntent: received new search query: $query")
-            search().searchByTitleKeyword(query!!)
+            Log.d(TAG, ".handleIntent: received new searchHelper query: $query")
+            searchHelper().searchByTitleKeyword(query!!)
         } else {
             Log.d(TAG, "intent.action != Intent.ACTION_SEARCH")
         }
@@ -194,26 +199,83 @@ class MainActivity : AppCompatActivity() {
 //        Log.d(TAG, ".handleIntent started")
 //        if (Intent.ACTION_SEARCH == intent.action) {
 //            val query = intent.getStringExtra(SearchManager.QUERY)
-//            Log.d(TAG, ".handleIntent: received new search query: $query")
-//            search().searchByTitleKeyword(query!!)
+//            Log.d(TAG, ".handleIntent: received new searchHelper query: $query")
+//            searchHelper().searchByTitleKeyword(query!!)
 //        } else {
 //            Log.d(TAG, "intent.action != Intent.ACTION_SEARCH")
 //        }
 //    }
 
     fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {
-        search().inflateSearchResultsFragment(resultList)
+        searchHelper().inflateSearchResultsFragment(resultList)
     }
 
-    private inner class search {
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        Log.d(TAG, ".onContextItemSelected called")
+        Log.d(TAG, "item: ${item}")
+        // todo: only works for watchlist right now! unsafe casts
+        val fragment = currentFragment as WatchlistFragment
+        val adapter = fragment.recyclerView!!.adapter as BrowseRecyclerAdapter
+        var position = -1
+        try {
+            position = adapter.position
+        } catch (e: java.lang.Exception) { // too general
+            Log.d(TAG, e.localizedMessage, e)
+            return super.onContextItemSelected(item)
+        }
+        when (item.itemId) { // todo: doesn't account for which fragment we're in!
+            R.id.film_thumbnail_context_menu_option1 -> Toast.makeText(this, "Option 1", Toast.LENGTH_SHORT).show()
+            R.id.film_thumbnail_context_menu_option2 -> {
+                // removeFilmFromWatchlist(
+                //val info = item.menuInfo as AdapterView.AdapterContextMenuInfo // todo: why the hell is this null?
+                //val position = info.position
+                watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
+                Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
+            }
+            else -> true
+        }
+
+        return super.onContextItemSelected(item)
+    }
+
+    private inner class watchlistHelper {
+    lateinit var watchlistFragment: WatchlistFragment
+
+        fun inflateWatchlistFragment(resultList: ArrayList<FilmThumbnail>) {
+            Log.d(TAG, ".inflateWatchlistFragment starts.")
+            //setContentView(R.layout.content_main)
+            val fragment = WatchlistFragment()
+            var args = Bundle()
+            args.putParcelableArrayList("watchlist", resultList)
+
+            Log.d(TAG, ".inflateWatchlistFragment: beginning transaction")
+            fragment.arguments = args
+            currentFragment = fragment
+            var transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.main_frame_layout_fragment_holder, fragment) // Defined in activity_main.xml
+            transaction.commit()
+            Log.d(TAG, ".inflateWatchlistFragment complete")
+        }
+
+
+        fun removeFilmFromWatchlist(film: FilmThumbnail) {
+            watchlist.remove(film) // todo: this change has to be stored somewhere
+            // Recall display
+            inflateWatchlistFragment(watchlist) // todo: destroys entire ui, try to refresh instead?
+        }
+
+    }
+
+    private inner class searchHelper {
         fun searchByTitleKeyword(titleContains: String) {
             Log.d(TAG, ".searchByTitleKeyword starts")
-            val query = "?s=$titleContains" // Indicates search by title
-            GetJSONSearch(this@MainActivity, (this@MainActivity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API search queries
+            val query = "?s=$titleContains" // Indicates searchHelper by title
+            GetJSONSearch(this@MainActivity, (this@MainActivity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries
         }
 
         fun inflateSearchResultsFragment(resultList: ArrayList<FilmThumbnail?>) {
-            Log.d(TAG, ".onSearchResultsDownload: JSON search calls listener")
+            Log.d(TAG, ".onSearchResultsDownload: JSON searchHelper calls listener")
             Log.d(TAG, ".onSearchResultsDownload: building fragment and replacing main_frame_layout_fragment_holder FrameLayout")
 
             // Build fragment, pass in data.
@@ -227,6 +289,21 @@ class MainActivity : AppCompatActivity() {
             transaction.commit()
         }
 
+    }
+
+    override fun onAttachFragment(fragment: Fragment) {
+        if (fragment is WatchlistFragment) {
+            fragment.setOnFilmSelectedListener(this)
+        }
+    }
+
+    override fun onFilmSelected(position: Int, type: FILM_CONTEXT_ACTION_TYPE) { // todo: less idiosyncratic handling, less weird logic gates
+        if (type == FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE) {
+            val watchlistFragment = currentFragment as WatchlistFragment
+            val adapter = watchlistFragment.recyclerView.adapter as BrowseRecyclerAdapter
+            watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
+            Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
+        }
     }
 
 }
