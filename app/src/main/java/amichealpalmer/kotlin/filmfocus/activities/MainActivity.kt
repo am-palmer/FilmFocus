@@ -38,7 +38,7 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 
 // todo: see trello
 
-class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListener { // todo: disperse as much logic into the fragments as possible
+class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListener, BrowseFragment.onRequestResultsListener { // todo: disperse as much logic into the fragments as possible
 
     internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
     internal val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
@@ -148,26 +148,23 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         var fragment: Fragment? = null
         val fragmentClass: Class<*>
         fragmentClass = when (menuItem.itemId) {
-            R.id.nav_first_fragment -> BrowseFragment::class.java
+            R.id.nav_first_fragment -> BrowseFragment::class.java // this is what we want?
             R.id.nav_second_fragment -> WatchlistFragment::class.java
             // R.id.nav_third_fragment -> ThirdFragment::class.java
             else -> BrowseFragment::class.java
         }
 
-        //todo: replace with proper retreival functionality
 
-        if (fragmentClass == WatchlistFragment::class.java) {
+        if (fragmentClass == BrowseFragment::class.java){ // todo how do we preserve a search the user has already entered if they switch fragments?
+        }
+
+        // todo: we have to retrieve the user's watchlist from somewhere local
+        else if (fragmentClass == WatchlistFragment::class.java) {
             fragment = fragmentClass.newInstance()
             val bundle = Bundle()
             bundle.putParcelableArrayList("watchlist", watchlist)
             fragment.arguments = bundle
         }
-
-//        try {
-//            fragment = fragmentClass.newInstance() as Fragment // not gonna work?
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//        }
 
         // Insert the fragment by replacing any existing fragment
         val fragmentManager = supportFragmentManager
@@ -189,25 +186,19 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         if (Intent.ACTION_SEARCH == intent!!.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
             Log.d(TAG, ".handleIntent: received new searchHelper query: $query")
-            searchHelper().searchByTitleKeyword(query!!)
+           // searchHelper().searchByTitleKeyword(query!!)
+
+            // Building the search fragment
+            val fragment = BrowseFragment()
+            var args = Bundle()
+            args.putString("searchString", query)
+            fragment.arguments = args
+            var transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.main_frame_layout_fragment_holder, fragment)
+            transaction.commit()
         } else {
             Log.d(TAG, "intent.action != Intent.ACTION_SEARCH")
         }
-    }
-
-//    private fun handleIntent(intent: Intent) {
-//        Log.d(TAG, ".handleIntent started")
-//        if (Intent.ACTION_SEARCH == intent.action) {
-//            val query = intent.getStringExtra(SearchManager.QUERY)
-//            Log.d(TAG, ".handleIntent: received new searchHelper query: $query")
-//            searchHelper().searchByTitleKeyword(query!!)
-//        } else {
-//            Log.d(TAG, "intent.action != Intent.ACTION_SEARCH")
-//        }
-//    }
-
-    fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {
-        searchHelper().inflateSearchResultsFragment(resultList)
     }
 
 
@@ -227,11 +218,8 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         when (item.itemId) { // todo: doesn't account for which fragment we're in!
             R.id.film_thumbnail_context_menu_option1 -> Toast.makeText(this, "Option 1", Toast.LENGTH_SHORT).show()
             R.id.film_thumbnail_context_menu_option2 -> {
-                // removeFilmFromWatchlist(
-                //val info = item.menuInfo as AdapterView.AdapterContextMenuInfo // todo: why the hell is this null?
-                //val position = info.position
                 watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
-                Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Removed from Watchlist", Toast.LENGTH_SHORT).show()
             }
             else -> true
         }
@@ -267,33 +255,13 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
 
     }
 
-    private inner class searchHelper {
-        fun searchByTitleKeyword(titleContains: String) {
-            Log.d(TAG, ".searchByTitleKeyword starts")
-            val query = "?s=$titleContains" // Indicates searchHelper by title
-            GetJSONSearch(this@MainActivity, (this@MainActivity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries
-        }
-
-        fun inflateSearchResultsFragment(resultList: ArrayList<FilmThumbnail?>) {
-            Log.d(TAG, ".onSearchResultsDownload: JSON searchHelper calls listener")
-            Log.d(TAG, ".onSearchResultsDownload: building fragment and replacing main_frame_layout_fragment_holder FrameLayout")
-
-            // Build fragment, pass in data.
-            //setContentView(R.layout.content_main)
-            val fragment = BrowseFragment()
-            var args = Bundle()
-            args.putParcelableArrayList("resultList", resultList)
-            fragment.arguments = args
-            var transaction = supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.main_frame_layout_fragment_holder, fragment)
-            transaction.commit()
-        }
-
-    }
 
     override fun onAttachFragment(fragment: Fragment) {
         if (fragment is WatchlistFragment) {
             fragment.setOnFilmSelectedListener(this)
+        }
+        if (fragment is BrowseFragment){
+            fragment.setOnRequestResultsListener(this)
         }
     }
 
@@ -306,6 +274,11 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         }
     }
 
+    override fun onRequestResults(fragment: BrowseFragment) {
+        val resultList = fragment.resultList
+        val searchString = fragment.searchString
+
+    }
 }
 
 

@@ -25,7 +25,7 @@ import com.squareup.picasso.Picasso
 
 class BrowseRecyclerAdapter(
         private val context: Context,
-        private val resultList: List<FilmThumbnail> // The list of films currently being displayed in the browser
+        private var resultList: ArrayList<FilmThumbnail> // The list of films currently being displayed in the browser
 ) : RecyclerView.Adapter<BrowseRecyclerAdapter.HelperViewHolder>() {
 
     private val TAG = "BrowseRecyclerAdapter"
@@ -40,15 +40,22 @@ class BrowseRecyclerAdapter(
         return HelperViewHolder(view)
     }
 
+    fun updateList(resultList: List<FilmThumbnail>) {
+        this.resultList.addAll(resultList)
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: HelperViewHolder, position: Int) {
-        Log.d(TAG, ".onBindViewHolder called. Title of film is: ${resultList[position].title}")
+        //Log.d(TAG, ".onBindViewHolder called. Title of film is: ${resultList[position].title}")
+        if (resultList.size > 0) {
+            Picasso.get().load(resultList[position]!!.posterURL).error(R.drawable.placeholder_imageloading)
+                    .placeholder(R.drawable.placeholder_imageloading).into(holder.poster)
 
-        Picasso.get().load(resultList[position].posterURL).error(R.drawable.placeholder_imageloading)
-                .placeholder(R.drawable.placeholder_imageloading).into(holder.poster)
-
-        holder.itemView.setOnLongClickListener {
-            this.position = (holder.adapterPosition)
-            false }
+            holder.itemView.setOnLongClickListener {
+                this.position = (holder.adapterPosition)
+                false
+            }
+        }
     }
 
     override fun onViewRecycled(holder: HelperViewHolder) {
@@ -59,7 +66,7 @@ class BrowseRecyclerAdapter(
     }
 
     fun getItem(position: Int): FilmThumbnail {
-        return resultList[position]
+        return resultList[position]!!
     }
 
 
@@ -74,9 +81,6 @@ class BrowseRecyclerAdapter(
 
         init {
             cardView.setOnClickListener {
-                //val intent = Intent(context, FilmDetailsFragment::class.java)
-                //intent.putExtra("imdbID", resultList[adapterPosition].imdbID)
-                //context.startActivity(intent)
 
                 // Using fragment
                 val fragment = FilmDetailsFragment()

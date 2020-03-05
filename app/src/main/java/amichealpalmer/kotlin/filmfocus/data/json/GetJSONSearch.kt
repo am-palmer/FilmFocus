@@ -1,18 +1,20 @@
 package amichealpalmer.kotlin.filmfocus.data.json
 
-import amichealpalmer.kotlin.filmfocus.activities.MainActivity
 //import amichealpalmer.kotlin.filmfocus.activities.SearchActivity
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.fragments.BrowseFragment
 import org.json.JSONObject
 import android.util.Log
 import org.json.JSONException
 
 // Retrieve OMDB JSON Search Data and return it to the calling class.
 
-class GetJSONSearch(val listener: MainActivity, val apikey: String) :
+class GetJSONSearch(val listener: BrowseFragment.searchHelper, val apikey: String) :
         GetJSONBase<ArrayList<FilmThumbnail?>>() { // Example input query is "?s=ghost". We then append the website and API key to form a valid URL (in the super class helper method)
 
     private val TAG = "GetJSONSearch"
+//    private var pageCount = 1
+//    private var currentPage = 1
 
     override fun onPostExecute(result: ArrayList<FilmThumbnail?>) {
         Log.d(TAG, ".onPostExecute starts")
@@ -22,6 +24,11 @@ class GetJSONSearch(val listener: MainActivity, val apikey: String) :
     private fun createResultsFromJSON(result: JSONObject): ArrayList<FilmThumbnail?> { // JSONObject is turned into an ArrayList<Result>
         Log.d(TAG, ".createResultsFromJSON starting with raw input JSON data")
         var resultList = ArrayList<FilmThumbnail?>()
+//        try {
+//            return resultList
+//        } catch (e: JSONException){
+//            Log.d(TAG, ".")
+//        }
         try {
             val itemsArray = result.getJSONArray("Search")
             for (i in 0 until itemsArray.length()) {
@@ -35,9 +42,9 @@ class GetJSONSearch(val listener: MainActivity, val apikey: String) :
                 Log.d(TAG, "New search result item constructed: $searchResult")
                 resultList.add(searchResult)
             }
-        } catch (e: JSONException) {
-            e.printStackTrace()
-            Log.e(TAG, ".createResultsFromJSON: Error processing JSON data. ${e.message}")
+        } catch (e: JSONException) { // Todo: this exception is currently always thrown when we reach the end of the results (when we hit a page number that contains no film items). Is this idiomatic use of exceptions?
+            //d.printStackTrace()
+            Log.d(TAG, ".createResultsFromJSON: Error processing JSON data. ${e.message}")
         }
         return resultList
     }
