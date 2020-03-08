@@ -3,8 +3,7 @@ package amichealpalmer.kotlin.filmfocus.adapters
 
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.R
-//import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
-//import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
+import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.fragments.FilmDetailsFragment
 import android.app.Activity
 import android.app.FragmentTransaction
@@ -13,8 +12,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-//import android.support.v7.widget.CardView
-//import android.support.v7.widget.RecyclerView
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -22,15 +21,15 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-
-class BrowseRecyclerAdapter(
+// todo: could inherit / reduce code using browserecycleradapter
+class WatchlistRecyclerAdapter(
         private val context: Context,
         private var resultList: ArrayList<FilmThumbnail> // The list of films currently being displayed in the browser
-) : RecyclerView.Adapter<BrowseRecyclerAdapter.HelperViewHolder>() {
+) : RecyclerView.Adapter<WatchlistRecyclerAdapter.HelperViewHolder>(), Filterable {
 
-    private val TAG = "BrowseRecyclerAdapter"
+    private val TAG = "WatchlistRecyclerAdapt"
     var position = 0
-
+    private val fullList = ArrayList<FilmThumbnail>(resultList)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelperViewHolder {
         Log.d(TAG, ".onCreateViewHolder called")
@@ -41,10 +40,10 @@ class BrowseRecyclerAdapter(
         return HelperViewHolder(view)
     }
 
-    fun updateList(resultList: List<FilmThumbnail>) {
-        this.resultList.addAll(resultList)
-        notifyDataSetChanged()
-    }
+//    fun updateList(resultList: List<FilmThumbnail>) {
+//        this.resultList.addAll(resultList)
+//        notifyDataSetChanged()
+//    }
 
     override fun onBindViewHolder(holder: HelperViewHolder, position: Int) {
         //Log.d(TAG, ".onBindViewHolder called. Title of film is: ${resultList[position].title}")
@@ -66,10 +65,6 @@ class BrowseRecyclerAdapter(
 
     }
 
-    fun removeItem(film: FilmThumbnail){
-        resultList.remove(film)
-    }
-
     fun getItem(position: Int): FilmThumbnail {
         return resultList[position]!!
     }
@@ -77,6 +72,35 @@ class BrowseRecyclerAdapter(
 
     override fun getItemCount(): Int {
         return resultList.size
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val filteredList = ArrayList<FilmThumbnail>()
+
+                if (constraint == null || constraint.length == 0) {
+                    filteredList.addAll(fullList)
+                } else {
+                    val pattern = constraint.toString().toLowerCase().trim()
+                    for (item in fullList) {
+                        if (item.title.contains(pattern) || item.year.contains(pattern)) {
+                            filteredList.add(item)
+                        }
+                    }
+                }
+                val filterResults = FilterResults()
+                filterResults.values = filteredList
+
+                return  filterResults
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                resultList.clear()
+                resultList.addAll(results!!.values as ArrayList<FilmThumbnail>)
+                notifyDataSetChanged()
+            }
+        }
     }
 
     inner class HelperViewHolder(view: View)

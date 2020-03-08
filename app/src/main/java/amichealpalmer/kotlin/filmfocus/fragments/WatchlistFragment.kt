@@ -19,15 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 private const val ARG_LIST = "watchlist"
 
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [WatchlistFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [WatchlistFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-
 enum class FILM_CONTEXT_ACTION_TYPE{
     WATCHLIST_REMOVE, WATCHLIST_MARK_WATCHED
 }
@@ -102,6 +93,8 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
             R.id.film_thumbnail_context_menu_option2 -> {
 
                 //watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
+                watchlist.remove(adapter.getItem(position))
+                adapter.removeItem(adapter.getItem(position))
                 //Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
             }
             else -> true
@@ -111,7 +104,6 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
     }
 
     companion object {
-        //val ARG_PARAM = "resultList"
 
         fun newInstance(resultList: ArrayList<FilmThumbnail>): WatchlistFragment {
             val fragment = WatchlistFragment()

@@ -16,20 +16,11 @@ import kotlinx.android.synthetic.main.fragment_film_details.*
 import kotlinx.android.synthetic.main.fragment_film_details.view.*
 
 
-private const val ARG_PARAM1 = "imdbID"
-
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [FilmDetailsFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [FilmDetailsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+private const val ARG_IMDBID = "imdbID"
 
 class FilmDetailsFragment : Fragment() {
 
-    private var listener: OnFragmentInteractionListener? = null
+    //private var listener: OnFragmentInteractionListener? = null
     private lateinit var film: Film
     private lateinit var imdbID: String
 
@@ -39,7 +30,7 @@ class FilmDetailsFragment : Fragment() {
         Log.d(TAG, ".OnCreate called")
         if (arguments != null) {
             Log.d(TAG, "arguments non-null, retrieving film/show details")
-            imdbID = arguments!!.getString(ARG_PARAM1) as String
+            imdbID = arguments!!.getString(ARG_IMDBID) as String
         } else {
             Log.d(TAG, ".onCreate: arguments null")
         }
@@ -109,25 +100,12 @@ class FilmDetailsFragment : Fragment() {
         return view
     }
 
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
-    }
-
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment FilmDetailsFragment.
-         */
 
         fun newInstance(film: Film): FilmDetailsFragment {
             val fragment = FilmDetailsFragment()
             val args = Bundle()
-            args.putParcelable(ARG_PARAM1, film)
+            args.putParcelable(ARG_IMDBID, film)
             fragment.arguments = args
             return fragment
         }
