@@ -84,6 +84,8 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
         inflater.inflate(R.menu.browse_fragment_menu, menu)
 
         val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext ?: context)
+        searchView.isIconifiedByDefault = false
+        searchView.requestFocus()
         menu.findItem(R.id.browse_fragment_search).apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)
             actionView = searchView
