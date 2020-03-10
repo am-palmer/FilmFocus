@@ -66,10 +66,6 @@ class BrowseRecyclerAdapter(
 
     }
 
-    fun removeItem(film: FilmThumbnail){
-        resultList.remove(film)
-    }
-
     fun getItem(position: Int): FilmThumbnail {
         return resultList[position]
     }

@@ -114,7 +114,7 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
     override fun onContextItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, ".onContextItemSelected called")
         Log.d(TAG, "item: ${item}")
-        val adapter = recyclerView.adapter as BrowseRecyclerAdapter
+        val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
         var position = -1
         try {
             position = adapter.position
@@ -125,10 +125,11 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
         when (item.itemId) {
             R.id.film_thumbnail_context_menu_option1 -> true //Toast.makeText(this, "Option 1", Toast.LENGTH_SHORT).show()
             R.id.film_thumbnail_context_menu_option2 -> {
-
+                val film = adapter.getItem(position)
                 //watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
-                watchlist.remove(adapter.getItem(position))
-                adapter.removeItem(adapter.getItem(position))
+                watchlist.remove(film)
+                adapter.removeFilmFromWatchlist(film)
+
                 //Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
             }
             else -> true

@@ -30,6 +30,7 @@ class WatchlistRecyclerAdapter(
     private val TAG = "WatchlistRecyclerAdapt"
     var position = 0
     private val fullList = ArrayList<FilmThumbnail>(resultList)
+    private var filteredList = ArrayList<FilmThumbnail>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelperViewHolder {
         Log.d(TAG, ".onCreateViewHolder called")
@@ -70,11 +71,18 @@ class WatchlistRecyclerAdapter(
         return resultList.size
     }
 
+    fun removeFilmFromWatchlist(film: FilmThumbnail){
+        resultList.remove(film)
+        fullList.remove(film)
+        filteredList.remove(film)
+        notifyDataSetChanged()
+    }
+
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
-                val filteredList = ArrayList<FilmThumbnail>()
-
+                //val filteredList = ArrayList<FilmThumbnail>()
+                filteredList.clear()
                 if (constraint == null || constraint.length == 0) {
                     filteredList.addAll(fullList)
                 } else {

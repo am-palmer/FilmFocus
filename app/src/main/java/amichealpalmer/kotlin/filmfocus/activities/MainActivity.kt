@@ -2,6 +2,7 @@ package amichealpalmer.kotlin.filmfocus.activities
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
+import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 //import amichealpalmer.kotlin.filmfocus.fragments.ACTION_TYPE
 import amichealpalmer.kotlin.filmfocus.fragments.BrowseFragment
@@ -155,14 +156,16 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         var fragment: Fragment? = null
         val fragmentClass: Class<*>
         fragmentClass = when (menuItem.itemId) {
-            R.id.nav_first_fragment -> BrowseFragment::class.java // this is what we want?
+            R.id.nav_first_fragment -> BrowseFragment::class.java
             R.id.nav_second_fragment -> WatchlistFragment::class.java
             // R.id.nav_third_fragment -> ThirdFragment::class.java
             else -> BrowseFragment::class.java
         }
 
 
-        if (fragmentClass == BrowseFragment::class.java){ // todo how do we preserve a search the user has already entered if they switch fragments?
+        if (fragmentClass == BrowseFragment::class.java){ // todo: preserve state if user has already made a search
+            fragment = fragmentClass.newInstance()
+            currentFragment = fragment
         }
 
         // todo: we have to retrieve the user's watchlist from somewhere local
@@ -171,6 +174,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
             val bundle = Bundle()
             bundle.putParcelableArrayList("watchlist", watchlist)
             fragment.arguments = bundle
+            currentFragment = fragment
         }
 
         // Insert the fragment by replacing any existing fragment
@@ -214,7 +218,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         Log.d(TAG, "item: ${item}")
         // todo: only works for watchlist right now! unsafe casts
         val fragment = currentFragment as WatchlistFragment
-        val adapter = fragment.recyclerView.adapter as BrowseRecyclerAdapter
+        val adapter = fragment.recyclerView.adapter as WatchlistRecyclerAdapter
         var position = -1
         try {
             position = adapter.position
@@ -225,7 +229,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         when (item.itemId) { // todo: doesn't account for which fragment we're in!
             R.id.film_thumbnail_context_menu_option1 -> Toast.makeText(this, "Option 1", Toast.LENGTH_SHORT).show()
             R.id.film_thumbnail_context_menu_option2 -> {
-                watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
+                //watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
                 Toast.makeText(this, "Removed from Watchlist", Toast.LENGTH_SHORT).show()
             }
             else -> true

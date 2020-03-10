@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 
-//private const val ARG_RESULTS = "resultList"
+private const val ARG_RESULTS = "resultList"
 private const val ARG_SEARCH_STRING = "searchString"
 
 class BrowseFragment : Fragment() {
@@ -42,12 +42,19 @@ class BrowseFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) { // Should save the state if user switches between fragments
         Log.d(TAG, ".onCreate called")
-        if (arguments != null) {
-            Log.d(TAG, ".onCreateView: arguments != null. setting query var")
-            searchString = arguments!!.getString(ARG_SEARCH_STRING)!!
-        } else {
-            Log.d(TAG, ".onCreateView: arguments is null")
+        if (savedInstanceState != null){
+
+            // we should also restore the position in the scroll view
+            Log.d(TAG, "savedInstanceState: retrieving search query")
+            searchString = savedInstanceState.getString(ARG_SEARCH_STRING)!! // Safer way to do this?
+            resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)!!
         }
+//        if (arguments != null) {
+//            Log.d(TAG, ".onCreateView: arguments != null. setting query var")
+//            searchString = arguments!!.getString(ARG_SEARCH_STRING)!!
+//        } else {
+//            Log.d(TAG, ".onCreateView: arguments is null")
+//        }
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         //searchHelper().searchByTitleKeyword(searchString)
@@ -116,10 +123,11 @@ class BrowseFragment : Fragment() {
 
     inner class searchHelper {
         val activity = callback as MainActivity
-        lateinit var query: String
+        //lateinit var query: String
         fun searchByTitleKeyword(titleContains: String) {
             Log.d(TAG, ".searchByTitleKeyword starts")
-            query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
+            searchString = titleContains
+            val query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
             currentPage++
             GetJSONSearch(this, (activity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries
         }
@@ -136,6 +144,12 @@ class BrowseFragment : Fragment() {
 
         }
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(ARG_SEARCH_STRING ,searchString)
+        outState.putParcelableArrayList(ARG_RESULTS, resultList)
     }
 
     override fun onAttach(context: Context) {
