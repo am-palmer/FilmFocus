@@ -4,15 +4,15 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 
 import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.activities.MainActivity
 import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
+import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import android.util.Log
-import android.view.MenuItem
+import android.view.*
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,6 +48,7 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
         } else {
             Log.d(TAG, ".onCreateView: arguments is null")
         }
+        setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
     }
 
@@ -59,7 +60,7 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
         var view = inflater.inflate(R.layout.fragment_browse, container, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
         recyclerView.layoutManager = GridLayoutManager(activity, 3)
-        recyclerView.adapter = BrowseRecyclerAdapter(activity!!, watchlist)
+        recyclerView.adapter = WatchlistRecyclerAdapter(activity!!, watchlist)
         return view
     }
 
@@ -75,6 +76,37 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
     override fun onDetach() {
         super.onDetach()
         callback = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        //super.onCreateOptionsMenu(menu, inflater)
+        Log.d(TAG, ".onCreateOptionsMenu called")
+        inflater.inflate(R.menu.browse_fragment_menu, menu)
+
+        val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext ?: context)
+        menu.findItem(R.id.browse_fragment_search).apply {
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)
+            actionView = searchView
+        }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                // the search button will do nothing, so we should probably disable/hide it in the watchlist
+                onQueryTextChange(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                // Use the adapter filter to update the view
+                val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
+                adapter.filter.filter(newText)
+                return true
+            }
+        })
+        searchView.setOnClickListener {view ->  }
+
+        super.onCreateOptionsMenu(menu, inflater)
+
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {

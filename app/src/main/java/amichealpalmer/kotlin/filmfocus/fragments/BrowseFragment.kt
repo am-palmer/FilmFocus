@@ -88,7 +88,6 @@ class BrowseFragment : Fragment() {
         Log.d(TAG, ".onCreateOptionsMenu called")
         inflater.inflate(R.menu.browse_fragment_menu, menu)
 
-
         val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext ?: context)
         menu.findItem(R.id.browse_fragment_search).apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)
@@ -109,15 +108,6 @@ class BrowseFragment : Fragment() {
         })
         searchView.setOnClickListener {view ->  }
 
-        // Associating searchable configuration with the SearchView
-        //val componentName = ComponentName(this, MainActivity::class.java)
-        //val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-
-        // Configuring the SearchView
-//        val searchView = menu.findItem(R.id.search).actionView as SearchView
-//        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-//        searchView.isIconifiedByDefault = false
-//        searchView.requestFocus()
         super.onCreateOptionsMenu(menu, inflater)
 
     }

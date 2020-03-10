@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         // testing load search fragment
         val fragment = BrowseFragment.newInstance(null)
         val fragmentManager = supportFragmentManager
-        fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment!!).commit()
+        fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
 
         //val bundle = Bundle()
         //bundle.putParcelableArrayList("watchlist", watchlist)
