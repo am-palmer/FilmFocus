@@ -1,42 +1,39 @@
 package amichealpalmer.kotlin.filmfocus.fragments
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.activities.MainActivity
-import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import android.util.Log
 import android.view.*
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 private const val ARG_LIST = "watchlist"
 
-enum class FILM_CONTEXT_ACTION_TYPE{
-    WATCHLIST_REMOVE, WATCHLIST_MARK_WATCHED
+enum class FILM_CONTEXT_ACTION_TYPE{ // Should this be somewhere else?
+    WATCHLIST_REMOVE, WATCHLIST_MARK_WATCHED, BROWSE_ADD_FILM_TO_WATCHLIST, BROWSE_MARK_WATCHED
 }
 
 class WatchlistFragment : Fragment() { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses
 
     //private var listener: OnFragmentInteractionListener? = null
     private val TAG = "WatchlistFragment"
-    internal var callback: onFilmSelectedListener? = null
+    internal var callback: OnFilmSelectedListener? = null
     private lateinit var watchlist: ArrayList<FilmThumbnail>
     lateinit var recyclerView: RecyclerView
 
-    fun setOnFilmSelectedListener(callback: onFilmSelectedListener) {
+    fun setOnFilmSelectedListener(callback: OnFilmSelectedListener) {
         this.callback = callback
     }
 
-    interface onFilmSelectedListener {
-        fun onFilmSelected(position: Int, type: FILM_CONTEXT_ACTION_TYPE)
+    interface OnFilmSelectedListener {
+        fun onFilmSelected(film: FilmThumbnail, type: FILM_CONTEXT_ACTION_TYPE)
     }
 
 
@@ -66,7 +63,7 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is onFilmSelectedListener) {
+        if (context is OnFilmSelectedListener) {
             callback = context
         } else {
             throw RuntimeException(context.toString() + " must implement onFilmSelectedListener")
@@ -113,12 +110,12 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, ".onContextItemSelected called")
-        Log.d(TAG, "item: ${item}")
+        Log.d(TAG, "menu item: ${item}")
         val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
         var position = -1
         try {
             position = adapter.position
-        } catch (e: java.lang.Exception) { // too general
+        } catch (e: java.lang.Exception) { // todo: too general
             Log.d(TAG, e.localizedMessage, e)
             return super.onContextItemSelected(item)
         }
@@ -128,7 +125,10 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
                 val film = adapter.getItem(position)
                 //watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
                 watchlist.remove(film)
+                // Call activity so the shared prefs can be updated
                 adapter.removeFilmFromWatchlist(film)
+                adapter.notifyDataSetChanged()
+                callback!!.onFilmSelected(film, FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE)
 
                 //Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
             }

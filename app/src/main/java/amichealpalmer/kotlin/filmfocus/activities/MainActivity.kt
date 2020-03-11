@@ -10,17 +10,13 @@ import amichealpalmer.kotlin.filmfocus.fragments.FILM_CONTEXT_ACTION_TYPE
 import amichealpalmer.kotlin.filmfocus.fragments.WatchlistFragment
 import android.annotation.SuppressLint
 import android.app.SearchManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.SearchView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -29,20 +25,21 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 
 
 // todo: see trello
 
-class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListener, BrowseFragment.onRequestResultsListener { // todo: disperse as much logic into the fragments as possible
+class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListener, BrowseFragment.onRequestResultsListener { // todo: disperse as much logic into the fragments as possible
 
     internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
     internal val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
 
     val TAG = "MainActivity"
     //val testFilm = Film("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
-    private lateinit var watchlist: ArrayList<FilmThumbnail>
+    private lateinit var watchlist: ArrayList<FilmThumbnail> // The user's Watchlist, stored in SharedPrefs
     //private var recyclerView: RecyclerView? = null
 
 
@@ -50,6 +47,8 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
     private lateinit var mDrawer: DrawerLayout
     private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
+    private val SHARED_PREFS = "sharedPrefs"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,24 +95,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         // Sync the toggle state after onRestoreInstanceState has occurred.
         drawerToggle.syncState()
     }
-
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        Log.d(TAG, ".onCreateOptionsMenu called")
-//        menuInflater.inflate(R.menu.browse_fragment_menu, menu)
-//
-//        // Associating searchable configuration with the SearchView
-//        val componentName = ComponentName(this, MainActivity::class.java)
-//        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-//
-//        // Configuring the SearchView
-//        val searchView = menu.findItem(R.id.search).actionView as SearchView
-//        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-//        searchView.isIconifiedByDefault = false
-//        searchView.requestFocus()
-//
-//        return true
-//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean { // Handles action bar item taps
         if (drawerToggle.onOptionsItemSelected(item)) return true
@@ -168,7 +149,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
             currentFragment = fragment
         }
 
-        // todo: we have to retrieve the user's watchlist from somewhere local
+        // todo: retrieve the user's watchlist from somewhere local (sharedprefs)
         else if (fragmentClass == WatchlistFragment::class.java) {
             fragment = fragmentClass.newInstance()
             val bundle = Bundle()
@@ -191,7 +172,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         return ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close)
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent?) { // todo: move this logic into the browse fragment, then delete
         super.onNewIntent(intent)
         Log.d(TAG, ".onNewIntent called")
         if (Intent.ACTION_SEARCH == intent!!.action) {
@@ -212,33 +193,25 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         }
     }
 
+    fun saveData(){
+        Log.d(TAG, ".saveData called, saving data to Shared Preferences")
+        val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
 
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        Log.d(TAG, ".onContextItemSelected called")
-        Log.d(TAG, "item: ${item}")
-        // todo: only works for watchlist right now! unsafe casts
-        val fragment = currentFragment as WatchlistFragment
-        val adapter = fragment.recyclerView.adapter as WatchlistRecyclerAdapter
-        var position = -1
-        try {
-            position = adapter.position
-        } catch (e: java.lang.Exception) { // too general
-            Log.d(TAG, e.localizedMessage, e)
-            return super.onContextItemSelected(item)
-        }
-        when (item.itemId) { // todo: doesn't account for which fragment we're in!
-            R.id.film_thumbnail_context_menu_option1 -> Toast.makeText(this, "Option 1", Toast.LENGTH_SHORT).show()
-            R.id.film_thumbnail_context_menu_option2 -> {
-                //watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
-                Toast.makeText(this, "Removed from Watchlist", Toast.LENGTH_SHORT).show()
-            }
-            else -> true
-        }
-
-        return super.onContextItemSelected(item)
+        // We use GSON to do custom objects (specifically, an ArrayList of filmThumbnails, and an ArrayList of 'watched films')
+        val gson = Gson()
+        var listAsJson = gson.toJson(watchlist)
+        //
     }
 
-    private inner class watchlistHelper {
+    fun loadData(){
+        Log.d(TAG, ".loadData called, loading data from Shared Preferences")
+        val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        // etc.
+    }
+
+    private inner class watchlistHelper { // todo: move this logic into the fragment (if possible)
     lateinit var watchlistFragment: WatchlistFragment
 
         fun inflateWatchlistFragment(resultList: ArrayList<FilmThumbnail>) {
@@ -258,10 +231,11 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         }
 
 
-        fun removeFilmFromWatchlist(film: FilmThumbnail) {
-            watchlist.remove(film) // todo: this change has to be stored somewhere
-            // Recall display
-            inflateWatchlistFragment(watchlist) // todo: destroys entire ui, try to refresh instead?
+        fun removeFilmFromWatchlist(film: FilmThumbnail) { // Called by Watchlist fragment when Removing a film using ContextMenu
+//            watchlist.remove(film) // todo: this change has to be stored somewhere
+//            saveData() // todo: may be a costly operation to do often
+//            // Recall display
+//            inflateWatchlistFragment(watchlist) // todo: destroys entire ui, try to refresh instead?
         }
 
     }
@@ -276,12 +250,18 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.onFilmSelectedListen
         }
     }
 
-    override fun onFilmSelected(position: Int, type: FILM_CONTEXT_ACTION_TYPE) { // todo: less idiosyncratic handling, less weird logic gates
+    override fun onFilmSelected(film: FilmThumbnail, type: FILM_CONTEXT_ACTION_TYPE) { // todo: less idiosyncratic handling, less weird logic gates
         if (type == FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE) {
+            Log.d(TAG, ".onFilmSelected is called with TYPE == WATCHLIST_REMOVE")
             val watchlistFragment = currentFragment as WatchlistFragment
-            val adapter = watchlistFragment.recyclerView.adapter as BrowseRecyclerAdapter
-            watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
-            Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
+            val adapter = watchlistFragment.recyclerView.adapter as WatchlistRecyclerAdapter
+            //watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
+            //Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
+            watchlist.remove(film)
+            // Update local data
+            // Todo: make sure this is not a costly operation, if it is must save changes via some other method
+            saveData()
+
         }
     }
 
