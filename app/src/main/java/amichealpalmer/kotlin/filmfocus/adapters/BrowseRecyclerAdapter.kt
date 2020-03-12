@@ -46,6 +46,10 @@ class BrowseRecyclerAdapter(
         notifyDataSetChanged()
     }
 
+    fun clearList(){
+        resultList.clear()
+    }
+
     override fun onBindViewHolder(holder: HelperViewHolder, position: Int) {
         //Log.d(TAG, ".onBindViewHolder called. Title of film is: ${resultList[position].title}")
         if (resultList.size > 0) {

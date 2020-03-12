@@ -105,6 +105,7 @@ class BrowseFragment : Fragment() {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
+                currentPage = 1 // Indicates a fresh search
                 searchString = query.toLowerCase()
                 searchHelper().searchByTitleKeyword(query.toLowerCase())
                 return true
@@ -123,9 +124,13 @@ class BrowseFragment : Fragment() {
 
     inner class searchHelper {
         val activity = callback as MainActivity
-        //lateinit var query: String
         fun searchByTitleKeyword(titleContains: String) {
             Log.d(TAG, ".searchByTitleKeyword starts")
+            if (currentPage == 1){
+                resultList.clear()
+                val adapter = recyclerView.adapter as BrowseRecyclerAdapter
+                adapter.clearList()
+            }
             searchString = titleContains
             val query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
             currentPage++
