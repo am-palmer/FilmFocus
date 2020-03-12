@@ -1,10 +1,10 @@
 package amichealpalmer.kotlin.filmfocus.activities
 
-import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
-import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
-import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 //import amichealpalmer.kotlin.filmfocus.fragments.ACTION_TYPE
+import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
+import amichealpalmer.kotlin.filmfocus.data.Film
+import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.fragments.BrowseFragment
 import amichealpalmer.kotlin.filmfocus.fragments.FILM_CONTEXT_ACTION_TYPE
 import amichealpalmer.kotlin.filmfocus.fragments.WatchlistFragment
@@ -26,8 +26,10 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.view.*
+import java.lang.reflect.Type
 
 
 // todo: see trello
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
     internal val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
 
     val TAG = "MainActivity"
+
     //val testFilm = Film("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
     private lateinit var watchlist: ArrayList<FilmThumbnail> // The user's Watchlist, stored in SharedPrefs
     //private var recyclerView: RecyclerView? = null
@@ -72,10 +75,10 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
                     .setAction("Action", null).show()
         }
 
-        // test watchlist create
-        Log.d(TAG, ".onCreate: testing load of watchlist")
-        watchlist = createTestWatchlist()
-//        watchlistHelper().inflateWatchlistFragment(watchlist)
+//        // test watchlist create
+//        Log.d(TAG, ".onCreate: testing load of watchlist")
+//        watchlist = createTestWatchlist()
+////        watchlistHelper().inflateWatchlistFragment(watchlist)
 
         // testing load search fragment
         val fragment = BrowseFragment.newInstance(null)
@@ -85,7 +88,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         //val bundle = Bundle()
         //bundle.putParcelableArrayList("watchlist", watchlist)
         //fragment.arguments = bundle
-
+        loadData()
         Log.d(TAG, ".onCreate finished")
 
     }
@@ -144,7 +147,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         }
 
 
-        if (fragmentClass == BrowseFragment::class.java){ // todo: preserve state if user has already made a search
+        if (fragmentClass == BrowseFragment::class.java) { // todo: preserve state if user has already made a search
             fragment = fragmentClass.newInstance()
             currentFragment = fragment
         }
@@ -178,7 +181,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         if (Intent.ACTION_SEARCH == intent!!.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
             Log.d(TAG, ".handleIntent: received new searchHelper query: $query")
-           // searchHelper().searchByTitleKeyword(query!!)
+            // searchHelper().searchByTitleKeyword(query!!)
 
             // Building the search fragment
             val fragment = BrowseFragment()
@@ -193,26 +196,39 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         }
     }
 
-    fun saveData(){
+    fun saveData() {
         Log.d(TAG, ".saveData called, saving data to Shared Preferences")
         val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
-        // We use GSON to do custom objects (specifically, an ArrayList of filmThumbnails, and an ArrayList of 'watched films')
+        // We use GSON to do custom objects (specifically, an ArrayList of filmThumbnails, and an ArrayList of 'watched films') todo: watched films (history) saving and retrieving
         val gson = Gson()
-        var listAsJson = gson.toJson(watchlist)
-        //
+        var watchlistJson = gson.toJson(watchlist)
+        editor.putString("watchlist", watchlistJson)
+        editor.apply()
     }
 
-    fun loadData(){
+    fun loadData() {
         Log.d(TAG, ".loadData called, loading data from Shared Preferences")
         val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        // etc.
+        val gson = Gson()
+        val watchlistJson = sharedPreferences.getString("watchlist", null)
+        val type: Type = object : TypeToken<ArrayList<FilmThumbnail>>() {}.type
+
+        val watchlistRetreived = gson.fromJson(watchlistJson, type) as ArrayList<FilmThumbnail>?
+
+        if (watchlistJson == null){ // Build a new watchlist
+            Log.d(TAG, ".loadData: watchlist could not be loaded / doesn't exist yet. Making a new watchlist")
+            watchlist = ArrayList<FilmThumbnail>()
+        } else {
+            Log.d(TAG, ".loadData: watchlist loaded. it contains ${watchlistRetreived!!.size} items")
+            watchlist.clear()
+            watchlist.addAll(watchlistRetreived)
+        }
     }
 
     private inner class watchlistHelper { // todo: move this logic into the fragment (if possible)
-    lateinit var watchlistFragment: WatchlistFragment
+        lateinit var watchlistFragment: WatchlistFragment
 
         fun inflateWatchlistFragment(resultList: ArrayList<FilmThumbnail>) {
             Log.d(TAG, ".inflateWatchlistFragment starts.")
@@ -245,7 +261,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         if (fragment is WatchlistFragment) {
             fragment.setOnFilmSelectedListener(this)
         }
-        if (fragment is BrowseFragment){
+        if (fragment is BrowseFragment) {
             fragment.setOnRequestResultsListener(this)
         }
     }
