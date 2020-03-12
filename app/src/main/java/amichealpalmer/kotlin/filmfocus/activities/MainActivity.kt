@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
             currentFragment = fragment
         }
 
-        // todo: retrieve the user's watchlist from somewhere local (sharedprefs)
+        // todo: don't reconstruct the fragment every time
         else if (fragmentClass == WatchlistFragment::class.java) {
             fragment = fragmentClass.newInstance()
             val bundle = Bundle()
@@ -223,8 +223,9 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
             watchlist = ArrayList<FilmThumbnail>()
         } else {
             Log.d(TAG, ".loadData: watchlist loaded. it contains ${watchlistRetreived!!.size} items")
-            watchlist.clear()
-            watchlist.addAll(watchlistRetreived)
+            //watchlist.clear()
+            //watchlist.addAll(watchlistRetreived)
+            watchlist = watchlistRetreived
         }
     }
 
@@ -286,6 +287,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         // todo: check if the film is already in the watchlist. if so, don't add, and display a toast message informing the user it is already in the watchlist
         watchlist.add(film)
         Toast.makeText(this, "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
+        saveData()
     }
 
     override fun onMarkFilmWatched(film: FilmThumbnail) {
