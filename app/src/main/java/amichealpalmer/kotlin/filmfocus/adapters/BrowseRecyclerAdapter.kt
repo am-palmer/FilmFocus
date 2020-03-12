@@ -6,10 +6,7 @@ import amichealpalmer.kotlin.filmfocus.R
 //import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
 //import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
 import amichealpalmer.kotlin.filmfocus.fragments.FilmDetailsFragment
-import android.app.Activity
-import android.app.FragmentTransaction
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -18,7 +15,6 @@ import android.view.*
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
@@ -105,7 +101,7 @@ class BrowseRecyclerAdapter(
         override fun onCreateContextMenu(menu: ContextMenu?, v: View, menuInfo: ContextMenu.ContextMenuInfo?) { // does not return true and performs normal click. todo fix
             Log.d(TAG, ".onCreateContextMenu called.")
             val inflater = MenuInflater(context)
-            inflater.inflate(R.menu.film_thumbnail_context_menu, menu)
+            inflater.inflate(R.menu.browse_film_context_menu, menu)
 
         }
 

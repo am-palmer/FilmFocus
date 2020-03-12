@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -34,7 +35,7 @@ import java.lang.reflect.Type
 
 // todo: see trello
 
-class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListener, BrowseFragment.onRequestResultsListener { // todo: disperse as much logic into the fragments as possible
+class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListener, BrowseFragment.onResultActionListener { // todo: disperse as much logic into the fragments as possible
 
     internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
     internal val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
@@ -262,7 +263,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
             fragment.setOnFilmSelectedListener(this)
         }
         if (fragment is BrowseFragment) {
-            fragment.setOnRequestResultsListener(this)
+            fragment.setOnResultActionListener(this)
         }
     }
 
@@ -281,21 +282,25 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         }
     }
 
-    override fun onRequestResults(fragment: BrowseFragment) {
-        val resultList = fragment.resultList
-        val searchString = fragment.searchString
+    override fun onAddFilmToWatchlist(film: FilmThumbnail) {
+        // todo: check if the film is already in the watchlist. if so, don't add, and display a toast message informing the user it is already in the watchlist
+        watchlist.add(film)
+        Toast.makeText(this, "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
+    }
 
+    override fun onMarkFilmWatched(film: FilmThumbnail) {
+        //TODO("Not yet implemented")
     }
 }
 
 
-fun createTestWatchlist(): ArrayList<FilmThumbnail> {
-    var resultList = ArrayList<FilmThumbnail>()
-    // Add some 'results' to the list
-    resultList.add(FilmThumbnail("Blade Runner", "", "tt0083658", "", "https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Blade_Runner_(1982_poster).png/220px-Blade_Runner_(1982_poster).png"))
-    resultList.add(FilmThumbnail("Predator", "", "tt0093773", "", "https://upload.wikimedia.org/wikipedia/en/9/95/Predator_Movie.jpg"))
-    resultList.add(FilmThumbnail("The Thing", "", "tt0084787", "", "https://upload.wikimedia.org/wikipedia/en/a/a6/The_Thing_(1982)_theatrical_poster.jpg"))
-    resultList.add(FilmThumbnail("The Fly", "", "tt0091064", "", "https://upload.wikimedia.org/wikipedia/en/a/aa/Fly_poster.jpg"))
-    return resultList
-}
+//fun createTestWatchlist(): ArrayList<FilmThumbnail> {
+//    var resultList = ArrayList<FilmThumbnail>()
+//    // Add some 'results' to the list
+//    resultList.add(FilmThumbnail("Blade Runner", "", "tt0083658", "", "https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Blade_Runner_(1982_poster).png/220px-Blade_Runner_(1982_poster).png"))
+//    resultList.add(FilmThumbnail("Predator", "", "tt0093773", "", "https://upload.wikimedia.org/wikipedia/en/9/95/Predator_Movie.jpg"))
+//    resultList.add(FilmThumbnail("The Thing", "", "tt0084787", "", "https://upload.wikimedia.org/wikipedia/en/a/a6/The_Thing_(1982)_theatrical_poster.jpg"))
+//    resultList.add(FilmThumbnail("The Fly", "", "tt0091064", "", "https://upload.wikimedia.org/wikipedia/en/a/aa/Fly_poster.jpg"))
+//    return resultList
+//}
 

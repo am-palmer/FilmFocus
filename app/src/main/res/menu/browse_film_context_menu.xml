@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/browse_film_context_menu_add"
+        android:title="Add to Watchlist"/>
+
+    <item
+        android:id="@+id/browse_film_context_menu_mark_watched"
+        android:title="Mark Watched"/>
+</menu>

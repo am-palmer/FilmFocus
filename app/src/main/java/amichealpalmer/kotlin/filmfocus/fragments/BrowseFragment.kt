@@ -3,6 +3,8 @@ package amichealpalmer.kotlin.filmfocus.fragments
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.activities.MainActivity
 import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
+import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
+import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.data.json.GetJSONSearch
 import android.app.SearchManager
@@ -24,7 +26,7 @@ private const val ARG_SEARCH_STRING = "searchString"
 
 class BrowseFragment : Fragment() {
 
-    internal var callback: onRequestResultsListener? = null
+    internal var callback: onResultActionListener? = null
     var resultList = ArrayList<FilmThumbnail>()
     lateinit var recyclerView: RecyclerView
     private val TAG = "BrowseFragment"
@@ -32,11 +34,12 @@ class BrowseFragment : Fragment() {
     lateinit var searchString: String
     private var currentPage = 1
 
-    interface onRequestResultsListener {
-        fun onRequestResults(fragment: BrowseFragment)
+    interface onResultActionListener {
+        fun onAddFilmToWatchlist(film: FilmThumbnail)
+        fun onMarkFilmWatched(film: FilmThumbnail)
     }
 
-    fun setOnRequestResultsListener(callback: onRequestResultsListener) {
+    fun setOnResultActionListener(callback: onResultActionListener) {
         this.callback = callback
     }
 
@@ -49,12 +52,6 @@ class BrowseFragment : Fragment() {
             searchString = savedInstanceState.getString(ARG_SEARCH_STRING)!! // Safer way to do this?
             resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)!!
         }
-//        if (arguments != null) {
-//            Log.d(TAG, ".onCreateView: arguments != null. setting query var")
-//            searchString = arguments!!.getString(ARG_SEARCH_STRING)!!
-//        } else {
-//            Log.d(TAG, ".onCreateView: arguments is null")
-//        }
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         //searchHelper().searchByTitleKeyword(searchString)
@@ -78,12 +75,8 @@ class BrowseFragment : Fragment() {
                 // could perhaps rewrite this so it loads new entries before the bottom is reached, right now it is jarring
                 if (!recyclerView.canScrollVertically(1)) { // todo: UI and backend logic are completely wrapped up together using this method
                     if (!noMoreResults) {
-                        Toast.makeText(activity, "Reached last row - attempting to load more items", Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(activity, "Reached last row - attempting to load more items", Toast.LENGTH_SHORT).show()
                         searchHelper().searchByTitleKeyword(searchString)
-//                        val activity = callback as MainActivity
-//                        activity.onRequestResults(this@BrowseFragment)
-
-
                     }
                 }
             }
@@ -151,6 +144,34 @@ class BrowseFragment : Fragment() {
 
     }
 
+    override fun onContextItemSelected(item: MenuItem): Boolean { // todo: code duplication with watchlistRecyclerAdapter
+        Log.d(TAG, ".onContextItemSelected called")
+        Log.d(TAG, "menu item: ${item}")
+        val adapter = recyclerView.adapter as BrowseRecyclerAdapter
+        var position = -1
+        try {
+            position = adapter.position
+        } catch (e: java.lang.Exception) { // todo: too general
+            Log.d(TAG, e.localizedMessage, e)
+            return super.onContextItemSelected(item)
+        }
+        when (item.itemId) {
+            R.id.browse_film_context_menu_add -> {
+                val film = adapter.getItem(position)
+                // add film to watchlist using listener interface
+                callback!!.onAddFilmToWatchlist(film) // Could callback be null?
+            }
+            R.id.browse_film_context_menu_mark_watched -> {
+                //val film = adapter.getItem(position)
+                // etc
+                true
+            }
+            else -> true
+        }
+
+        return super.onContextItemSelected(item)
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(ARG_SEARCH_STRING ,searchString)
@@ -159,7 +180,7 @@ class BrowseFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is BrowseFragment.onRequestResultsListener) {
+        if (context is BrowseFragment.onResultActionListener) {
             callback = context
         } else {
             throw RuntimeException(context.toString() + " must implement onRequestResultsListener")
