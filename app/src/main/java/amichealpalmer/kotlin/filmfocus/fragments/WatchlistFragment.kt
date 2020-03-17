@@ -38,12 +38,10 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, ".onCreate called")
         if (arguments != null) {
-            Log.d(TAG, ".onCreateView: arguments != null. setting resultList var")
             watchlist = arguments!!.getParcelableArrayList<FilmThumbnail>(ARG_LIST) as ArrayList<FilmThumbnail>
         } else {
-            Log.d(TAG, ".onCreateView: arguments is null")
+            Log.d(TAG, ".onCreateView: arguments null")
         }
         setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)

@@ -59,9 +59,19 @@ class HistoryRecyclerAdapter(
             val date = timelineList[position].date as LocalDate
 
             // Set the views
-//            holder.dateYearTextView.text = date.year.toString()
-//            holder.dateMonthTextView.text = date.monthOfYear.toString()
-//            holder.dateDayTextView.text = date.dayOfMonth.toString()
+            holder.dateYearTextView.text = date.year.toString()
+            holder.dateMonthTextView.text = date.monthOfYear.toString()
+            holder.dateDayTextView.text = date.dayOfMonth.toString()
+
+            if (timelineList[position].rating != null){
+                holder.ratingBar.rating = 0.toFloat() // Rating is blank. todo: different xml layouts for items or programatically remove rating / review if not included
+            } else {
+                holder.ratingBar.rating = timelineList[position].rating!!.toFloat()
+            }
+
+            if (timelineList[position].hasReview()){
+                holder.reviewTextView.text = timelineList[position].getReview()
+            } else holder.reviewTextView.text = "" // todo: again, progromatically remove view if field is null
 
             holder.itemView.setOnLongClickListener {
                 this.position = (holder.adapterPosition)
@@ -92,6 +102,7 @@ class HistoryRecyclerAdapter(
         val dateDayTextView: TextView = view.findViewById(R.id.timeline_item_date_day)
         val dateMonthTextView: TextView = view.findViewById(R.id.timeline_item_date_month)
         val dateYearTextView: TextView = view.findViewById(R.id.timeline_item_date_year)
+        val reviewTextView: TextView = view.findViewById(R.id.timeline_item_review_tv)
 
         init {
             poster.setOnClickListener {
