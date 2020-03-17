@@ -5,14 +5,10 @@ import android.os.Parcelable
 import org.joda.time.LocalDate
 
 // Holds FilmThumbnail, ID, Review, Star Rating, and Date marked watched. Displayed in the watched film timeline
-class TimelineItem(val film: FilmThumbnail, val rating: Int?, val date: org.joda.time.LocalDate, private var review: String?) : Parcelable {
+class TimelineItem(val film: FilmThumbnail, val rating: Int?, val date: LocalDate, private var review: String?) : Parcelable {
 
     fun hasReview(): Boolean {
-        if (review != null) {
-            return true
-        } else {
-            return false
-        }
+        return review != null
     }
 
     fun getReview(): String {
