@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import org.joda.time.LocalDate
 import org.w3c.dom.Text
 
 
@@ -55,10 +56,12 @@ class HistoryRecyclerAdapter(
             Picasso.get().load(timelineList[position].film.posterURL).error(R.drawable.placeholder_imageloading)
                     .placeholder(R.drawable.placeholder_imageloading).into(holder.poster)
 
+            val date = timelineList[position].date as LocalDate
+
             // Set the views
-            holder.dateYearTextView.text = timelineList[position].date.year.toString()
-            holder.dateMonthTextView.text = timelineList[position].date.month.toString()
-            holder.dateDayTextView.text = timelineList[position].date.month.toString()
+//            holder.dateYearTextView.text = date.year.toString()
+//            holder.dateMonthTextView.text = date.monthOfYear.toString()
+//            holder.dateDayTextView.text = date.dayOfMonth.toString()
 
             holder.itemView.setOnLongClickListener {
                 this.position = (holder.adapterPosition)

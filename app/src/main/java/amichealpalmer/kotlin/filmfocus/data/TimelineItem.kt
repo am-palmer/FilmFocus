@@ -5,7 +5,7 @@ import java.time.LocalDate
 import java.util.*
 
 // Holds FilmThumbnail, ID, Review, Star Rating, and Date marked watched. Displayed in the watched film timeline
-class TimelineItem(val film: FilmThumbnail, val rating: Int, val date: LocalDate, private var review: String?) {
+class TimelineItem(val film: FilmThumbnail, val rating: Int, val date: org.joda.time.LocalDate, private var review: String?) {
 
     fun hasReview(): Boolean{
         if (review != null){
