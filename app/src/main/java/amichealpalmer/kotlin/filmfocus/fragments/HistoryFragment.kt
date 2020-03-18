@@ -80,17 +80,6 @@ class HistoryFragment : Fragment() { // note code duplication with other fragmen
         }
         when (item.itemId) {
             R.id.history_timeline_item_context_menu_remove -> true // todo: remove the item from the timeline - should display an 'are you sure?' prompt
-//            R.id.film_thumbnail_context_menu_option2 -> {
-//                val film = adapter.getItem(position)
-//                //watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
-//                watchlist.remove(film)
-//                // Call activity so the shared prefs can be updated
-//                adapter.removeFilmFromWatchlist(film)
-//                adapter.notifyDataSetChanged()
-//                callback!!.onFilmSelected(film, FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE)
-//
-//                //Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
-//            }
             else -> true
         }
 

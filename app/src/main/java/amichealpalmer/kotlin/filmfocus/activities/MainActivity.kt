@@ -5,8 +5,10 @@ import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.data.TimelineItem
 import amichealpalmer.kotlin.filmfocus.fragments.BrowseFragment
 import amichealpalmer.kotlin.filmfocus.fragments.FILM_CONTEXT_ACTION_TYPE
+import amichealpalmer.kotlin.filmfocus.fragments.HistoryFragment
 import amichealpalmer.kotlin.filmfocus.fragments.WatchlistFragment
 import android.annotation.SuppressLint
 import android.app.SearchManager
@@ -31,6 +33,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import java.lang.reflect.Type
+import java.sql.Time
 
 
 // todo: see trello
@@ -39,12 +42,13 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
 
     internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
     internal val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
+    internal val SHAREDPREFS_KEY_WATCHLIST = "watchlist"
+    internal val SHAREDPREFS_KEY_TIMELINE = "timelineList"
 
     val TAG = "MainActivity"
 
-    //val testFilm = Film("", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "")
     private lateinit var watchlist: ArrayList<FilmThumbnail> // The user's Watchlist, stored in SharedPrefs
-    //private var recyclerView: RecyclerView? = null
+    private lateinit var timelineList: ArrayList<TimelineItem> // List of items in the user's history
 
 
     private var currentFragment: Fragment? = null // search or watchlist
@@ -76,19 +80,11 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
                     .setAction("Action", null).show()
         }
 
-//        // test watchlist create
-//        Log.d(TAG, ".onCreate: testing load of watchlist")
-//        watchlist = createTestWatchlist()
-////        watchlistHelper().inflateWatchlistFragment(watchlist)
-
-        // testing load search fragment
+        // Load search by default
         val fragment = BrowseFragment.newInstance(null)
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
 
-        //val bundle = Bundle()
-        //bundle.putParcelableArrayList("watchlist", watchlist)
-        //fragment.arguments = bundle
         loadData()
         Log.d(TAG, ".onCreate finished")
 
@@ -143,10 +139,9 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         fragmentClass = when (menuItem.itemId) {
             R.id.nav_first_fragment -> BrowseFragment::class.java
             R.id.nav_second_fragment -> WatchlistFragment::class.java
-            // R.id.nav_third_fragment -> ThirdFragment::class.java
+            R.id.nav_third_fragment -> HistoryFragment::class.java
             else -> BrowseFragment::class.java
         }
-
 
         if (fragmentClass == BrowseFragment::class.java) { // todo: preserve state if user has already made a search
             fragment = fragmentClass.newInstance()
@@ -158,6 +153,15 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
             fragment = fragmentClass.newInstance()
             val bundle = Bundle()
             bundle.putParcelableArrayList("watchlist", watchlist)
+            fragment.arguments = bundle
+            currentFragment = fragment
+        }
+
+        // todo: ditto above
+        else if (fragmentClass == HistoryFragment::class.java) {
+            fragment = fragmentClass.newInstance()
+            val bundle = Bundle()
+            bundle.putParcelableArrayList("timelineList", timelineList)
             fragment.arguments = bundle
             currentFragment = fragment
         }
@@ -202,10 +206,16 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
-        // We use GSON to do custom objects (specifically, an ArrayList of filmThumbnails, and an ArrayList of 'watched films') todo: watched films (history) saving and retrieving
+        // We use GSON to do custom objects (specifically, an ArrayList of FilmThumbnails, and an ArrayList of TimelineItems)
         val gson = Gson()
+        // Watchlist
         var watchlistJson = gson.toJson(watchlist)
-        editor.putString("watchlist", watchlistJson)
+        editor.putString(SHAREDPREFS_KEY_WATCHLIST, watchlistJson)
+
+        // Timeline items
+        var timelineJson = gson.toJson(timelineList)
+        editor.putString(SHAREDPREFS_KEY_TIMELINE, timelineJson)
+
         editor.apply()
     }
 
@@ -213,19 +223,29 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         Log.d(TAG, ".loadData called, loading data from Shared Preferences")
         val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
         val gson = Gson()
-        val watchlistJson = sharedPreferences.getString("watchlist", null)
-        val type: Type = object : TypeToken<ArrayList<FilmThumbnail>>() {}.type
 
-        val watchlistRetreived = gson.fromJson(watchlistJson, type) as ArrayList<FilmThumbnail>?
-
-        if (watchlistJson == null){ // Build a new watchlist
+        // Load the watchlist
+        val watchlistJson = sharedPreferences.getString(SHAREDPREFS_KEY_WATCHLIST, null)
+        val watchlistType: Type = object : TypeToken<ArrayList<FilmThumbnail>>() {}.type
+        if (watchlistJson == null) { // Build a new watchlist
             Log.d(TAG, ".loadData: watchlist could not be loaded / doesn't exist yet. Making a new watchlist")
             watchlist = ArrayList<FilmThumbnail>()
         } else {
-            Log.d(TAG, ".loadData: watchlist loaded. it contains ${watchlistRetreived!!.size} items")
-            //watchlist.clear()
-            //watchlist.addAll(watchlistRetreived)
-            watchlist = watchlistRetreived
+            val watchlistRetrieved = gson.fromJson(watchlistJson, watchlistType) as ArrayList<FilmThumbnail>?
+            Log.d(TAG, ".loadData: watchlist loaded. it contains ${watchlistRetrieved!!.size} items")
+            watchlist = watchlistRetrieved
+        }
+
+        // Load the timeline items
+        val timelineJson = sharedPreferences.getString(SHAREDPREFS_KEY_TIMELINE, null)
+        val timelineType: Type = object : TypeToken<ArrayList<TimelineItem>>() {}.type
+        if (timelineJson == null) {
+            Log.d(TAG, ".loadData: timeline could not be loaded / does not exist yet. Making a new watchlist")
+            timelineList = ArrayList<TimelineItem>()
+        } else {
+            val timelineRetrieved = gson.fromJson(timelineJson, timelineType) as ArrayList<TimelineItem>?
+            Log.d(TAG, ".loadData: timeline retrieved")
+            timelineList = timelineRetrieved!!
         }
     }
 
