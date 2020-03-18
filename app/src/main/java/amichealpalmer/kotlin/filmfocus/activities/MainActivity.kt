@@ -6,10 +6,7 @@ import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
-import amichealpalmer.kotlin.filmfocus.fragments.BrowseFragment
-import amichealpalmer.kotlin.filmfocus.fragments.FILM_CONTEXT_ACTION_TYPE
-import amichealpalmer.kotlin.filmfocus.fragments.HistoryFragment
-import amichealpalmer.kotlin.filmfocus.fragments.WatchlistFragment
+import amichealpalmer.kotlin.filmfocus.fragments.*
 import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
@@ -38,7 +35,7 @@ import java.sql.Time
 
 // todo: see trello
 
-class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListener, BrowseFragment.onResultActionListener { // todo: disperse as much logic into the fragments as possible
+class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener { // todo: disperse as much logic into the fragments as possible
 
     internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
     internal val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
@@ -312,6 +309,10 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
 
     override fun onMarkFilmWatched(film: FilmThumbnail) {
         //TODO("Not yet implemented")
+    }
+
+    override fun onTimelineItemSelected(item: TimelineItem, type: TIMELINE_ITEM_CONTEXT_ACTION_TYPE) {
+        TODO("Not yet implemented")
     }
 }
 
