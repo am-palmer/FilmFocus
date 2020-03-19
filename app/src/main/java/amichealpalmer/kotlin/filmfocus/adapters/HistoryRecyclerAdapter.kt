@@ -110,7 +110,6 @@ class HistoryRecyclerAdapter(
 
         init {
             poster.setOnClickListener {
-
                 val fragment = FilmDetailsFragment()
                 val bundle = Bundle()
                 bundle.putString("imdbID", timelineList[adapterPosition].film.imdbID)
@@ -121,7 +120,7 @@ class HistoryRecyclerAdapter(
                 manager.replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
             }
 
-            constraintLayoutWrapper.setOnCreateContextMenuListener(this)
+            //constraintLayoutWrapper.setOnCreateContextMenuListener(this)
             poster.setOnCreateContextMenuListener(this)
         }
 
