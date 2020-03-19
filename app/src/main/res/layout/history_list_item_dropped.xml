@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="4dp"
-        android:rating="4"
+        android:rating="1"
         android:theme="@style/RatingBar"
         app:layout_constraintEnd_toEndOf="@+id/timeline_item_review_tv"
         app:layout_constraintStart_toStartOf="@+id/timeline_item_review_tv"
@@ -54,7 +54,7 @@
         android:id="@+id/timeline_item_review_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:gravity="center"
         android:scrollHorizontally="false"
         android:text="TextView"
@@ -66,7 +66,7 @@
         app:layout_constraintStart_toEndOf="@+id/timeline_item_film_poster"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
         app:layout_constraintVertical_bias="0.0"
-        tools:text='"A classic for the whole family!"' />
+        tools:text='"Did not enjoy this one"' />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -89,7 +89,7 @@
             android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView"
+            app:layout_constraintTop_toBottomOf="@+id/timeline_item_tv_DROPPED"
             tools:text="January" />
 
         <TextView
@@ -109,14 +109,14 @@
             tools:text="10th" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/timeline_item_tv_DROPPED"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Watched"
+            android:text="Dropped"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Watched" />
+            tools:text="Dropped" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -140,7 +140,7 @@
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_watched_darkgreen_24dp" />
+            app:srcCompat="@drawable/ic_dropped_darkgreen_24dp" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

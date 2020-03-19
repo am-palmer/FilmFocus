@@ -1,7 +1,6 @@
 package amichealpalmer.kotlin.filmfocus.adapters
 
 
-import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
 //import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
@@ -17,13 +16,10 @@ import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import org.joda.time.LocalDate
-import org.joda.time.format.DateTimeFormat
-import org.w3c.dom.Text
 
 
 class HistoryRecyclerAdapter(
@@ -39,7 +35,7 @@ class HistoryRecyclerAdapter(
         Log.d(TAG, ".onCreateViewHolder called")
         val view: View
         val mInflater = LayoutInflater.from(context)
-        view = mInflater.inflate(R.layout.history_list_item, parent, false)
+        view = mInflater.inflate(R.layout.history_list_item_watched, parent, false)
 
         return HelperViewHolder(view)
     }

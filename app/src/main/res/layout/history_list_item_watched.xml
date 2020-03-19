@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/history_timeline_item_constraintLayout"
+    android:clickable="true">
+
+    <ImageView
+        android:id="@+id/timeline_line"
+        android:layout_width="2dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@color/colorPrimaryDark" />
+
+    <ImageView
+        android:id="@+id/timeline_item_film_poster"
+        android:layout_width="100dp"
+        android:layout_height="160dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="24dp"
+        android:background="#2d2d2d"
+        android:clickable="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="@+id/timeline_line"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/icon_star_watched_frame"
+        app:layout_constraintTop_toTopOf="@+id/timeline_line"
+        app:layout_constraintVertical_bias="0.0"
+        tools:srcCompat="@drawable/cover_placeholder"></ImageView>
+
+
+    <RatingBar
+        android:id="@+id/timeline_item_ratingBar"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:rating="4"
+        android:theme="@style/RatingBar"
+        app:layout_constraintEnd_toEndOf="@+id/timeline_item_review_tv"
+        app:layout_constraintStart_toStartOf="@+id/timeline_item_review_tv"
+        app:layout_constraintTop_toBottomOf="@+id/timeline_item_review_tv" />
+
+    <TextView
+        android:id="@+id/timeline_item_review_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:scrollHorizontally="false"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="@+id/timeline_item_film_poster"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/timeline_item_film_poster"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text='"A classic for the whole family!"' />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/timeline_item_review_tv"
+        app:layout_constraintStart_toStartOf="@+id/timeline_item_review_tv"
+        app:layout_constraintTop_toTopOf="@+id/timeline_item_film_poster">
+
+        <TextView
+            android:id="@+id/timeline_item_date_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="TextView"
+            android:textColor="@color/colorPrimary"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timeline_item_tv_WATCHED"
+            tools:text="January" />
+
+        <TextView
+            android:id="@+id/timeline_item_date_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:text="TextView"
+            android:textColor="@color/colorPrimary"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/timeline_item_date_month"
+            app:layout_constraintTop_toTopOf="@+id/timeline_item_date_month"
+            tools:text="10th" />
+
+        <TextView
+            android:id="@+id/timeline_item_tv_WATCHED"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Watched"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Watched" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/icon_star_watched_frame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/timeline_line"
+        app:layout_constraintEnd_toEndOf="@+id/timeline_line"
+        app:layout_constraintStart_toStartOf="@+id/timeline_line"
+        app:layout_constraintTop_toTopOf="@+id/timeline_line">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_white_solid_24dp" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_watched_darkgreen_24dp" />
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
