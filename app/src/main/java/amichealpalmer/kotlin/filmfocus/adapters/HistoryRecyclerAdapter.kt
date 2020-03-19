@@ -22,6 +22,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import org.joda.time.LocalDate
+import org.joda.time.format.DateTimeFormat
 import org.w3c.dom.Text
 
 
@@ -57,14 +58,15 @@ class HistoryRecyclerAdapter(
             Picasso.get().load(timelineList[position].film.posterURL).error(R.drawable.placeholder_imageloading)
                     .placeholder(R.drawable.placeholder_imageloading).into(holder.poster)
 
-            val date = timelineList[position].date
-
+            var date = timelineList[position].date as LocalDate
+            //val dayProperty: LocalDate.Property = date.dayOfWeek()
+            val monthProperty: LocalDate.Property = date.monthOfYear()
             // Set the views
-            holder.dateYearTextView.text = date.year.toString()
-            holder.dateMonthTextView.text = date.monthOfYear.toString()
-            holder.dateDayTextView.text = date.dayOfMonth.toString()
+           // holder.dateYearTextView.text = date.year.toString()
+            holder.dateMonthTextView.text = date.dayOfMonth.toString() // todo: ordinal indicator: https://stackoverflow.com/questions/24039973/output-readable-day-of-month-with-joda-time
+            holder.dateDayTextView.text = monthProperty.asText
 
-            if (timelineList[position].rating != null){
+            if (timelineList[position].rating == null){
                 holder.ratingBar.rating = 0.toFloat() // Rating is blank. todo: different xml layouts for items or programatically remove rating / review if not included
             } else {
                 holder.ratingBar.rating = timelineList[position].rating!!.toFloat()
@@ -103,7 +105,7 @@ class HistoryRecyclerAdapter(
         val ratingBar: RatingBar = view.findViewById(R.id.timeline_item_ratingBar)
         val dateDayTextView: TextView = view.findViewById(R.id.timeline_item_date_day)
         val dateMonthTextView: TextView = view.findViewById(R.id.timeline_item_date_month)
-        val dateYearTextView: TextView = view.findViewById(R.id.timeline_item_date_year)
+        //val dateYearTextView: TextView = view.findViewById(R.id.timeline_item_date_year)
         val reviewTextView: TextView = view.findViewById(R.id.timeline_item_review_tv)
 
         init {
