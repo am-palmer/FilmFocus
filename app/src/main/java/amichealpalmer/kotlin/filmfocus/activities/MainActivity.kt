@@ -2,8 +2,6 @@ package amichealpalmer.kotlin.filmfocus.activities
 
 //import amichealpalmer.kotlin.filmfocus.fragments.ACTION_TYPE
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
-import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
 import amichealpalmer.kotlin.filmfocus.fragments.*
@@ -30,11 +28,10 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import java.lang.reflect.Type
-import java.sql.Time
 
 
 // todo: see trello
-
+// todo next: add context menu option to move watchlist film to history. use a generic test rating and review for now. add it for films in browse as well. after that, add the
 class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener { // todo: disperse as much logic into the fragments as possible
 
     internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
@@ -140,6 +137,8 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
             else -> BrowseFragment::class.java
         }
 
+        // todo: move these to a specific function, keep them out of the UI
+
         if (fragmentClass == BrowseFragment::class.java) { // todo: preserve state if user has already made a search
             fragment = fragmentClass.newInstance()
             currentFragment = fragment
@@ -240,39 +239,12 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
             Log.d(TAG, ".loadData: timeline could not be loaded / does not exist yet. Making a new watchlist")
             timelineList = ArrayList<TimelineItem>()
         } else {
-            val timelineRetrieved = gson.fromJson(timelineJson, timelineType) as ArrayList<TimelineItem>?
+            //val timelineRetrieved = gson.fromJson(timelineJson, timelineType) as ArrayList<TimelineItem>?
+
             Log.d(TAG, ".loadData: timeline retrieved")
-            timelineList = timelineRetrieved!!
+            //timelineList = timelineRetrieved!!
+            timelineList = ArrayList<TimelineItem>()
         }
-    }
-
-    private inner class watchlistHelper { // todo: move this logic into the fragment (if possible)
-        lateinit var watchlistFragment: WatchlistFragment
-
-        fun inflateWatchlistFragment(resultList: ArrayList<FilmThumbnail>) {
-            Log.d(TAG, ".inflateWatchlistFragment starts.")
-            //setContentView(R.layout.content_main)
-            val fragment = WatchlistFragment()
-            var args = Bundle()
-            args.putParcelableArrayList("watchlist", resultList)
-
-            Log.d(TAG, ".inflateWatchlistFragment: beginning transaction")
-            fragment.arguments = args
-            currentFragment = fragment
-            var transaction = supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.main_frame_layout_fragment_holder, fragment) // Defined in activity_main.xml
-            transaction.commit()
-            Log.d(TAG, ".inflateWatchlistFragment complete")
-        }
-
-
-        fun removeFilmFromWatchlist(film: FilmThumbnail) { // Called by Watchlist fragment when Removing a film using ContextMenu
-//            watchlist.remove(film) // todo: this change has to be stored somewhere
-//            saveData() // todo: may be a costly operation to do often
-//            // Recall display
-//            inflateWatchlistFragment(watchlist) // todo: destroys entire ui, try to refresh instead?
-        }
-
     }
 
 
@@ -283,32 +255,51 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         if (fragment is BrowseFragment) {
             fragment.setOnResultActionListener(this)
         }
-    }
-
-    override fun onFilmSelected(film: FilmThumbnail, type: FILM_CONTEXT_ACTION_TYPE) { // todo: less idiosyncratic handling, less weird logic gates
-        if (type == FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE) {
-            Log.d(TAG, ".onFilmSelected is called with TYPE == WATCHLIST_REMOVE")
-            val watchlistFragment = currentFragment as WatchlistFragment
-            val adapter = watchlistFragment.recyclerView.adapter as WatchlistRecyclerAdapter
-            //watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
-            //Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
-            watchlist.remove(film)
-            // Update local data
-            // Todo: make sure this is not a costly operation, if it is must save changes via some other method
-            saveData()
-
+        if (fragment is HistoryFragment) {
+            fragment.setOnTimelineItemSelectedListener(this)
         }
     }
 
-    override fun onAddFilmToWatchlist(film: FilmThumbnail) {
-        // todo: check if the film is already in the watchlist. if so, don't add, and display a toast message informing the user it is already in the watchlist
-        watchlist.add(film)
-        Toast.makeText(this, "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
-        saveData()
+    override fun onFilmSelected(bundle: Bundle, typeWATCHLIST: WATCHLIST_FILM_CONTEXT_ACTION_TYPE) { // todo: less idiosyncratic handling, less weird logic gates
+        Log.d(TAG, ".onFilmSelected is called with TYPE: ${typeWATCHLIST.name}")
+        if (typeWATCHLIST == WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE) {
+            val film = bundle.getParcelable<FilmThumbnail>("film")
+            if (film == null) {
+                Log.e(TAG, ".onFilmSelected: film null in bundle") // error handling?
+            } else {
+                watchlist.remove(film)
+                // Update local data
+                // Todo: make sure this is not a costly operation, if it is must save changes via some other method
+                saveData()
+            }
+        } else if (typeWATCHLIST == WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_MARK_WATCHED) {
+            val timelineItem = bundle.getParcelable<TimelineItem>("timelineItem")
+            if (timelineItem == null) {
+                Log.e(TAG, ".onFilmSelected: timelineItem null in bundle") // error handling?
+            } else {
+                timelineList.add(timelineItem)
+                watchlist.remove(timelineItem.film)
+                Toast.makeText(this, "Marked ${timelineItem.film.title} as watched", Toast.LENGTH_SHORT).show()
+                saveData()
+            }
+        }
     }
 
-    override fun onMarkFilmWatched(film: FilmThumbnail) {
-        //TODO("Not yet implemented")
+    override fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE) {
+        if (type == BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST) {
+            // todo: check if the film is already in the watchlist. if so, don't add, and display a toast message informing the user it is already in the watchlist
+            val film = bundle.getParcelable<FilmThumbnail>("film")
+            if (film != null) {
+                watchlist.add(film)
+                Toast.makeText(this, "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
+                saveData()
+            } else {
+                Log.e(TAG, "onSearchResultAction: film from bundle is null.")
+                // todo: handle if film in bundle is null?
+            }
+        } else if (type == BROWSE_FILM_CONTEXT_ACTION_TYPE.MARK_WATCHED) {
+            // todo: handle MARK_WATCHED in browse
+        }
     }
 
     override fun onTimelineItemSelected(item: TimelineItem, type: TIMELINE_ITEM_CONTEXT_ACTION_TYPE) {
@@ -316,14 +307,20 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
     }
 }
 
+class ExtraTools {
 
-//fun createTestWatchlist(): ArrayList<FilmThumbnail> {
-//    var resultList = ArrayList<FilmThumbnail>()
-//    // Add some 'results' to the list
-//    resultList.add(FilmThumbnail("Blade Runner", "", "tt0083658", "", "https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Blade_Runner_(1982_poster).png/220px-Blade_Runner_(1982_poster).png"))
-//    resultList.add(FilmThumbnail("Predator", "", "tt0093773", "", "https://upload.wikimedia.org/wikipedia/en/9/95/Predator_Movie.jpg"))
-//    resultList.add(FilmThumbnail("The Thing", "", "tt0084787", "", "https://upload.wikimedia.org/wikipedia/en/a/a6/The_Thing_(1982)_theatrical_poster.jpg"))
-//    resultList.add(FilmThumbnail("The Fly", "", "tt0091064", "", "https://upload.wikimedia.org/wikipedia/en/a/aa/Fly_poster.jpg"))
-//    return resultList
-//}
+//    fun createTestWatchlist(): ArrayList<FilmThumbnail> {
+//        var resultList = ArrayList<FilmThumbnail>()
+//        // Add some 'results' to the list
+//        resultList.add(FilmThumbnail("Blade Runner", "", "tt0083658", "", "https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Blade_Runner_(1982_poster).png/220px-Blade_Runner_(1982_poster).png"))
+//        resultList.add(FilmThumbnail("Predator", "", "tt0093773", "", "https://upload.wikimedia.org/wikipedia/en/9/95/Predator_Movie.jpg"))
+//        resultList.add(FilmThumbnail("The Thing", "", "tt0084787", "", "https://upload.wikimedia.org/wikipedia/en/a/a6/The_Thing_(1982)_theatrical_poster.jpg"))
+//        resultList.add(FilmThumbnail("The Fly", "", "tt0091064", "", "https://upload.wikimedia.org/wikipedia/en/a/aa/Fly_poster.jpg"))
+//        return resultList
+//    }
+
+
+}
+
+
 

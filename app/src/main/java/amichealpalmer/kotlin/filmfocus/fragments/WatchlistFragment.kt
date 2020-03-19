@@ -8,16 +8,18 @@ import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.activities.MainActivity
 import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.data.TimelineItem
 import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import org.joda.time.LocalDate
 
 private const val ARG_LIST = "watchlist"
 
-enum class FILM_CONTEXT_ACTION_TYPE{ // Should this be somewhere else?
-    WATCHLIST_REMOVE, WATCHLIST_MARK_WATCHED, BROWSE_ADD_FILM_TO_WATCHLIST, BROWSE_MARK_WATCHED
+enum class WATCHLIST_FILM_CONTEXT_ACTION_TYPE { // todo: Should this be somewhere else?
+    WATCHLIST_REMOVE, WATCHLIST_MARK_WATCHED
 }
 
 class WatchlistFragment : Fragment() { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses
@@ -33,7 +35,7 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
     }
 
     interface OnFilmSelectedListener {
-        fun onFilmSelected(film: FilmThumbnail, type: FILM_CONTEXT_ACTION_TYPE)
+        fun onFilmSelected(bundle: Bundle, typeWATCHLIST: WATCHLIST_FILM_CONTEXT_ACTION_TYPE)
     }
 
 
@@ -78,7 +80,8 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
         Log.d(TAG, ".onCreateOptionsMenu called")
         inflater.inflate(R.menu.browse_fragment_menu, menu)
 
-        val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext ?: context)
+        val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext
+                ?: context)
         searchView.isIconifiedByDefault = false
         searchView.requestFocus()
         menu.findItem(R.id.browse_fragment_search).apply {
@@ -100,7 +103,7 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
                 return true
             }
         })
-        searchView.setOnClickListener {view ->  }
+        searchView.setOnClickListener { view -> }
 
         super.onCreateOptionsMenu(menu, inflater)
 
@@ -118,17 +121,31 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
             return super.onContextItemSelected(item)
         }
         when (item.itemId) {
-            R.id.film_thumbnail_context_menu_option1 -> true //Toast.makeText(this, "Option 1", Toast.LENGTH_SHORT).show()
-            R.id.film_thumbnail_context_menu_option2 -> {
+            R.id.film_thumbnail_context_menu_mark_watched -> {
                 val film = adapter.getItem(position)
-                //watchlistHelper().removeFilmFromWatchlist(adapter.getItem(position))
-                watchlist.remove(film)
-                // Call activity so the shared prefs can be updated
-                adapter.removeFilmFromWatchlist(film)
-                adapter.notifyDataSetChanged()
-                callback!!.onFilmSelected(film, FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE)
 
-                //Toast.makeText(this, "Removed", Toast.LENGTH_SHORT).show()
+                // Construct a TimelineItem
+                // todo: prompt user for review and rating properly
+                val rating = 3
+                val review = "I Liked this film quite a bit!"
+                val timelineItem = TimelineItem(film, rating, LocalDate.now(), review)
+                val bundle = Bundle()
+                bundle.putParcelable("timelineItem", timelineItem)
+                // Call listener
+                callback!!.onFilmSelected(bundle, WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_MARK_WATCHED)
+
+                // Removal
+                watchlist.remove(film)
+                adapter.removeFilmFromWatchlist(film)
+            }
+            R.id.film_thumbnail_context_menu_remove -> {
+                val film = adapter.getItem(position)
+                watchlist.remove(film)
+                adapter.removeFilmFromWatchlist(film)
+                val bundle = Bundle()
+                bundle.putParcelable("film", film)
+                // Call activity so the shared prefs can be updated
+                callback!!.onFilmSelected(bundle, WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE)
             }
             else -> true
         }

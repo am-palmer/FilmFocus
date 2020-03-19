@@ -24,6 +24,10 @@ import androidx.recyclerview.widget.RecyclerView
 private const val ARG_RESULTS = "resultList"
 private const val ARG_SEARCH_STRING = "searchString"
 
+enum class BROWSE_FILM_CONTEXT_ACTION_TYPE{
+    ADD_TO_WATCHLIST, MARK_WATCHED
+}
+
 class BrowseFragment : Fragment() {
 
     internal var callback: onResultActionListener? = null
@@ -35,8 +39,7 @@ class BrowseFragment : Fragment() {
     private var currentPage = 1
 
     interface onResultActionListener {
-        fun onAddFilmToWatchlist(film: FilmThumbnail)
-        fun onMarkFilmWatched(film: FilmThumbnail)
+        fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE)
     }
 
     fun setOnResultActionListener(callback: onResultActionListener) {
@@ -145,23 +148,28 @@ class BrowseFragment : Fragment() {
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean { // todo: code duplication with watchlistRecyclerAdapter
+        if (callback == null){
+            // Todo: throw an exception
+        }
         Log.d(TAG, ".onContextItemSelected called")
         Log.d(TAG, "menu item: ${item}")
         val adapter = recyclerView.adapter as BrowseRecyclerAdapter
         var position = -1
         try {
             position = adapter.position
-        } catch (e: java.lang.Exception) { // todo: too general
+        } catch (e: java.lang.Exception) { // todo: too generalized, catch specific exceptions
             Log.d(TAG, e.localizedMessage, e)
             return super.onContextItemSelected(item)
         }
         when (item.itemId) {
             R.id.browse_film_context_menu_add -> {
                 val film = adapter.getItem(position)
-                // add film to watchlist using listener interface
-                callback!!.onAddFilmToWatchlist(film) // Could callback be null?
+                val bundle = Bundle()
+                bundle.putParcelable("film", film)
+                callback!!.onSearchResultAction(bundle, BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST)
             }
             R.id.browse_film_context_menu_mark_watched -> {
+                // todo: inflate layout
                 //val film = adapter.getItem(position)
                 // etc
                 true

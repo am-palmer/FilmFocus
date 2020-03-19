@@ -25,7 +25,7 @@ class TimelineItem(val film: FilmThumbnail, val rating: Int?, val date: LocalDat
         parcel.writeParcelable(film, flags)
 
         if (rating != null) {
-            parcel.writeInt(rating!!)
+            parcel.writeInt(rating)
         } else parcel.writeInt(0)
 
         parcel.writeString(date.toString())
@@ -33,7 +33,7 @@ class TimelineItem(val film: FilmThumbnail, val rating: Int?, val date: LocalDat
         parcel.writeString(review)
     }
 
-    constructor(parcel: Parcel) : this(parcel.readParcelable<FilmThumbnail>(FilmThumbnail::class.java.classLoader)!!, parcel.readInt()!!, LocalDate(parcel.readString()!!), parcel.readString()!!)
+    constructor(parcel: Parcel) : this(parcel.readParcelable<FilmThumbnail>(FilmThumbnail::class.java.classLoader)!!, parcel.readInt(), LocalDate(parcel.readString()!!), parcel.readString()!!)
 
     override fun describeContents(): Int {
         return 0

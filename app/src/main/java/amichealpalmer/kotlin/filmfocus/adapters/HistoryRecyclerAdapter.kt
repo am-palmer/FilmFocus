@@ -18,6 +18,7 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import org.joda.time.LocalDate
@@ -37,7 +38,7 @@ class HistoryRecyclerAdapter(
         Log.d(TAG, ".onCreateViewHolder called")
         val view: View
         val mInflater = LayoutInflater.from(context)
-        view = mInflater.inflate(R.layout.browse_films_item, parent, false)
+        view = mInflater.inflate(R.layout.history_list_item, parent, false)
 
         return HelperViewHolder(view)
     }
@@ -56,7 +57,7 @@ class HistoryRecyclerAdapter(
             Picasso.get().load(timelineList[position].film.posterURL).error(R.drawable.placeholder_imageloading)
                     .placeholder(R.drawable.placeholder_imageloading).into(holder.poster)
 
-            val date = timelineList[position].date as LocalDate
+            val date = timelineList[position].date
 
             // Set the views
             holder.dateYearTextView.text = date.year.toString()
@@ -97,7 +98,8 @@ class HistoryRecyclerAdapter(
     inner class HelperViewHolder(view: View)
         : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
         val poster: ImageView = view.findViewById(R.id.timeline_item_film_poster)
-        val cardViewWrapper: CardView = view.findViewById(R.id.timeline_item_cardview_wrapper)
+        //val cardViewWrapper: CardView = view.findViewById(R.id.timeline_item_cardview_wrapper)
+        val constraintLayoutWrapper: ConstraintLayout = view.findViewById(R.id.history_timeline_item_constraintLayout)
         val ratingBar: RatingBar = view.findViewById(R.id.timeline_item_ratingBar)
         val dateDayTextView: TextView = view.findViewById(R.id.timeline_item_date_day)
         val dateMonthTextView: TextView = view.findViewById(R.id.timeline_item_date_month)
@@ -117,7 +119,7 @@ class HistoryRecyclerAdapter(
                 manager.replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
             }
 
-            cardViewWrapper.setOnCreateContextMenuListener(this)
+            constraintLayoutWrapper.setOnCreateContextMenuListener(this)
             poster.setOnCreateContextMenuListener(this)
         }
 
