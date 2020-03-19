@@ -54,6 +54,7 @@
         android:id="@+id/timeline_item_review_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:scrollHorizontally="false"
         android:text="TextView"
@@ -63,32 +64,32 @@
         app:layout_constraintBottom_toBottomOf="@+id/timeline_item_film_poster"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/timeline_item_film_poster"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintVertical_bias="0.0"
         tools:text='"A classic for the whole family!"' />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/timeline_item_review_tv"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="@+id/timeline_item_review_tv"
         app:layout_constraintStart_toStartOf="@+id/timeline_item_review_tv"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toTopOf="@+id/timeline_item_film_poster">
 
         <TextView
             android:id="@+id/timeline_item_date_month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:text="TextView"
             android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
             tools:text="January" />
 
         <TextView
@@ -99,13 +100,23 @@
             android:layout_marginEnd="8dp"
             android:text="TextView"
             android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/timeline_item_date_month"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/timeline_item_date_month"
             tools:text="10th" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Watched"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Watched" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
