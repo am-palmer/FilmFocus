@@ -9,9 +9,11 @@ import amichealpalmer.kotlin.filmfocus.activities.MainActivity
 import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
+import android.app.Dialog
 import android.util.Log
 import android.view.*
 import android.widget.SearchView
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.joda.time.LocalDate
@@ -151,6 +153,21 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
         }
 
         return super.onContextItemSelected(item)
+    }
+
+    // Dialog fragment called when a film is marked watched in the context menu
+    inner class WatchedDialogFragment(): DialogFragment() {
+        // todo: support for dropped films
+
+
+        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+            return super.onCreateDialog(savedInstanceState)
+        }
+
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+            // Inflate dialog's xml
+            return inflater.inflate(R.layout.fragment_watchlist_watched_dialog, container, false)
+        }
     }
 
     companion object {

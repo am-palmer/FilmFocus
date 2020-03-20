@@ -46,19 +46,24 @@
         android:layout_marginEnd="4dp"
         android:rating="4"
         android:theme="@style/RatingBar"
+        app:layout_constraintBottom_toBottomOf="@+id/timeline_item_film_poster"
         app:layout_constraintEnd_toEndOf="@+id/timeline_item_review_tv"
         app:layout_constraintStart_toStartOf="@+id/timeline_item_review_tv"
         app:layout_constraintTop_toBottomOf="@+id/timeline_item_review_tv" />
 
     <TextView
         android:id="@+id/timeline_item_review_tv"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:gravity="center"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:maxLines="5"
         android:scrollHorizontally="false"
-        android:text="TextView"
-        android:textAlignment="center"
+        android:text=""
+        android:textAlignment="gravity"
         android:textSize="14sp"
         android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="@+id/timeline_item_film_poster"
@@ -66,13 +71,12 @@
         app:layout_constraintStart_toEndOf="@+id/timeline_item_film_poster"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
         app:layout_constraintVertical_bias="0.0"
-        tools:text='"A classic for the whole family!"' />
+        tools:text="@string/placeholder_review" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="@+id/timeline_item_review_tv"
         app:layout_constraintStart_toStartOf="@+id/timeline_item_review_tv"
         app:layout_constraintTop_toTopOf="@+id/timeline_item_film_poster">
