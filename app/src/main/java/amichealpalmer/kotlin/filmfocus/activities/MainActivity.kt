@@ -34,7 +34,7 @@ import java.lang.reflect.Type
 
 
 // todo: see trello
-// todo next: add context menu option to move watchlist film to history. use a generic test rating and review for now. add it for films in browse as well. after that, add the
+// todo next: implement the dialog box which shows when user marks film as watched (in watchlist view and in the browse view)
 class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener { // todo: disperse as much logic into the fragments as possible
 
     internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
