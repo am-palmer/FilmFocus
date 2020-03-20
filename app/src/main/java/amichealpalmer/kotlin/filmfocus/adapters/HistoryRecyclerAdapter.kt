@@ -58,19 +58,19 @@ class HistoryRecyclerAdapter(
             //val dayProperty: LocalDate.Property = date.dayOfWeek()
             val monthProperty: LocalDate.Property = date.monthOfYear()
             // Set the views
-           // holder.dateYearTextView.text = date.year.toString()
+            // holder.dateYearTextView.text = date.year.toString()
             holder.dateMonthTextView.text = date.dayOfMonth.toString() // todo: ordinal indicator: https://stackoverflow.com/questions/24039973/output-readable-day-of-month-with-joda-time
             holder.dateDayTextView.text = monthProperty.asText
 
-            if (timelineList[position].rating == null){
-                holder.ratingBar.rating = 0.toFloat() // Rating is blank. todo: different xml layouts for items or programatically remove rating / review if not included
+            if (timelineList[position].rating == null) {
+                holder.ratingBar.visibility = View.GONE // Hide the rating bar if a rating hasn't been set
             } else {
                 holder.ratingBar.rating = timelineList[position].rating!!.toFloat()
             }
 
-            if (timelineList[position].hasReview()){
+            if (timelineList[position].hasReview()) {
                 holder.reviewTextView.text = timelineList[position].getReview()
-            } else holder.reviewTextView.text = "" // todo: again, progromatically remove view if field is null
+            } else holder.reviewTextView.visibility = View.GONE // Hide review field if not set
 
             holder.itemView.setOnLongClickListener {
                 this.position = (holder.adapterPosition)
@@ -96,11 +96,13 @@ class HistoryRecyclerAdapter(
     inner class HelperViewHolder(view: View)
         : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
         val poster: ImageView = view.findViewById(R.id.timeline_item_film_poster)
+
         //val cardViewWrapper: CardView = view.findViewById(R.id.timeline_item_cardview_wrapper)
         val constraintLayoutWrapper: ConstraintLayout = view.findViewById(R.id.history_timeline_item_constraintLayout)
         val ratingBar: RatingBar = view.findViewById(R.id.timeline_item_ratingBar)
         val dateDayTextView: TextView = view.findViewById(R.id.timeline_item_date_day)
         val dateMonthTextView: TextView = view.findViewById(R.id.timeline_item_date_month)
+
         //val dateYearTextView: TextView = view.findViewById(R.id.timeline_item_date_year)
         val reviewTextView: TextView = view.findViewById(R.id.timeline_item_review_tv)
 

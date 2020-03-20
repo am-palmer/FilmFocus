@@ -6,25 +6,27 @@
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="350dp"
         android:layout_height="match_parent">
 
         <EditText
             android:id="@+id/fragment_watchlist_watched_dialog_review_et"
-            android:layout_width="400dp"
+            android:layout_width="0dp"
             android:layout_height="140dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:gravity="start"
             android:hint="@string/dialog_review_hint"
             android:inputType="text"
+            android:maxLength="250"
             android:singleLine="false"
             android:textColorHint="@color/colorPrimaryDark"
             android:textSize="14sp"
             app:layout_constraintBottom_toTopOf="@+id/fragment_watchlist_watched_dialog_cancelButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            android:maxLength="250"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <RatingBar
             android:id="@+id/fragment_watchlist_watched_dialog_ratingBar"
@@ -49,6 +51,8 @@
             android:id="@+id/fragment_watchlist_watched_dialog_doneButton"
             android:layout_width="88dp"
             android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
             android:text="@string/dialog_review_done"
             android:textColor="@color/colorPrimaryDark"
@@ -60,11 +64,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
             android:text="@string/dialog_cancel"
             android:textColor="@color/colorPrimaryDark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fragment_watchlist_watched_dialog_doneButton" />
+
+        <ToggleButton
+            android:id="@+id/fragment_watchlist_watched_dialog_toggleWatched"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:checked="true"
+            android:text="ToggleButton"
+            android:textOff="@string/dialog_toggleButton_dropped"
+            android:textOn="@string/dialog_toggleButton_watched"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/fragment_watchlist_watched_dialog_cancelButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
