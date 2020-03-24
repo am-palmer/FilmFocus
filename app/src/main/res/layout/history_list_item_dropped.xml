@@ -22,19 +22,16 @@
         android:layout_width="100dp"
         android:layout_height="160dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         android:background="#2d2d2d"
         android:clickable="true"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="@+id/timeline_line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/icon_star_watched_frame"
-        app:layout_constraintTop_toTopOf="@+id/timeline_line"
-        app:layout_constraintVertical_bias="0.0"
-        tools:srcCompat="@drawable/cover_placeholder"></ImageView>
+        app:layout_constraintStart_toEndOf="@+id/icon_dropped_frame"
+        tools:srcCompat="@drawable/cover_placeholder_bad"></ImageView>
 
 
     <RatingBar
@@ -43,36 +40,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="4dp"
         android:rating="1"
         android:theme="@style/RatingBar"
-        app:layout_constraintEnd_toEndOf="@+id/timeline_item_review_tv"
-        app:layout_constraintStart_toStartOf="@+id/timeline_item_review_tv"
-        app:layout_constraintTop_toBottomOf="@+id/timeline_item_review_tv" />
+        app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+        app:layout_constraintStart_toStartOf="@+id/constraintLayout"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <TextView
         android:id="@+id/timeline_item_review_tv"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:ellipsize="end"
         android:gravity="center"
+        android:maxLines="5"
         android:scrollHorizontally="false"
-        android:text="TextView"
-        android:textAlignment="center"
+        android:text=""
+        android:textAlignment="gravity"
         android:textSize="14sp"
         android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="@+id/timeline_item_film_poster"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/timeline_item_film_poster"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-        app:layout_constraintVertical_bias="0.0"
-        tools:text='"Did not enjoy this one"' />
+        tools:text='"Was not my cup of tea"' />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="@+id/timeline_item_review_tv"
         app:layout_constraintStart_toStartOf="@+id/timeline_item_review_tv"
         app:layout_constraintTop_toTopOf="@+id/timeline_item_film_poster">
@@ -82,14 +83,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:text="TextView"
-            android:textColor="@color/colorPrimary"
-            android:textSize="12sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="14sp"
             android:textStyle="normal"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/timeline_item_tv_DROPPED"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="January" />
 
         <TextView
@@ -99,8 +98,8 @@
             android:layout_marginStart="4dp"
             android:layout_marginEnd="8dp"
             android:text="TextView"
-            android:textColor="@color/colorPrimary"
-            android:textSize="12sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="14sp"
             android:textStyle="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -108,20 +107,10 @@
             app:layout_constraintTop_toTopOf="@+id/timeline_item_date_month"
             tools:text="10th" />
 
-        <TextView
-            android:id="@+id/timeline_item_tv_DROPPED"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dropped"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Dropped" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
-        android:id="@+id/icon_star_watched_frame"
+        android:id="@+id/icon_dropped_frame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -142,5 +131,19 @@
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_dropped_darkgreen_24dp" />
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/timeline_item_tv_DROPPED"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Dropped"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintBottom_toTopOf="@+id/timeline_item_film_poster"
+        app:layout_constraintEnd_toEndOf="@+id/timeline_item_film_poster"
+        app:layout_constraintStart_toStartOf="@+id/timeline_item_film_poster"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Dropped" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
