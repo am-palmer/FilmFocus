@@ -59,7 +59,7 @@ class HistoryRecyclerAdapter(
             val monthProperty: LocalDate.Property = date.monthOfYear()
             // Set the views
             // holder.dateYearTextView.text = date.year.toString()
-            holder.dateMonthTextView.text = date.dayOfMonth.toString() // todo: ordinal indicator: https://stackoverflow.com/questions/24039973/output-readable-day-of-month-with-joda-time
+            holder.dateMonthTextView.text = date.dayOfMonth.toString()
             holder.dateDayTextView.text = monthProperty.asText
 
             if (timelineList[position].rating == null) {

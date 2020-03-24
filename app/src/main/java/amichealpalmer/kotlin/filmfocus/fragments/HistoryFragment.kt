@@ -10,6 +10,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.lang.NullPointerException
 
 private const val ARG_TIMELINE_LIST = "timelineList"
 
@@ -34,10 +35,10 @@ class HistoryFragment : Fragment() { // note code duplication with other fragmen
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (arguments != null) {
+        try {
             timelineList = arguments!!.getParcelableArrayList<TimelineItem>(ARG_TIMELINE_LIST) as ArrayList<TimelineItem>
-        } else {
-            Log.d(TAG, ".onCreate: arguments null")
+        } catch (e: NullPointerException) {
+            Log.e(TAG, ".onCreate: timelineList null in arguments")
         }
         //setHasOptionsMenu(true) ?
         super.onCreate(savedInstanceState)

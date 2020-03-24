@@ -22,7 +22,7 @@
             android:maxLength="250"
             android:singleLine="false"
             android:textColorHint="@color/colorPrimaryDark"
-            android:textSize="14sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/fragment_watchlist_watched_dialog_cancelButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -42,9 +42,11 @@
             android:id="@+id/fragment_watchlist_watched_dialog_poster_iv"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
             app:layout_constraintBottom_toTopOf="@+id/fragment_watchlist_watched_dialog_ratingBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/cover_placeholder" />
 
         <Button

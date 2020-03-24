@@ -7,16 +7,24 @@ import androidx.fragment.app.Fragment
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.activities.MainActivity
 import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
+import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.data.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
 import android.app.Dialog
 import android.util.Log
 import android.view.*
-import android.widget.SearchView
+import android.view.inputmethod.EditorInfo
+import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_film_details.*
+import kotlinx.android.synthetic.main.fragment_watchlist_watched_dialog.*
 import org.joda.time.LocalDate
+import java.lang.Exception
+import java.lang.NullPointerException
 
 private const val ARG_LIST = "watchlist"
 
@@ -24,9 +32,8 @@ enum class WATCHLIST_FILM_CONTEXT_ACTION_TYPE { // todo: Should this be somewher
     WATCHLIST_REMOVE, WATCHLIST_MARK_WATCHED
 }
 
-class WatchlistFragment : Fragment() { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses
+class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
 
-    //private var listener: OnFragmentInteractionListener? = null
     private val TAG = "WatchlistFragment"
     internal var callback: OnFilmSelectedListener? = null
     private lateinit var watchlist: ArrayList<FilmThumbnail>
@@ -78,7 +85,6 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        //super.onCreateOptionsMenu(menu, inflater)
         Log.d(TAG, ".onCreateOptionsMenu called")
         inflater.inflate(R.menu.browse_fragment_menu, menu)
 
@@ -113,7 +119,6 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, ".onContextItemSelected called")
-        Log.d(TAG, "menu item: ${item}")
         val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
         var position = -1
         try {
@@ -126,19 +131,11 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
             R.id.film_thumbnail_context_menu_mark_watched -> {
                 val film = adapter.getItem(position)
 
-                // Construct a TimelineItem
                 // todo: prompt user for review and rating properly
-                val rating = 3
-                val review = "I Liked this film quite a bit!"
-                val timelineItem = TimelineItem(film, rating, LocalDate.now(), review)
-                val bundle = Bundle()
-                bundle.putParcelable("timelineItem", timelineItem)
-                // Call listener
-                callback!!.onFilmSelected(bundle, WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_MARK_WATCHED)
+                val dialogFragment = WatchedDialogFragment.newInstance(film)
+                dialogFragment.setOnWatchedDialogSubmissionListener(this)
+                dialogFragment.show(fragmentManager!!, "fragment_watched_dialog")
 
-                // Removal
-                watchlist.remove(film)
-                adapter.removeFilmFromWatchlist(film)
             }
             R.id.film_thumbnail_context_menu_remove -> {
                 val film = adapter.getItem(position)
@@ -155,19 +152,18 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
         return super.onContextItemSelected(item)
     }
 
-    // Dialog fragment called when a film is marked watched in the context menu
-    inner class WatchedDialogFragment(): DialogFragment() {
-        // todo: support for dropped films
+    override fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem) {
+        // Put values in bundle
+        val bundle = Bundle()
+        bundle.putParcelable("timelineItem", timelineItem)
 
+        // Call listener
+        callback!!.onFilmSelected(bundle, WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_MARK_WATCHED)
 
-        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-            return super.onCreateDialog(savedInstanceState)
-        }
-
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            // Inflate dialog's xml
-            return inflater.inflate(R.layout.fragment_watchlist_watched_dialog, container, false)
-        }
+        // Removal
+        watchlist.remove(timelineItem.film)
+        val adapter = this.recyclerView.adapter as WatchlistRecyclerAdapter
+        adapter.removeFilmFromWatchlist(timelineItem.film)
     }
 
     companion object {
@@ -180,4 +176,110 @@ class WatchlistFragment : Fragment() { // note: code duplication with browsefrag
             return fragment
         }
     }
+}
+
+// Dialog fragment called when a film is marked watched in the context menu
+class WatchedDialogFragment() : DialogFragment(), RatingBar.OnRatingBarChangeListener, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
+    // todo: support for dropped films
+    private val TAG = "WatchedDialogFragment"
+
+    private lateinit var callback: onWatchedDialogSubmissionListener
+
+    private lateinit var poster: ImageView
+    private lateinit var ratingBar: RatingBar
+    private lateinit var reviewEditText: EditText
+    private lateinit var toggleWatched: ToggleButton
+    private lateinit var cancelButton: Button
+    private lateinit var doneButton: Button
+    private lateinit var film: FilmThumbnail
+
+    private var rating: Int? = null
+    private var status: TIMELINE_ITEM_STATUS = TIMELINE_ITEM_STATUS.WATCHED
+
+    interface onWatchedDialogSubmissionListener {
+        fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem)
+    }
+
+    fun setOnWatchedDialogSubmissionListener(callback: onWatchedDialogSubmissionListener) {
+        this.callback = callback
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        try {
+            film = arguments!!.getParcelable<FilmThumbnail>("film") as FilmThumbnail
+            Log.d(TAG, ".onCreate: film is ${film.title}")
+        } catch (e: NullPointerException) {
+            // todo: less general catch
+            Log.e(TAG, ".onCreate - failed to retrieve film from bundle")
+        }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? { // Called because we're using a custom XML layout to define the dialog layout
+        // Inflate dialog's xml
+        return inflater.inflate(R.layout.fragment_watchlist_watched_dialog, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) { // Called after onCreateView, used to set up the widgets
+        super.onViewCreated(view, savedInstanceState)
+
+        // todo: synthetic imports?
+        poster = view.findViewById(R.id.fragment_watchlist_watched_dialog_poster_iv)
+        ratingBar = view.findViewById(R.id.fragment_watchlist_watched_dialog_ratingBar)
+        reviewEditText = view.findViewById(R.id.fragment_watchlist_watched_dialog_review_et)
+        toggleWatched = view.findViewById(R.id.fragment_watchlist_watched_dialog_toggleWatched)
+        cancelButton = view.findViewById(R.id.fragment_watchlist_watched_dialog_cancelButton)
+        doneButton = view.findViewById(R.id.fragment_watchlist_watched_dialog_cancelButton)
+
+        ratingBar.setOnRatingBarChangeListener(this)
+        toggleWatched.setOnCheckedChangeListener(this)
+
+
+        Picasso.get().load(film.posterURL).error(R.drawable.placeholder_imageloading)
+                .placeholder(R.drawable.placeholder_imageloading).into(poster)
+
+        // ?
+        dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+    }
+
+    override fun onRatingChanged(ratingBar: RatingBar?, rating: Float, fromUser: Boolean) {
+        this.rating = rating.toInt()
+    }
+
+    override fun onClick(v: View?) {
+        if (view == cancelButton) {
+            // Close the dialog
+            this.dismiss()
+        } else if (view == doneButton) {
+            // We send all the info to the Watchlist Fragment as a timeline item
+            val date = LocalDate.now()
+            val text = reviewEditText.text.toString()
+            val item = TimelineItem(film, rating, date, text, status)
+            callback.onWatchedDialogSubmissionListener(item)
+        }
+    }
+
+    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
+        if (buttonView == toggleWatched) {
+            var value = TIMELINE_ITEM_STATUS.WATCHED
+            when (isChecked) {
+                true -> value = TIMELINE_ITEM_STATUS.WATCHED
+                false -> value = TIMELINE_ITEM_STATUS.DROPPED
+            }
+            status = value
+        }
+    }
+
+
+    companion object {
+
+        fun newInstance(filmThumbnail: FilmThumbnail): WatchedDialogFragment {
+            val fragment = WatchedDialogFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("film", filmThumbnail)
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
+
 }

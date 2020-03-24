@@ -4,8 +4,12 @@ import android.os.Parcel
 import android.os.Parcelable
 import org.joda.time.LocalDate
 
+enum class TIMELINE_ITEM_STATUS {
+    WATCHED, DROPPED
+}
+
 // Holds FilmThumbnail, ID, Review, Star Rating, and Date marked watched. Displayed in the watched film timeline
-class TimelineItem(val film: FilmThumbnail, val rating: Int?, val date: LocalDate, private var review: String?) : Parcelable {
+class TimelineItem(val film: FilmThumbnail, val rating: Int?, val date: LocalDate, private var review: String?, val status: TIMELINE_ITEM_STATUS) : Parcelable {
 
     fun hasReview(): Boolean {
         return review != null
@@ -31,9 +35,12 @@ class TimelineItem(val film: FilmThumbnail, val rating: Int?, val date: LocalDat
         parcel.writeString(date.toString())
 
         parcel.writeString(review)
+
+        parcel.writeString(status.name)
+
     }
 
-    constructor(parcel: Parcel) : this(parcel.readParcelable<FilmThumbnail>(FilmThumbnail::class.java.classLoader)!!, parcel.readInt(), LocalDate(parcel.readString()!!), parcel.readString()!!)
+    constructor(parcel: Parcel) : this(parcel.readParcelable<FilmThumbnail>(FilmThumbnail::class.java.classLoader)!!, parcel.readInt(), LocalDate(parcel.readString()!!), parcel.readString()!!, TIMELINE_ITEM_STATUS.valueOf(parcel.readString()!!))
 
     override fun describeContents(): Int {
         return 0
