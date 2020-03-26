@@ -3,5 +3,9 @@
 
     <item
         android:id="@+id/history_timeline_item_context_menu_remove"
-        android:title="Remove from history"/>
+        android:title="@string/remove_item_from_history"/>
+
+    <item
+        android:id="@+id/history_timeline_item_context_menu_addToWatchlist"
+        android:title="@string/add_to_watchlist"/>
 </menu>

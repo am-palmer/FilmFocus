@@ -10,6 +10,12 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
+
+    <string name="add_to_watchlist">Add to watchlist</string>
+    <string name="remove">Remove</string>
+    <string name="remove_item_from_history">Remove from history</string>
+    <string name="mark_watched">Mark Watched</string>
+
     <string name="dialog_review_hint">Write a review for this film...</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_review_done">Done</string>
