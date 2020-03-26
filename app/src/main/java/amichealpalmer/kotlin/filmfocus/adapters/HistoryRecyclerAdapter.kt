@@ -37,7 +37,7 @@ class HistoryRecyclerAdapter(
         Log.d(TAG, ".onCreateViewHolder called")
         val view: View
         val mInflater = LayoutInflater.from(context)
-        view = mInflater.inflate(R.layout.history_list_item_watched, parent, false)
+        view = mInflater.inflate(R.layout.history_list_item, parent, false)
 
         return HelperViewHolder(view)
     }
