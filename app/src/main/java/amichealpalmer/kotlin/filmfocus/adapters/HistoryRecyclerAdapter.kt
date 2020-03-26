@@ -3,6 +3,7 @@ package amichealpalmer.kotlin.filmfocus.adapters
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.data.RATING_VALUE
+import amichealpalmer.kotlin.filmfocus.data.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
 //import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
 //import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
@@ -73,6 +74,12 @@ class HistoryRecyclerAdapter(
                 holder.reviewTextView.text = review
             } else holder.reviewTextView.visibility = View.GONE // Hide review field if not set
 
+            // Programmatically change views if film is marked as dropped
+            if (timelineList[position].status == TIMELINE_ITEM_STATUS.DROPPED){
+                holder.watchedDroppedIcon.setImageResource(R.drawable.ic_dropped_darkgreen_24dp)
+                holder.watchedDroppedTextView.text = "Dropped"
+            }
+
             holder.itemView.setOnLongClickListener {
                 this.position = (holder.adapterPosition)
                 false
@@ -104,6 +111,8 @@ class HistoryRecyclerAdapter(
         val dateDayTextView: TextView = view.findViewById(R.id.timeline_item_date_day)
         val dateMonthTextView: TextView = view.findViewById(R.id.timeline_item_date_month)
 
+        val watchedDroppedTextView: TextView = view.findViewById(R.id.timeline_item_tv_WATCHED_DROPPED)
+        val watchedDroppedIcon: ImageView = view.findViewById(R.id.icon_watched_dropped_drawable)
         //val dateYearTextView: TextView = view.findViewById(R.id.timeline_item_date_year)
         val reviewTextView: TextView = view.findViewById(R.id.timeline_item_review_tv)
 
