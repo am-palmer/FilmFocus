@@ -1,10 +1,8 @@
 package amichealpalmer.kotlin.filmfocus.fragments
 
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.data.TIMELINE_ITEM_STATUS
-import amichealpalmer.kotlin.filmfocus.data.TimelineItem
-import android.app.Dialog
+import amichealpalmer.kotlin.filmfocus.data.*
+import amichealpalmer.kotlin.filmfocus.data.FilmRating
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -32,7 +30,8 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
     private lateinit var doneButton: Button
     private lateinit var film: FilmThumbnail
 
-    private var rating: Int? = null
+    private var rating: Float? = null
+    private var hasRating: Boolean = false
     private var status: TIMELINE_ITEM_STATUS = TIMELINE_ITEM_STATUS.WATCHED
 
     interface onWatchedDialogSubmissionListener {
@@ -71,7 +70,7 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
         cancelButton = view.findViewById(R.id.fragment_watchlist_watched_dialog_cancelButton)
         doneButton = view.findViewById(R.id.fragment_watchlist_watched_dialog_doneButton)
 
-        ratingBar.setOnRatingBarChangeListener(this)
+        ratingBar.onRatingBarChangeListener = this
         toggleWatched.setOnCheckedChangeListener(this)
         cancelButton.setOnClickListener(this)
         doneButton.setOnClickListener(this)
@@ -84,7 +83,8 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
     }
 
     override fun onRatingChanged(ratingBar: RatingBar?, rating: Float, fromUser: Boolean) {
-        this.rating = rating.toInt()
+        this.rating = rating
+        hasRating = true
     }
 
     override fun onClick(v: View?) {
@@ -98,7 +98,13 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
             // We send all the info to the Watchlist Fragment as a timeline item
             val date = LocalDate.now()
             val text = reviewEditText.text.toString()
-            val item = TimelineItem(film, rating, date, text, status)
+            var ratingObject: FilmRating?
+            if (hasRating){
+                ratingObject = FilmRating(rating!!.toFloat(), RATING_VALUE.HAS_RATING)
+            } else {
+                ratingObject = FilmRating(0f, RATING_VALUE.NO_RATING)
+            }
+            val item = TimelineItem(film, ratingObject, date, text, status)
             callback.onWatchedDialogSubmissionListener(item)
             this.dismiss()
         }

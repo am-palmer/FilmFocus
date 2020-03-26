@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.lang.NullPointerException
+import kotlin.reflect.typeOf
 
 private const val ARG_TIMELINE_LIST = "timelineList"
 
@@ -35,9 +36,16 @@ class HistoryFragment : Fragment() { // note code duplication with other fragmen
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         try {
             val bundleList = arguments!!.getParcelableArrayList<TimelineItem>(ARG_TIMELINE_LIST) as ArrayList<TimelineItem>
-            timelineList = bundleList.reversed() as ArrayList<TimelineItem>
+            if (!bundleList.isNullOrEmpty()) {
+                timelineList = ArrayList<TimelineItem>()
+                timelineList.addAll(bundleList)
+                timelineList.reverse()
+            } else { // Presumably no items in timeline yet
+                timelineList = ArrayList<TimelineItem>()
+            }
         } catch (e: NullPointerException) {
             Log.e(TAG, ".onCreate: timelineList null in arguments")
         }

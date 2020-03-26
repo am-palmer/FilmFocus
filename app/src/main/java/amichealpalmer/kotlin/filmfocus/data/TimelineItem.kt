@@ -9,7 +9,7 @@ enum class TIMELINE_ITEM_STATUS {
 }
 
 // Holds FilmThumbnail, ID, Review, Star Rating, and Date marked watched. Displayed in the watched film timeline
-class TimelineItem(val film: FilmThumbnail, val rating: Int?, val date: LocalDate, private var review: String?, val status: TIMELINE_ITEM_STATUS) : Parcelable {
+class TimelineItem(val film: FilmThumbnail, val rating: FilmRating, val date: LocalDate, private var review: String?, val status: TIMELINE_ITEM_STATUS) : Parcelable {
 
     fun hasReview(): Boolean {
         return review != null
@@ -28,9 +28,7 @@ class TimelineItem(val film: FilmThumbnail, val rating: Int?, val date: LocalDat
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(film, flags)
 
-        if (rating != null) {
-            parcel.writeInt(rating)
-        } else parcel.writeInt(0)
+        parcel.writeParcelable(rating, flags)
 
         parcel.writeString(date.toString())
 
@@ -40,7 +38,11 @@ class TimelineItem(val film: FilmThumbnail, val rating: Int?, val date: LocalDat
 
     }
 
-    constructor(parcel: Parcel) : this(parcel.readParcelable<FilmThumbnail>(FilmThumbnail::class.java.classLoader)!!, parcel.readInt(), LocalDate(parcel.readString()!!), parcel.readString()!!, TIMELINE_ITEM_STATUS.valueOf(parcel.readString()!!))
+    constructor(parcel: Parcel) : this(parcel.readParcelable<FilmThumbnail>(FilmThumbnail::class.java.classLoader)!!,
+            parcel.readParcelable<FilmRating>(FilmRating::class.java.classLoader)!!,
+            LocalDate(parcel.readString()!!),
+            parcel.readString()!!,
+            TIMELINE_ITEM_STATUS.valueOf(parcel.readString()!!))
 
     override fun describeContents(): Int {
         return 0

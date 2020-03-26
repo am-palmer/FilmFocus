@@ -2,6 +2,7 @@ package amichealpalmer.kotlin.filmfocus.adapters
 
 
 import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.data.RATING_VALUE
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
 //import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
 //import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
@@ -54,22 +55,22 @@ class HistoryRecyclerAdapter(
             Picasso.get().load(timelineList[position].film.posterURL).error(R.drawable.placeholder_imageloading)
                     .placeholder(R.drawable.placeholder_imageloading).into(holder.poster)
 
-            var date = timelineList[position].date as LocalDate
+            var date = timelineList[position].date
             //val dayProperty: LocalDate.Property = date.dayOfWeek()
             val monthProperty: LocalDate.Property = date.monthOfYear()
             // Set the views
             // holder.dateYearTextView.text = date.year.toString()
             holder.dateMonthTextView.text = date.dayOfMonth.toString()
             holder.dateDayTextView.text = monthProperty.asText
-
-            if (timelineList[position].rating == null) {
+            if (timelineList[position].rating.state == RATING_VALUE.NO_RATING) {
                 holder.ratingBar.visibility = View.GONE // Hide the rating bar if a rating hasn't been set
             } else {
-                holder.ratingBar.rating = timelineList[position].rating!!.toFloat()
+                holder.ratingBar.rating = timelineList[position].rating.value
             }
 
             if (timelineList[position].hasReview()) {
-                holder.reviewTextView.text = timelineList[position].getReview()
+                val review = "\"" + timelineList[position].getReview() + "\""
+                holder.reviewTextView.text = review
             } else holder.reviewTextView.visibility = View.GONE // Hide review field if not set
 
             holder.itemView.setOnLongClickListener {

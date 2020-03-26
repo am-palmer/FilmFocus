@@ -10,6 +10,7 @@ import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -82,7 +83,9 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
 
+
         loadData()
+        //clearData()
         Log.d(TAG, ".onCreate finished")
 
     }
@@ -219,6 +222,12 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         editor.putString(SHAREDPREFS_KEY_TIMELINE, timelineJson)
 
         editor.apply()
+    }
+
+    private fun clearData() { // For testing
+        Log.d(TAG, ".clearData called, clearing shared preferences")
+        val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+        sharedPreferences.edit().clear().apply()
     }
 
     fun loadData() {
