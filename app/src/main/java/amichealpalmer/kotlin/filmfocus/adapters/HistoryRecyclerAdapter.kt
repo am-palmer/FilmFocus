@@ -48,6 +48,10 @@ class HistoryRecyclerAdapter(
         notifyDataSetChanged()
     }
 
+    fun removeTimelineItem(item: TimelineItem){
+        timelineList.remove(item)
+    }
+
     fun clearList() {
         timelineList.clear()
     }
@@ -69,7 +73,8 @@ class HistoryRecyclerAdapter(
                 // We also change the constraints on the review so there isn't a weird gap
                 val constraintSet = ConstraintSet()
                 constraintSet.clone(holder.constraintLayoutWrapper)
-                constraintSet.connect(holder.reviewTextView.id, ConstraintSet.TOP, holder.dateHolderConstraintLayout.id, ConstraintSet.BOTTOM)
+                constraintSet.connect(holder.reviewTextView.id, ConstraintSet.TOP, holder.dateHolderConstraintLayout.id, ConstraintSet.BOTTOM, 12)
+                constraintSet.applyTo(holder.constraintLayoutWrapper)
             } else {
                 holder.ratingBar.rating = timelineList[position].rating.value
             }

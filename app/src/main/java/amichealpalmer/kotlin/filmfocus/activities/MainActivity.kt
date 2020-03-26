@@ -320,7 +320,11 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
     }
 
     override fun onTimelineItemSelected(item: TimelineItem, type: TIMELINE_ITEM_CONTEXT_ACTION_TYPE) {
-        TODO("Not yet implemented")
+        if (type == TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_REMOVE){
+            timelineList.remove(item)
+            Toast.makeText(this, "Removed film from History", Toast.LENGTH_SHORT).show()
+            saveData()
+        }
     }
 }
 

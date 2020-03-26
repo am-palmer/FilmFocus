@@ -16,7 +16,7 @@ import kotlin.reflect.typeOf
 private const val ARG_TIMELINE_LIST = "timelineList"
 
 enum class TIMELINE_ITEM_CONTEXT_ACTION_TYPE {
-    TIMELINE_ITEM_REMOVE
+    TIMELINE_ITEM_REMOVE, TIMELINE_ADD_TO_WATCHLIST
 }
 
 class HistoryFragment : Fragment() { // note code duplication with other fragments
@@ -89,7 +89,15 @@ class HistoryFragment : Fragment() { // note code duplication with other fragmen
             return super.onContextItemSelected(item)
         }
         when (item.itemId) {
-            R.id.history_timeline_item_context_menu_remove -> true // todo: remove the item from the timeline - should display an 'are you sure?' prompt
+            R.id.history_timeline_item_context_menu_remove -> {
+                // todo: this should display an 'are you sure' prompt
+                val timelineItem = adapter.getItem(position)
+                timelineList.remove(timelineItem)
+                adapter.removeTimelineItem(timelineItem)
+                adapter.notifyDataSetChanged()
+                // listener call
+                callback!!.onTimelineItemSelected(timelineItem, TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_REMOVE)
+            }
             else -> true
         }
 

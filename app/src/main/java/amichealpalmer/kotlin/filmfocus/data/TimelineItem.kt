@@ -12,7 +12,7 @@ enum class TIMELINE_ITEM_STATUS {
 class TimelineItem(val film: FilmThumbnail, val rating: FilmRating, val date: LocalDate, private var review: String?, val status: TIMELINE_ITEM_STATUS) : Parcelable {
 
     fun hasReview(): Boolean {
-        return review != null
+        return !review.isNullOrBlank()
     }
 
     fun getReview(): String {

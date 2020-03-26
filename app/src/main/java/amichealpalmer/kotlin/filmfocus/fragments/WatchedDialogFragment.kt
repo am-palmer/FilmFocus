@@ -31,7 +31,7 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
     private lateinit var film: FilmThumbnail
 
     private var rating: Float? = null
-    private var hasRating: Boolean = false
+    private var hasRating = false
     private var status: TIMELINE_ITEM_STATUS = TIMELINE_ITEM_STATUS.WATCHED
 
     interface onWatchedDialogSubmissionListener {

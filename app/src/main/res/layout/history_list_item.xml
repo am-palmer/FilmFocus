@@ -72,8 +72,8 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/timeline_item_review_tv"
-        app:layout_constraintStart_toStartOf="@+id/timeline_item_review_tv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/timeline_item_film_poster"
         app:layout_constraintTop_toTopOf="@+id/timeline_item_film_poster">
 
         <TextView
