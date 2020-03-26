@@ -19,6 +19,7 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import org.joda.time.LocalDate
@@ -65,6 +66,10 @@ class HistoryRecyclerAdapter(
             holder.dateDayTextView.text = monthProperty.asText
             if (timelineList[position].rating.state == RATING_VALUE.NO_RATING) {
                 holder.ratingBar.visibility = View.GONE // Hide the rating bar if a rating hasn't been set
+                // We also change the constraints on the review so there isn't a weird gap
+                val constraintSet = ConstraintSet()
+                constraintSet.clone(holder.constraintLayoutWrapper)
+                constraintSet.connect(holder.reviewTextView.id, ConstraintSet.TOP, holder.dateHolderConstraintLayout.id, ConstraintSet.BOTTOM)
             } else {
                 holder.ratingBar.rating = timelineList[position].rating.value
             }
@@ -72,8 +77,9 @@ class HistoryRecyclerAdapter(
             if (timelineList[position].hasReview()) {
                 val review = "\"" + timelineList[position].getReview() + "\""
                 holder.reviewTextView.text = review
-            } else holder.reviewTextView.visibility = View.GONE // Hide review field if not set
-
+            } else {
+                holder.reviewTextView.visibility = View.GONE // Hide review field if not set
+            }
             // Programmatically change views if film is marked as dropped
             if (timelineList[position].status == TIMELINE_ITEM_STATUS.DROPPED){
                 holder.watchedDroppedIcon.setImageResource(R.drawable.ic_dropped_darkgreen_24dp)
@@ -110,7 +116,7 @@ class HistoryRecyclerAdapter(
         val ratingBar: RatingBar = view.findViewById(R.id.timeline_item_ratingBar)
         val dateDayTextView: TextView = view.findViewById(R.id.timeline_item_date_day)
         val dateMonthTextView: TextView = view.findViewById(R.id.timeline_item_date_month)
-
+        val dateHolderConstraintLayout: ConstraintLayout = view.findViewById(R.id.date_holder_constraintLayout)
         val watchedDroppedTextView: TextView = view.findViewById(R.id.timeline_item_tv_WATCHED_DROPPED)
         val watchedDroppedIcon: ImageView = view.findViewById(R.id.icon_watched_dropped_drawable)
         //val dateYearTextView: TextView = view.findViewById(R.id.timeline_item_date_year)
