@@ -304,15 +304,21 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
 
     override fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE) {
         if (type == BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST) {
-            // todo: check if the film is already in the watchlist. if so, don't add, and display a toast message informing the user it is already in the watchlist
             val film = bundle.getParcelable<FilmThumbnail>("film")
             if (film != null) {
-                watchlist.add(film)
-                Toast.makeText(this, "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
-                saveData()
+                var inWatchlist = false
+                for (f in watchlist) {
+                    if (f.imdbID == film.imdbID) inWatchlist = true
+                }
+                if (!inWatchlist) {
+                    watchlist.add(film)
+                    Toast.makeText(this, "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
+                    saveData()
+                } else {
+                    Toast.makeText(this, "${film.title} is already on Watchlist", Toast.LENGTH_SHORT).show()
+                }
             } else {
                 Log.e(TAG, "onSearchResultAction: film from bundle is null.")
-                // todo: handle if film in bundle is null?
             }
         } else if (type == BROWSE_FILM_CONTEXT_ACTION_TYPE.MARK_WATCHED) {
             // todo: handle MARK_WATCHED in browse
@@ -320,7 +326,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
     }
 
     override fun onTimelineItemSelected(item: TimelineItem, type: TIMELINE_ITEM_CONTEXT_ACTION_TYPE) {
-        if (type == TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_REMOVE){
+        if (type == TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_REMOVE) {
             timelineList.remove(item)
             Toast.makeText(this, "Removed film from History", Toast.LENGTH_SHORT).show()
             saveData()
