@@ -209,12 +209,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         bundle.putParcelable("timelineItem", timelineItem)
 
         // Call listener
-        callback!!.onSearchResultAction(bundle, BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST)
-        // Removal
-        //watchlist.remove(timelineItem.film)
-        // Todo: do we remove the film from watchlist if it is currently in there?
-        //val adapter = this.recyclerView.adapter as WatchlistRecyclerAdapter
-        //adapter.removeFilmFromWatchlist(timelineItem.film)
+        callback!!.onSearchResultAction(bundle, BROWSE_FILM_CONTEXT_ACTION_TYPE.MARK_WATCHED)
     }
 
     companion object {
