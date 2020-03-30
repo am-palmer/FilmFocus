@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         val fragment = BrowseFragment.newInstance(null)
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
-
+        currentFragment = fragment
 
         loadData()
         //clearData()
@@ -144,37 +144,37 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         }
 
         // todo: move these to a specific function, keep them out of the UI
+        // todo: replace if with when
+        // todo: don't reconstruct the fragments every time?
+        if (currentFragment!!::class.java == fragmentClass) {
+            Log.d(TAG, ".selectDrawerItem: user clicked fragment we're currently in")
+            // User clicked the fragment button we're in; do nothing
+        } else {
+            if (fragmentClass == BrowseFragment::class.java) { // todo: preserve state if user has already made a search
+                fragment = fragmentClass.newInstance()
+                currentFragment = fragment
+            } else if (fragmentClass == WatchlistFragment::class.java) {
+                fragment = fragmentClass.newInstance()
+                val bundle = Bundle()
+                bundle.putParcelableArrayList("watchlist", watchlist)
+                fragment.arguments = bundle
+                currentFragment = fragment
+            } else if (fragmentClass == HistoryFragment::class.java) {
+                fragment = fragmentClass.newInstance()
+                val bundle = Bundle()
+                bundle.putParcelableArrayList("timelineList", timelineList)
+                fragment.arguments = bundle
+                currentFragment = fragment
+            }
 
-        if (fragmentClass == BrowseFragment::class.java) { // todo: preserve state if user has already made a search
-            fragment = fragmentClass.newInstance()
-            currentFragment = fragment
+            // Insert the fragment by replacing any existing fragment
+            val fragmentManager = supportFragmentManager
+
+            fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment!!).commit()
+
+            menuItem.isChecked = true
+            title = menuItem.title
         }
-
-        // todo: don't reconstruct the fragment every time
-        else if (fragmentClass == WatchlistFragment::class.java) {
-            fragment = fragmentClass.newInstance()
-            val bundle = Bundle()
-            bundle.putParcelableArrayList("watchlist", watchlist)
-            fragment.arguments = bundle
-            currentFragment = fragment
-        }
-
-        // todo: ditto above
-        else if (fragmentClass == HistoryFragment::class.java) {
-            fragment = fragmentClass.newInstance()
-            val bundle = Bundle()
-            bundle.putParcelableArrayList("timelineList", timelineList)
-            fragment.arguments = bundle
-            currentFragment = fragment
-        }
-
-        // Insert the fragment by replacing any existing fragment
-        val fragmentManager = supportFragmentManager
-
-        fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment!!).commit()
-
-        menuItem.isChecked = true
-        title = menuItem.title
         mDrawer.closeDrawers()
     }
 
