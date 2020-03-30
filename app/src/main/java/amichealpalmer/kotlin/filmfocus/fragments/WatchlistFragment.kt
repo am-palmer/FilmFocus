@@ -130,7 +130,6 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         when (item.itemId) {
             R.id.film_thumbnail_context_menu_mark_watched -> {
                 val film = adapter.getItem(position)
-
                 // todo: prompt user for review and rating properly
                 val dialogFragment = WatchedDialogFragment.newInstance(film)
                 dialogFragment.setOnWatchedDialogSubmissionListener(this)

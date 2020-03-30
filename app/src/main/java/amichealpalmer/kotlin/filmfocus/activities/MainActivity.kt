@@ -277,7 +277,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         }
     }
 
-    override fun onFilmSelected(bundle: Bundle, typeWATCHLIST: WATCHLIST_FILM_CONTEXT_ACTION_TYPE) { // todo: less idiosyncratic handling, less weird logic gates
+    override fun onFilmSelected(bundle: Bundle, typeWATCHLIST: WATCHLIST_FILM_CONTEXT_ACTION_TYPE) { // todo: merge this listener with the below into an 'on context item selected' listener
         Log.d(TAG, ".onFilmSelected is called with TYPE: ${typeWATCHLIST.name}")
         if (typeWATCHLIST == WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE) {
             val film = bundle.getParcelable<FilmThumbnail>("film")
@@ -321,7 +321,16 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
                 Log.e(TAG, "onSearchResultAction: film from bundle is null.")
             }
         } else if (type == BROWSE_FILM_CONTEXT_ACTION_TYPE.MARK_WATCHED) {
-            // todo: handle MARK_WATCHED in browse
+            // todo: code duplication with above - merge these listeners?
+            val timelineItem = bundle.getParcelable<TimelineItem>("timelineItem")
+            if (timelineItem == null) {
+                Log.e(TAG, ".onFilmSelected: timelineItem null in bundle") // error handling?
+            } else {
+                timelineList.add(timelineItem)
+                watchlist.remove(timelineItem.film)
+                Toast.makeText(this, "Marked ${timelineItem.film.title} as watched", Toast.LENGTH_SHORT).show()
+                saveData()
+            }
         }
     }
 

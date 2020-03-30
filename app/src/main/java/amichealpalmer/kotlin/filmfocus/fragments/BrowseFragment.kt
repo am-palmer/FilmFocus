@@ -6,6 +6,7 @@ import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.data.TimelineItem
 import amichealpalmer.kotlin.filmfocus.data.json.GetJSONSearch
 import android.app.SearchManager
 import android.content.ComponentName
@@ -28,7 +29,7 @@ enum class BROWSE_FILM_CONTEXT_ACTION_TYPE{
     ADD_TO_WATCHLIST, MARK_WATCHED
 }
 
-class BrowseFragment : Fragment() {
+class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
     internal var callback: onResultActionListener? = null
     var resultList = ArrayList<FilmThumbnail>()
@@ -169,10 +170,12 @@ class BrowseFragment : Fragment() {
                 callback!!.onSearchResultAction(bundle, BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST)
             }
             R.id.browse_film_context_menu_mark_watched -> {
-                // todo: inflate layout
-                //val film = adapter.getItem(position)
-                // etc
-                true
+                // todo: code duplication with watchlist fragment
+                val film = adapter.getItem(position)
+                // todo: prompt user for review and rating properly
+                val dialogFragment = WatchedDialogFragment.newInstance(film)
+                dialogFragment.setOnWatchedDialogSubmissionListener(this)
+                dialogFragment.show(fragmentManager!!, "fragment_watched_dialog")
             }
             else -> true
         }
@@ -198,6 +201,20 @@ class BrowseFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         callback = null
+    }
+
+    override fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem) { // todo: code duplication with watchlist fragment
+        // Put values in bundle
+        val bundle = Bundle()
+        bundle.putParcelable("timelineItem", timelineItem)
+
+        // Call listener
+        callback!!.onSearchResultAction(bundle, BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST)
+        // Removal
+        //watchlist.remove(timelineItem.film)
+        // Todo: do we remove the film from watchlist if it is currently in there?
+        //val adapter = this.recyclerView.adapter as WatchlistRecyclerAdapter
+        //adapter.removeFilmFromWatchlist(timelineItem.film)
     }
 
     companion object {
