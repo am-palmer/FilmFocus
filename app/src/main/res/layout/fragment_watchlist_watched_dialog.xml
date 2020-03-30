@@ -18,7 +18,7 @@
             android:layout_marginBottom="8dp"
             android:gravity="start"
             android:hint="@string/dialog_review_hint"
-            android:inputType="text"
+            android:inputType="textMultiLine"
             android:maxLength="250"
             android:singleLine="false"
             android:textColorHint="@color/colorPrimaryDark"
@@ -42,11 +42,11 @@
             android:id="@+id/fragment_watchlist_watched_dialog_poster_iv"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toTopOf="@+id/fragment_watchlist_watched_dialog_ratingBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3"
             app:srcCompat="@drawable/cover_placeholder" />
 
         <Button
@@ -88,6 +88,18 @@
             android:textOn="@string/dialog_toggleButton_watched"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/fragment_watchlist_watched_dialog_cancelButton" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="20sp"
+            android:text="@string/mark_watched"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

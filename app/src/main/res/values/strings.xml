@@ -23,5 +23,9 @@
     <string name="dialog_toggleButton_watched">WATCHED</string>
     <string name="dialog_toggleButton_dropped">DROPPED</string>
 
+    <string name="dialog_title_removeitem">Remove item from history?</string>
+    <string name="dialog_confirmRemovalFromHistory_prompt">Are you sure you want to remove this item from your History?</string>
+    <string name="dialog_remove">Remove</string>
+
     <string name="interpunct_unicode">\u00b7</string>
 </resources>

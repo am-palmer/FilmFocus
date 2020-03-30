@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -114,5 +115,11 @@ class HistoryFragment : Fragment() { // note code duplication with other fragmen
             return fragment
         }
     }
+
+}
+
+class RemoveFilmFromHistoryDialog(): DialogFragment(){
+
+    // todo: code me
 
 }
