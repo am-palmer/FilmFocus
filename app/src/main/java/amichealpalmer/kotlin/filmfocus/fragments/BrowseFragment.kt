@@ -36,7 +36,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
     lateinit var recyclerView: RecyclerView
     private val TAG = "BrowseFragment"
     private var noMoreResults = false
-    lateinit var searchString: String
+    var searchString: String? = null
     private var currentPage = 1
 
     interface onResultActionListener {
@@ -78,9 +78,9 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                 super.onScrollStateChanged(recyclerView, newState)
                 // could perhaps rewrite this so it loads new entries before the bottom is reached, right now it is jarring
                 if (!recyclerView.canScrollVertically(1)) { // todo: UI and backend logic are completely wrapped up together using this method
-                    if (!noMoreResults) {
+                    if (!noMoreResults && searchString != null) {
                         //Toast.makeText(activity, "Reached last row - attempting to load more items", Toast.LENGTH_SHORT).show()
-                        searchHelper().searchByTitleKeyword(searchString)
+                        searchHelper().searchByTitleKeyword(searchString!!)
                     }
                 }
             }
