@@ -80,6 +80,8 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
 
         // Load search by default
         val fragment = BrowseFragment.newInstance(null)
+        setTitle("Browse")
+        supportActionBar!!.setDisplayShowTitleEnabled(true)
         val fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
         currentFragment = fragment
