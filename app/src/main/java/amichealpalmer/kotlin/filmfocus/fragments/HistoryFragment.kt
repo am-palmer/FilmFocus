@@ -24,7 +24,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
 
     private val TAG = "HistoryFragment"
 
-    internal var callback: OnTimelineItemSelectedListener? = null
+    private var callback: OnTimelineItemSelectedListener? = null
     private lateinit var timelineList: ArrayList<TimelineItem>
     lateinit var recyclerView: RecyclerView
 
@@ -96,7 +96,10 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
                 dialogFragment.setOnConfirmRemoveFilmDialogActionListener(this)
                 dialogFragment.show(fragmentManager!!, "fragment_confirm_remove_dialog")
             }
-            R.id.history_timeline_item_context_menu_addToWatchlist -> true //todo: allow adding film to watchlist from history
+            R.id.history_timeline_item_context_menu_addToWatchlist -> {
+                val timelineItem = adapter.getItem(position)
+                callback?.onTimelineItemSelected(timelineItem, TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ADD_TO_WATCHLIST)
+            }
             else -> true
         }
 
@@ -157,7 +160,7 @@ class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClic
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val prompt = "Are you sure you want to remove ${timelineItem.film.title} from your  history?"
+        val prompt = "Are you sure you want to remove ${timelineItem.film.title} from your history?"
         fragment_confirm_remove_dialog_button_cancel.setOnClickListener(this)
         fragment_confirm_remove_dialog_button_remove.setOnClickListener(this)
         fragment_confirm_remove_dialog_textPrompt.text = prompt

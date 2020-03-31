@@ -302,21 +302,25 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         }
     }
 
+    private fun helperAddToWatchlist(film: FilmThumbnail) {
+        var inWatchlist = false
+        for (f in watchlist) {
+            if (f.imdbID == film.imdbID) inWatchlist = true
+        }
+        if (!inWatchlist) {
+            watchlist.add(film)
+            Toast.makeText(this, "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
+            saveData()
+        } else {
+            Toast.makeText(this, "${film.title} is already on Watchlist", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE) {
         if (type == BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST) {
             val film = bundle.getParcelable<FilmThumbnail>("film")
             if (film != null) {
-                var inWatchlist = false
-                for (f in watchlist) {
-                    if (f.imdbID == film.imdbID) inWatchlist = true
-                }
-                if (!inWatchlist) {
-                    watchlist.add(film)
-                    Toast.makeText(this, "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
-                    saveData()
-                } else {
-                    Toast.makeText(this, "${film.title} is already on Watchlist", Toast.LENGTH_SHORT).show()
-                }
+                helperAddToWatchlist(film)
             } else {
                 Log.e(TAG, "onSearchResultAction: film from bundle is null.")
             }
@@ -339,6 +343,9 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
             timelineList.remove(item)
             Toast.makeText(this, "Removed ${item.film.title} from History", Toast.LENGTH_SHORT).show()
             saveData()
+        }
+        if (type == TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ADD_TO_WATCHLIST) {
+            helperAddToWatchlist(item.film)
         }
     }
 }
