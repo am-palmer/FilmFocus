@@ -12,6 +12,7 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.fragment.app.DialogFragment
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_watchlist_watched_dialog.*
 import org.joda.time.LocalDate
 import java.lang.NullPointerException
 
@@ -22,12 +23,6 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
 
     private lateinit var callback: onWatchedDialogSubmissionListener
 
-    private lateinit var poster: ImageView
-    private lateinit var ratingBar: RatingBar
-    private lateinit var reviewEditText: EditText
-    private lateinit var toggleWatched: ToggleButton
-    private lateinit var cancelButton: Button
-    private lateinit var doneButton: Button
     private lateinit var film: FilmThumbnail
 
     private var rating: Float? = null
@@ -62,21 +57,13 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) { // Called after onCreateView
         super.onViewCreated(view, savedInstanceState)
 
-        // todo: synthetic imports?
-        poster = view.findViewById(R.id.fragment_watchlist_watched_dialog_poster_iv)
-        ratingBar = view.findViewById(R.id.fragment_watchlist_watched_dialog_ratingBar)
-        reviewEditText = view.findViewById(R.id.fragment_watchlist_watched_dialog_review_et)
-        toggleWatched = view.findViewById(R.id.fragment_watchlist_watched_dialog_toggleWatched)
-        cancelButton = view.findViewById(R.id.fragment_watchlist_watched_dialog_cancelButton)
-        doneButton = view.findViewById(R.id.fragment_watchlist_watched_dialog_doneButton)
-
-        ratingBar.onRatingBarChangeListener = this
-        toggleWatched.setOnCheckedChangeListener(this)
-        cancelButton.setOnClickListener(this)
-        doneButton.setOnClickListener(this)
+        fragment_watchlist_watched_dialog_ratingBar.onRatingBarChangeListener = this
+        fragment_watchlist_watched_dialog_toggleWatched.setOnCheckedChangeListener(this)
+        fragment_watchlist_watched_dialog_cancelButton.setOnClickListener(this)
+        fragment_watchlist_watched_dialog_doneButton.setOnClickListener(this)
 
         Picasso.get().load(film.posterURL).error(R.drawable.placeholder_imageloading)
-                .placeholder(R.drawable.placeholder_imageloading).into(poster)
+                .placeholder(R.drawable.placeholder_imageloading).into(fragment_watchlist_watched_dialog_poster_iv)
 
         // ?
         dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
@@ -89,29 +76,29 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
 
     override fun onClick(v: View?) {
         Log.d(TAG, ".onClick triggered")
-        if (v?.id == cancelButton.id) {
-            Log.d(TAG, "Cancel button clicked")
-            // Close the dialog
-            this.dismiss()
-        } else if (v?.id == doneButton.id) {
-            Log.d(TAG, "Done button clicked")
-            // We send all the info to the Watchlist Fragment as a timeline item
-            val date = LocalDate.now()
-            val text = reviewEditText.text.toString()
-            var ratingObject: FilmRating?
-            if (hasRating){
-                ratingObject = FilmRating(rating!!.toFloat(), RATING_VALUE.HAS_RATING)
-            } else {
-                ratingObject = FilmRating(0f, RATING_VALUE.NO_RATING)
+        when (v?.id){
+            fragment_watchlist_watched_dialog_cancelButton.id -> this.dismiss()
+            fragment_watchlist_watched_dialog_doneButton.id -> {
+                Log.d(TAG, "Done button clicked")
+                // We send all the info to the Watchlist Fragment as a timeline item
+                val date = LocalDate.now()
+                val text = fragment_watchlist_watched_dialog_review_et.text.toString()
+                var ratingObject: FilmRating?
+                if (hasRating) {
+                    ratingObject = FilmRating(rating!!.toFloat(), RATING_VALUE.HAS_RATING)
+                } else {
+                    ratingObject = FilmRating(0f, RATING_VALUE.NO_RATING)
+                }
+                val item = TimelineItem(film, ratingObject, date, text, status)
+                callback.onWatchedDialogSubmissionListener(item)
+                this.dismiss()
             }
-            val item = TimelineItem(film, ratingObject, date, text, status)
-            callback.onWatchedDialogSubmissionListener(item)
-            this.dismiss()
+            else -> true
         }
     }
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-        if (buttonView == toggleWatched) {
+        if (buttonView == fragment_watchlist_watched_dialog_toggleWatched) {
             var value = TIMELINE_ITEM_STATUS.WATCHED
             when (isChecked) {
                 true -> value = TIMELINE_ITEM_STATUS.WATCHED
