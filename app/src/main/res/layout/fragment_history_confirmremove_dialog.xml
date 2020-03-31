@@ -6,45 +6,48 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="350dp"
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/button_no"
+            android:id="@+id/fragment_confirm_remove_dialog_button_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="8dp"
             android:text="@string/dialog_cancel"
-            app:layout_constraintBaseline_toBaselineOf="@+id/button_yes"
-            app:layout_constraintEnd_toStartOf="@+id/button_yes"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintBaseline_toBaselineOf="@+id/fragment_confirm_remove_dialog_button_remove"
+            app:layout_constraintEnd_toStartOf="@+id/fragment_confirm_remove_dialog_button_remove"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            android:textColor="@color/colorPrimaryDark"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-            android:id="@+id/button_yes"
+            android:id="@+id/fragment_confirm_remove_dialog_button_remove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dialog_remove"
+            android:textColor="@color/colorPrimaryDark"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:textColor="@color/colorPrimaryDark"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+            android:id="@+id/fragment_confirm_remove_dialog_textPrompt"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="32dp"
+            android:gravity="center"
             android:text="@string/dialog_confirmRemovalFromHistory_prompt"
             android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@+id/button_no"
+            app:layout_constraintBottom_toTopOf="@+id/fragment_confirm_remove_dialog_button_cancel"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.6"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
