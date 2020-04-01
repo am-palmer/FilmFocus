@@ -68,7 +68,7 @@ class HistoryRecyclerAdapter(
             // holder.dateYearTextView.text = date.year.toString()
             holder.dateMonthTextView.text = date.dayOfMonth.toString()
             holder.dateDayTextView.text = monthProperty.asText
-            if (timelineList[position].rating.state == RATING_VALUE.NO_RATING) {
+            if (timelineList[position].rating.state == RATING_VALUE.NO_RATING || timelineList[position].rating.value == 0f) {
                 holder.ratingBar.visibility = View.GONE // Hide the rating bar if a rating hasn't been set
                 // We also change the constraints on the review so there isn't a weird gap
                 val constraintSet = ConstraintSet()
