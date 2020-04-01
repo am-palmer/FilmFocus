@@ -11,15 +11,18 @@ import amichealpalmer.kotlin.filmfocus.data.json.GetJSONSearch
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.ProgressBar
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.fragment_browse.*
 
 
 private const val ARG_RESULTS = "resultList"
@@ -34,6 +37,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
     internal var callback: onResultActionListener? = null
     var resultList = ArrayList<FilmThumbnail>()
     lateinit var recyclerView: RecyclerView
+    //var progressBar: ProgressBar? = null
     private val TAG = "BrowseFragment"
     private var noMoreResults = false
     var searchString: String? = null
@@ -58,13 +62,10 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         }
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        //searchHelper().searchByTitleKeyword(searchString)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Get the resultList
-        //searchHelper().searchByTitleKeyword(searchString)
 
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView called")
@@ -72,19 +73,19 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         recyclerView = view.findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
         recyclerView.layoutManager = GridLayoutManager(activity, 3)
         recyclerView.adapter = BrowseRecyclerAdapter(activity!!, resultList)
-        val recyclerAdapter = recyclerView.adapter as BrowseRecyclerAdapter
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 // could perhaps rewrite this so it loads new entries before the bottom is reached, right now it is jarring
                 if (!recyclerView.canScrollVertically(1)) { // todo: UI and backend logic are completely wrapped up together using this method
                     if (!noMoreResults && searchString != null) {
-                        //Toast.makeText(activity, "Reached last row - attempting to load more items", Toast.LENGTH_SHORT).show()
                         searchHelper().searchByTitleKeyword(searchString!!)
                     }
                 }
             }
         })
+        //progressBar = browse_fragment_progressBar
+        //progressBar?.visibility = View.GONE
         return view
     }
 
@@ -121,6 +122,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     inner class searchHelper {
         val activity = callback as MainActivity
+
         fun searchByTitleKeyword(titleContains: String) {
             Log.d(TAG, ".searchByTitleKeyword starts")
             if (currentPage == 1){
@@ -129,14 +131,15 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                 adapter.clearList()
             }
             searchString = titleContains
-            val query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
+            var query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
             currentPage++
+            browse_fragment_progressBar.visibility = View.VISIBLE
             GetJSONSearch(this, (activity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries
         }
 
 
         fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {
-            //resultList.addAll(resultList)
+            browse_fragment_progressBar.visibility = View.GONE
             val adapter = recyclerView.adapter as BrowseRecyclerAdapter
             if (resultList.size > 0) {
                 adapter.updateList(resultList as List<FilmThumbnail>)
