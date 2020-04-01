@@ -10,7 +10,7 @@
         android:id="@+id/timeline_line"
         android:layout_width="2dp"
         android:layout_height="0dp"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="38dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,15 +21,15 @@
         android:layout_width="100dp"
         android:layout_height="160dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
         android:background="#2d2d2d"
         android:clickable="true"
         android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="@+id/timeline_line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/icon_star_watched_frame"
+        app:layout_constraintTop_toBottomOf="@+id/date_holder_constraintLayout"
         tools:srcCompat="@drawable/cover_placeholder"></ImageView>
 
 
@@ -38,12 +38,13 @@
         style="@style/Widget.AppCompat.RatingBar.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:rating="4"
         android:theme="@style/RatingBar"
-        app:layout_constraintEnd_toEndOf="@+id/date_holder_constraintLayout"
-        app:layout_constraintStart_toStartOf="@+id/date_holder_constraintLayout"
-        app:layout_constraintTop_toBottomOf="@+id/date_holder_constraintLayout" />
+        app:layout_constraintBottom_toBottomOf="@+id/timeline_item_film_poster"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/timeline_item_film_poster"
+        app:layout_constraintTop_toTopOf="@+id/timeline_item_film_poster"
+        app:layout_constraintVertical_bias="0.25" />
 
     <TextView
         android:id="@+id/timeline_item_review_tv"
@@ -59,21 +60,23 @@
         android:text=""
         android:textAlignment="gravity"
         android:textSize="14sp"
-        android:textStyle="italic"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toBottomOf="@+id/timeline_item_film_poster"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/timeline_item_film_poster"
         app:layout_constraintTop_toBottomOf="@+id/timeline_item_ratingBar"
+        app:layout_constraintVertical_bias="0.0"
         tools:text='"Amazing film! One of my all time favourites"' />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/date_holder_constraintLayout"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/timeline_item_film_poster"
-        app:layout_constraintTop_toTopOf="@+id/timeline_item_film_poster">
+        app:layout_constraintEnd_toEndOf="@+id/timeline_item_film_poster"
+        app:layout_constraintStart_toStartOf="@+id/timeline_item_film_poster"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/timeline_item_date_month"
@@ -137,10 +140,11 @@
         android:layout_marginBottom="8dp"
         android:text="Watched"
         android:textColor="@color/colorPrimaryDark"
-        app:layout_constraintBottom_toTopOf="@+id/timeline_item_film_poster"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/timeline_item_film_poster"
         app:layout_constraintStart_toStartOf="@+id/timeline_item_film_poster"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeline_item_film_poster"
         tools:text="Watched" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -72,11 +72,11 @@ class HistoryRecyclerAdapter(
             // Figure out the ordinal indicator
             var j = dayInt % 10
             var k = dayInt % 100
-            if (j == 1 && k != 11){
+            if (j == 1 && k != 11) {
                 dateDay = dayInt.toString() + "st"
-            } else if (j == 2 && k != 12){
+            } else if (j == 2 && k != 12) {
                 dateDay = dayInt.toString() + "nd"
-            } else if (j == 3 && k != 13){
+            } else if (j == 3 && k != 13) {
                 dateDay = dayInt.toString() + "rd"
             } else {
                 dateDay = dayInt.toString() + "th"
@@ -89,7 +89,9 @@ class HistoryRecyclerAdapter(
                 // We also change the constraints on the review so there isn't a weird gap
                 val constraintSet = ConstraintSet()
                 constraintSet.clone(holder.constraintLayoutWrapper)
-                constraintSet.connect(holder.reviewTextView.id, ConstraintSet.TOP, holder.dateHolderConstraintLayout.id, ConstraintSet.BOTTOM, 12)
+                constraintSet.connect(holder.reviewTextView.id, ConstraintSet.TOP, R.id.timeline_item_film_poster, ConstraintSet.TOP, 0)
+                constraintSet.setVerticalBias(R.id.timeline_item_review_tv, 0.50f)
+
                 constraintSet.applyTo(holder.constraintLayoutWrapper)
             } else {
                 holder.ratingBar.rating = timelineList[position].rating.value
@@ -102,6 +104,12 @@ class HistoryRecyclerAdapter(
                 holder.reviewTextView.visibility = View.VISIBLE
             } else {
                 holder.reviewTextView.visibility = View.GONE // Hide review field if not set
+                if (timelineList[position].rating.value > 0f){
+                    val constraintSet = ConstraintSet()
+                    constraintSet.clone(holder.constraintLayoutWrapper)
+                    constraintSet.setVerticalBias(R.id.timeline_item_ratingBar, 0.50f)
+                    constraintSet.applyTo(holder.constraintLayoutWrapper)
+                }
             }
             // Programmatically change views if film is marked as watched or dropped
             when (timelineList[position].status) {
