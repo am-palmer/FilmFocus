@@ -66,8 +66,24 @@ class HistoryRecyclerAdapter(
             val monthProperty: LocalDate.Property = date.monthOfYear()
             // Set the views
             // holder.dateYearTextView.text = date.year.toString()
-            holder.dateMonthTextView.text = date.dayOfMonth.toString()
-            holder.dateDayTextView.text = monthProperty.asText
+            val dayInt = date.dayOfMonth.toInt()
+            var dateDay = "null"
+
+            // Figure out the ordinal indicator
+            var j = dayInt % 10
+            var k = dayInt % 100
+            if (j == 1 && k != 11){
+                dateDay = dayInt.toString() + "st"
+            } else if (j == 2 && k != 12){
+                dateDay = dayInt.toString() + "nd"
+            } else if (j == 3 && k != 13){
+                dateDay = dayInt.toString() + "rd"
+            } else {
+                dateDay = dayInt.toString() + "th"
+            }
+
+            holder.dateMonthTextView.text = monthProperty.asText
+            holder.dateDayTextView.text = dateDay
             if (timelineList[position].rating.state == RATING_VALUE.NO_RATING || timelineList[position].rating.value == 0f) {
                 holder.ratingBar.visibility = View.GONE // Hide the rating bar if a rating hasn't been set
                 // We also change the constraints on the review so there isn't a weird gap
@@ -124,7 +140,6 @@ class HistoryRecyclerAdapter(
         : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
         val poster: ImageView = view.findViewById(R.id.timeline_item_film_poster)
 
-        //val cardViewWrapper: CardView = view.findViewById(R.id.timeline_item_cardview_wrapper)
         val constraintLayoutWrapper: ConstraintLayout = view.findViewById(R.id.history_timeline_item_constraintLayout)
         val ratingBar: RatingBar = view.findViewById(R.id.timeline_item_ratingBar)
         val dateDayTextView: TextView = view.findViewById(R.id.timeline_item_date_day)
@@ -133,7 +148,6 @@ class HistoryRecyclerAdapter(
         val watchedDroppedTextView: TextView = view.findViewById(R.id.timeline_item_tv_WATCHED_DROPPED)
         val watchedDroppedIcon: ImageView = view.findViewById(R.id.icon_watched_dropped_drawable)
 
-        //val dateYearTextView: TextView = view.findViewById(R.id.timeline_item_date_year)
         val reviewTextView: TextView = view.findViewById(R.id.timeline_item_review_tv)
 
         init {
