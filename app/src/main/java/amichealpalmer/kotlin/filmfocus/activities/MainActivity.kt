@@ -341,13 +341,25 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
     }
 
     override fun onTimelineItemSelected(item: TimelineItem, type: TIMELINE_ITEM_CONTEXT_ACTION_TYPE) {
-        if (type == TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_REMOVE) {
-            timelineList.remove(item)
-            Toast.makeText(this, "Removed ${item.film.title} from History", Toast.LENGTH_SHORT).show()
-            saveData()
-        }
-        if (type == TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ADD_TO_WATCHLIST) {
-            helperAddToWatchlist(item.film)
+        when (type) {
+            TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_REMOVE -> {
+                timelineList.remove(item)
+                Toast.makeText(this, "Removed ${item.film.title} from History", Toast.LENGTH_SHORT).show()
+                saveData()
+            }
+            TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ADD_TO_WATCHLIST -> {
+                helperAddToWatchlist(item.film)
+            }
+            TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_UPDATE -> {
+                // Somewhat inefficient - but probably won't be called often enough for it to matter
+                for (listItem in timelineList){
+                    if (listItem.date == item.date && listItem.film.imdbID == item.film.imdbID){
+                        val position = timelineList.indexOf(listItem)
+                        timelineList[position] = item
+                        saveData()
+                    }
+                }
+            }
         }
     }
 }

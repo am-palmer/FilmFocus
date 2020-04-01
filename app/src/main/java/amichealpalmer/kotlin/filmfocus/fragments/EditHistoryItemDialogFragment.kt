@@ -13,36 +13,47 @@ import android.widget.*
 import androidx.fragment.app.DialogFragment
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_watchlist_watched_dialog.*
+import kotlinx.android.synthetic.main.history_list_item.*
 import org.joda.time.LocalDate
 import java.lang.NullPointerException
 
-// Dialog fragment called when a film is marked watched in the context menu
-class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListener, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
+// todo: code duplication with watchedDialogFragment - should they inherit from a parent class?
 
-    private val TAG = "WatchedDialogFragment"
-    private lateinit var callback: onWatchedDialogSubmissionListener
-    private lateinit var film: FilmThumbnail
+// This is the fragment that is displayed when a user edits an item in the history
+class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListener, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
+
+    private val TAG = "EditHistoryItemDiaFrag"
+    private lateinit var callback: onHistoryEditDialogSubmissionListener
     private var rating: Float? = null
     private var hasRating = false
-    private var status: TIMELINE_ITEM_STATUS = TIMELINE_ITEM_STATUS.WATCHED
+    private lateinit var timelineItem: TimelineItem
+    private lateinit var status: TIMELINE_ITEM_STATUS
+    private var arrayPosition = 0
 
-    interface onWatchedDialogSubmissionListener {
-        fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem)
+    interface onHistoryEditDialogSubmissionListener {
+        fun onEditHistoryItemDialogSubmissionListener(timelineItem: TimelineItem, arrayPosition: Int)
     }
 
-    fun setOnWatchedDialogSubmissionListener(callback: onWatchedDialogSubmissionListener) {
+    fun setHistoryEditDialogSubmissionListener(callback: onHistoryEditDialogSubmissionListener) {
         this.callback = callback
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
-            film = arguments!!.getParcelable<FilmThumbnail>("film") as FilmThumbnail
-            Log.d(TAG, ".onCreate: film is ${film.title}")
+            timelineItem = arguments!!.getParcelable<FilmThumbnail>("timelineItem") as TimelineItem
+            arrayPosition = arguments!!.getInt("arrayPosition")
         } catch (e: NullPointerException) {
-            // todo: less general catch
-            Log.e(TAG, ".onCreate - failed to retrieve film from bundle")
+            Log.e(TAG, ".onCreate - failed to retrieve timelineItem from bundle")
         }
+        rating = timelineItem.rating.value
+        if (rating!!.toFloat() > 0f) {
+            hasRating = true
+        } else {
+            rating = 0f
+        }
+        status = timelineItem.status
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? { // Called because we're using a custom XML layout to define the dialog layout
@@ -54,12 +65,20 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) { // Called after onCreateView
         super.onViewCreated(view, savedInstanceState)
 
+        // Load content from the timeline item
+        fragment_watchlist_watched_dialog_ratingBar.rating = rating!!
+        when (status){
+            TIMELINE_ITEM_STATUS.DROPPED -> fragment_watchlist_watched_dialog_toggleWatched.isChecked = false
+            TIMELINE_ITEM_STATUS.WATCHED -> fragment_watchlist_watched_dialog_toggleWatched.isChecked = true
+        }
+        fragment_watchlist_watched_dialog_review_et.setText(timelineItem.getReview())
+
         fragment_watchlist_watched_dialog_ratingBar.onRatingBarChangeListener = this
         fragment_watchlist_watched_dialog_toggleWatched.setOnCheckedChangeListener(this)
         fragment_watchlist_watched_dialog_cancelButton.setOnClickListener(this)
         fragment_watchlist_watched_dialog_doneButton.setOnClickListener(this)
 
-        Picasso.get().load(film.posterURL).error(R.drawable.placeholder_imageloading)
+        Picasso.get().load(timelineItem.film.posterURL).error(R.drawable.placeholder_imageloading)
                 .placeholder(R.drawable.placeholder_imageloading).into(fragment_watchlist_watched_dialog_poster_iv)
 
         // ?
@@ -78,7 +97,7 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
             fragment_watchlist_watched_dialog_doneButton.id -> {
                 Log.d(TAG, "Done button clicked")
                 // We send all the info to the Watchlist Fragment as a timeline item
-                val date = LocalDate.now()
+                val date = timelineItem.date
                 val text = fragment_watchlist_watched_dialog_review_et.text.toString()
                 var ratingObject: FilmRating?
                 if (hasRating) {
@@ -86,8 +105,8 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
                 } else {
                     ratingObject = FilmRating(0f, RATING_VALUE.NO_RATING)
                 }
-                val item = TimelineItem(film, ratingObject, date, text, status)
-                callback.onWatchedDialogSubmissionListener(item)
+                val item = TimelineItem(timelineItem.film, ratingObject, date, text, status)
+                callback.onEditHistoryItemDialogSubmissionListener(item, arrayPosition)
                 this.dismiss()
             }
             else -> true
@@ -107,10 +126,11 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
 
     companion object {
 
-        fun newInstance(filmThumbnail: FilmThumbnail): WatchedDialogFragment {
-            val fragment = WatchedDialogFragment()
+        fun newInstance(timelineItem: TimelineItem, arrayPosition: Int): EditHistoryItemDialogFragment {
+            val fragment = EditHistoryItemDialogFragment()
             val bundle = Bundle()
-            bundle.putParcelable("film", filmThumbnail)
+            bundle.putParcelable("timelineItem", timelineItem)
+            bundle.putInt("arrayPosition", arrayPosition)
             fragment.arguments = bundle
             return fragment
         }

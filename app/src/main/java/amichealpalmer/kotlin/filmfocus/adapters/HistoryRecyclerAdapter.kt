@@ -48,7 +48,7 @@ class HistoryRecyclerAdapter(
         notifyDataSetChanged()
     }
 
-    fun removeTimelineItem(item: TimelineItem){
+    fun removeTimelineItem(item: TimelineItem) {
         timelineList.remove(item)
     }
 
@@ -77,18 +77,26 @@ class HistoryRecyclerAdapter(
                 constraintSet.applyTo(holder.constraintLayoutWrapper)
             } else {
                 holder.ratingBar.rating = timelineList[position].rating.value
+                holder.ratingBar.visibility = View.VISIBLE
             }
 
             if (timelineList[position].hasReview()) {
                 val review = "\"" + timelineList[position].getReview() + "\""
                 holder.reviewTextView.text = review
+                holder.reviewTextView.visibility = View.VISIBLE
             } else {
                 holder.reviewTextView.visibility = View.GONE // Hide review field if not set
             }
-            // Programmatically change views if film is marked as dropped
-            if (timelineList[position].status == TIMELINE_ITEM_STATUS.DROPPED){
-                holder.watchedDroppedIcon.setImageResource(R.drawable.ic_dropped_darkgreen_24dp)
-                holder.watchedDroppedTextView.text = "Dropped"
+            // Programmatically change views if film is marked as watched or dropped
+            when (timelineList[position].status) {
+                TIMELINE_ITEM_STATUS.WATCHED -> {
+                    holder.watchedDroppedTextView.text = "Watched"
+                    holder.watchedDroppedIcon.setImageResource(R.drawable.ic_watched_darkgreen_24dp)
+                }
+                TIMELINE_ITEM_STATUS.DROPPED -> {
+                    holder.watchedDroppedIcon.setImageResource(R.drawable.ic_dropped_darkgreen_24dp)
+                    holder.watchedDroppedTextView.text = "Dropped"
+                }
             }
 
             holder.itemView.setOnLongClickListener {
@@ -124,6 +132,7 @@ class HistoryRecyclerAdapter(
         val dateHolderConstraintLayout: ConstraintLayout = view.findViewById(R.id.date_holder_constraintLayout)
         val watchedDroppedTextView: TextView = view.findViewById(R.id.timeline_item_tv_WATCHED_DROPPED)
         val watchedDroppedIcon: ImageView = view.findViewById(R.id.icon_watched_dropped_drawable)
+
         //val dateYearTextView: TextView = view.findViewById(R.id.timeline_item_date_year)
         val reviewTextView: TextView = view.findViewById(R.id.timeline_item_review_tv)
 

@@ -17,10 +17,10 @@ import java.lang.NullPointerException
 private const val ARG_TIMELINE_LIST = "timelineList"
 
 enum class TIMELINE_ITEM_CONTEXT_ACTION_TYPE {
-    TIMELINE_ITEM_REMOVE, TIMELINE_ADD_TO_WATCHLIST
+    TIMELINE_ITEM_REMOVE, TIMELINE_ADD_TO_WATCHLIST, TIMELINE_ITEM_UPDATE
 }
 
-class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener { // note code duplication with other fragments
+class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener { // note code duplication with other fragments
 
     private val TAG = "HistoryFragment"
 
@@ -100,6 +100,12 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
                 val timelineItem = adapter.getItem(position)
                 callback?.onTimelineItemSelected(timelineItem, TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ADD_TO_WATCHLIST)
             }
+            R.id.history_timeline_item_context_menu_editReview -> {
+                val timelineItem = adapter.getItem(position)
+                val editFragment = EditHistoryItemDialogFragment.newInstance(timelineItem, position)
+                editFragment.setHistoryEditDialogSubmissionListener(this)
+                editFragment.show(fragmentManager!!, "fragment_edit_history_item_dialog")
+            }
             else -> true
         }
 
@@ -130,6 +136,13 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
             fragment.arguments = args
             return fragment
         }
+    }
+
+    override fun onEditHistoryItemDialogSubmissionListener(timelineItem: TimelineItem, arrayPosition: Int) {
+        val adapter = recyclerView.adapter as HistoryRecyclerAdapter
+        timelineList[arrayPosition] = timelineItem
+        adapter.notifyDataSetChanged() // Is this enough?
+        callback!!.onTimelineItemSelected(timelineItem, TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_UPDATE)
     }
 
 }
@@ -177,6 +190,8 @@ class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClic
             }
         }
     }
+
+
 
     enum class DIALOG_OUTCOME {
         YES, NO
