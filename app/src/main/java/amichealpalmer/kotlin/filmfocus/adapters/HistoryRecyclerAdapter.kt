@@ -104,13 +104,21 @@ class HistoryRecyclerAdapter(
                 holder.reviewTextView.visibility = View.VISIBLE
             } else {
                 holder.reviewTextView.visibility = View.GONE // Hide review field if not set
-                if (timelineList[position].rating.value > 0f){
+                if (timelineList[position].rating.value > 0f) {
                     val constraintSet = ConstraintSet()
                     constraintSet.clone(holder.constraintLayoutWrapper)
                     constraintSet.setVerticalBias(R.id.timeline_item_ratingBar, 0.50f)
                     constraintSet.applyTo(holder.constraintLayoutWrapper)
                 }
             }
+
+            // Programmatically remove portion of line if this is the first or last entry in the list
+            if (position == 0) {
+                holder.timelineLineTop.visibility = View.INVISIBLE
+            } else if (position == (timelineList.size) - 1) {
+                holder.timelineLineBottom.visibility = View.INVISIBLE
+            }
+
             // Programmatically change views if film is marked as watched or dropped
             when (timelineList[position].status) {
                 TIMELINE_ITEM_STATUS.WATCHED -> {
@@ -152,9 +160,13 @@ class HistoryRecyclerAdapter(
         val ratingBar: RatingBar = view.findViewById(R.id.timeline_item_ratingBar)
         val dateDayTextView: TextView = view.findViewById(R.id.timeline_item_date_day)
         val dateMonthTextView: TextView = view.findViewById(R.id.timeline_item_date_month)
-        val dateHolderConstraintLayout: ConstraintLayout = view.findViewById(R.id.date_holder_constraintLayout)
+
+        //val dateHolderConstraintLayout: ConstraintLayout = view.findViewById(R.id.date_holder_constraintLayout)
         val watchedDroppedTextView: TextView = view.findViewById(R.id.timeline_item_tv_WATCHED_DROPPED)
         val watchedDroppedIcon: ImageView = view.findViewById(R.id.icon_watched_dropped_drawable)
+        val timelineLineTop: ImageView = view.findViewById(R.id.timeline_line_top)
+        val timelineLineBottom: ImageView = view.findViewById(R.id.timeline_line_bottom)
+
 
         val reviewTextView: TextView = view.findViewById(R.id.timeline_item_review_tv)
 
