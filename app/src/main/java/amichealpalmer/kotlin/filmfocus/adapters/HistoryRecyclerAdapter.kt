@@ -57,6 +57,7 @@ class HistoryRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: HelperViewHolder, position: Int) {
+        Log.d(TAG, ".onBindViewHolder begins for position $position")
         if (timelineList.size > 0) {
             Picasso.get().load(timelineList[position].film.posterURL).error(R.drawable.placeholder_imageloading)
                     .placeholder(R.drawable.placeholder_imageloading).into(holder.poster)
@@ -84,12 +85,14 @@ class HistoryRecyclerAdapter(
 
             holder.dateMonthTextView.text = monthProperty.asText
             holder.dateDayTextView.text = dateDay
+            Log.d(TAG, ".onBindViewHolder: configuring rating bar")
             if (timelineList[position].rating.state == RATING_VALUE.NO_RATING || timelineList[position].rating.value == 0f) {
                 holder.ratingBar.visibility = View.GONE // Hide the rating bar if a rating hasn't been set
                 // We also change the constraints on the review so there isn't a weird gap
+                Log.d(TAG, ".onBindViewHolder: rating constraintset")
                 val constraintSet = ConstraintSet()
                 constraintSet.clone(holder.constraintLayoutWrapper)
-                constraintSet.connect(holder.reviewTextView.id, ConstraintSet.TOP, R.id.timeline_item_film_poster, ConstraintSet.TOP, 0)
+                constraintSet.connect(holder.reviewTextView.id, ConstraintSet.TOP, R.id.timeline_item_poster_holder_cardview, ConstraintSet.TOP, 0)
                 constraintSet.setVerticalBias(R.id.timeline_item_review_tv, 0.50f)
 
                 constraintSet.applyTo(holder.constraintLayoutWrapper)
@@ -98,6 +101,7 @@ class HistoryRecyclerAdapter(
                 holder.ratingBar.visibility = View.VISIBLE
             }
 
+            Log.d(TAG, ".onBindViewHolder: configuring review visibility")
             if (timelineList[position].hasReview()) {
                 val review = "\"" + timelineList[position].getReview() + "\""
                 holder.reviewTextView.text = review
@@ -105,6 +109,7 @@ class HistoryRecyclerAdapter(
             } else {
                 holder.reviewTextView.visibility = View.GONE // Hide review field if not set
                 if (timelineList[position].rating.value > 0f) {
+                    Log.d(TAG, ".onBindViewHolder: rating for $position is > 0f. review constraintset to change layout")
                     val constraintSet = ConstraintSet()
                     constraintSet.clone(holder.constraintLayoutWrapper)
                     constraintSet.setVerticalBias(R.id.timeline_item_ratingBar, 0.50f)
@@ -114,8 +119,10 @@ class HistoryRecyclerAdapter(
 
             // Programmatically remove portion of line if this is the first or last entry in the list
             if (position == 0) {
+                Log.d(TAG, ".onBindViewHolder: position is 0, hiding top part of time line line")
                 holder.timelineLineTop.visibility = View.INVISIBLE
             } else if (position == (timelineList.size) - 1) {
+                Log.d(TAG, ".onBindViewHolder: position is last in array. hiding bottom part of line")
                 holder.timelineLineBottom.visibility = View.INVISIBLE
             }
 
@@ -136,9 +143,11 @@ class HistoryRecyclerAdapter(
                 false
             }
         }
+        Log.d(TAG, ".onBindViewHolder ends for position $position")
     }
 
     override fun onViewRecycled(holder: HelperViewHolder) {
+        Log.d(TAG, ".onViewRecycled called")
         holder.itemView.setOnLongClickListener(null)
         super.onViewRecycled(holder)
     }
@@ -171,6 +180,7 @@ class HistoryRecyclerAdapter(
         val reviewTextView: TextView = view.findViewById(R.id.timeline_item_review_tv)
 
         init {
+            Log.d(TAG, "HelperViewHolder: init segment")
             poster.setOnClickListener {
                 val fragment = FilmDetailsFragment()
                 val bundle = Bundle()

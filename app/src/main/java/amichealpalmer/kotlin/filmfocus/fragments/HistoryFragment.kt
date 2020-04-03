@@ -37,7 +37,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        Log.d(TAG, ".onCreate begins")
         try {
             val bundleList = arguments!!.getParcelableArrayList<TimelineItem>(ARG_TIMELINE_LIST) as ArrayList<TimelineItem>
             if (!bundleList.isNullOrEmpty()) {
@@ -50,6 +50,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         } catch (e: NullPointerException) {
             Log.e(TAG, ".onCreate: timelineList null in arguments")
         }
+        Log.d(TAG, ".onCreate: timelineList created. list has ${timelineList.size} items")
         //setHasOptionsMenu(true) ?
         super.onCreate(savedInstanceState)
     }
@@ -57,7 +58,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        Log.d(TAG, ".onCreateView called")
+        Log.d(TAG, ".onCreateView begins")
         var view = inflater.inflate(R.layout.fragment_history, container, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.fragment_history_timeline_rv)
         //recyclerView.layoutManager = GridLayoutManager(activity, 3)
@@ -67,6 +68,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     }
 
     override fun onAttach(context: Context) {
+        Log.d(TAG, ".onAttach begins")
         super.onAttach(context)
         if (context is OnTimelineItemSelectedListener) {
             callback = context
@@ -76,11 +78,13 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     }
 
     override fun onDetach() {
+        Log.d(TAG, ".onDetach begins")
         super.onDetach()
         callback = null
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
+        Log.d(TAG, ".onContextItemSelected begins")
         val adapter = recyclerView.adapter as HistoryRecyclerAdapter
         var position = -1
         try {
@@ -128,8 +132,9 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     }
 
     companion object {
-
+        private val TAG = "HistoryFragmentCompan"
         fun newInstance(timelineList: ArrayList<TimelineItem>): HistoryFragment {
+            Log.d(TAG, ".newInstance")
             val fragment = HistoryFragment()
             val args = Bundle()
             args.putParcelableArrayList(ARG_TIMELINE_LIST, timelineList)

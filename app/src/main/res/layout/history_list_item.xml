@@ -9,10 +9,8 @@
     <ImageView
         android:id="@+id/timeline_line_top"
         android:layout_width="2dp"
-        android:layout_height="120dp"
+        android:layout_height="145dp"
         android:layout_marginStart="38dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/icon_star_watched_frame"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@color/colorPrimaryDark" />
@@ -26,21 +24,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@color/colorPrimaryDark" />
 
-    <ImageView
-        android:id="@+id/timeline_item_film_poster"
-        android:layout_width="100dp"
-        android:layout_height="160dp"
+    <androidx.cardview.widget.CardView
+        android:layout_width="120dp"
+        android:layout_height="190dp"
+        android:foreground="?android:attr/selectableItemBackground"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:background="#2d2d2d"
-        android:clickable="true"
-        android:scaleType="fitXY"
+        app:cardCornerRadius="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/icon_star_watched_frame"
         app:layout_constraintTop_toBottomOf="@+id/date_holder_constraintLayout"
-        tools:srcCompat="@drawable/cover_placeholder"></ImageView>
+        android:id="@+id/timeline_item_poster_holder_cardview"
+        >
+
+        <ImageView
+            android:id="@+id/timeline_item_film_poster"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#2d2d2d"
+            android:scaleType="fitXY"
+            tools:srcCompat="@drawable/cover_placeholder"></ImageView>
+    </androidx.cardview.widget.CardView>
+
 
 
     <RatingBar
@@ -50,10 +57,10 @@
         android:layout_height="wrap_content"
         android:rating="4"
         android:theme="@style/RatingBar"
-        app:layout_constraintBottom_toBottomOf="@+id/timeline_item_film_poster"
+        app:layout_constraintBottom_toBottomOf="@+id/timeline_item_poster_holder_cardview"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/timeline_item_film_poster"
-        app:layout_constraintTop_toTopOf="@+id/timeline_item_film_poster"
+        app:layout_constraintStart_toEndOf="@+id/timeline_item_poster_holder_cardview"
+        app:layout_constraintTop_toTopOf="@+id/timeline_item_poster_holder_cardview"
         app:layout_constraintVertical_bias="0.25" />
 
     <TextView
@@ -71,10 +78,10 @@
         android:textAlignment="gravity"
         android:textSize="14sp"
         android:textStyle="bold|italic"
-        app:layout_constraintBottom_toBottomOf="@+id/timeline_item_film_poster"
+        app:layout_constraintBottom_toBottomOf="@+id/timeline_item_poster_holder_cardview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/timeline_item_film_poster"
+        app:layout_constraintStart_toEndOf="@+id/timeline_item_poster_holder_cardview"
         app:layout_constraintTop_toBottomOf="@+id/timeline_item_ratingBar"
         app:layout_constraintVertical_bias="0.0"
         tools:text='"Amazing film! One of my all time favourites"' />
@@ -84,8 +91,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/timeline_item_film_poster"
-        app:layout_constraintStart_toStartOf="@+id/timeline_item_film_poster"
+        app:layout_constraintEnd_toEndOf="@+id/timeline_item_poster_holder_cardview"
+        app:layout_constraintStart_toStartOf="@+id/timeline_item_poster_holder_cardview"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -129,9 +136,9 @@
         android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/timeline_item_film_poster"
-        app:layout_constraintStart_toStartOf="@+id/timeline_item_film_poster"
-        app:layout_constraintTop_toBottomOf="@+id/timeline_item_film_poster"
+        app:layout_constraintEnd_toEndOf="@+id/timeline_item_poster_holder_cardview"
+        app:layout_constraintStart_toStartOf="@+id/timeline_item_poster_holder_cardview"
+        app:layout_constraintTop_toBottomOf="@+id/timeline_item_poster_holder_cardview"
         tools:text="Watched" />
 
     <FrameLayout
@@ -140,8 +147,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/timeline_line_bottom"
         app:layout_constraintEnd_toEndOf="@+id/timeline_line_bottom"
-        app:layout_constraintStart_toStartOf="@+id/timeline_line_bottom"
-        app:layout_constraintTop_toTopOf="@+id/timeline_line_bottom">
+        app:layout_constraintStart_toStartOf="@+id/timeline_line_bottom">
 
         <ImageView
             android:id="@+id/imageView2"
