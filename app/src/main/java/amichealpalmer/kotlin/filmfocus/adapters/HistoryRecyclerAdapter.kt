@@ -32,7 +32,7 @@ class HistoryRecyclerAdapter(
 
     private val TAG = "HistoryRecyclerAdapter"
     var position = 0
-
+    //lateinit var holder: HelperViewHolder
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelperViewHolder {
         Log.d(TAG, ".onCreateViewHolder called")
@@ -138,7 +138,7 @@ class HistoryRecyclerAdapter(
                 }
             }
 
-            holder.itemView.setOnLongClickListener {
+            holder.poster.setOnLongClickListener {
                 this.position = (holder.adapterPosition)
                 false
             }
@@ -148,7 +148,7 @@ class HistoryRecyclerAdapter(
 
     override fun onViewRecycled(holder: HelperViewHolder) {
         Log.d(TAG, ".onViewRecycled called")
-        holder.itemView.setOnLongClickListener(null)
+        holder.poster.setOnLongClickListener(null)
         super.onViewRecycled(holder)
     }
 

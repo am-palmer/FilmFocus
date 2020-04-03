@@ -89,6 +89,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         var position = -1
         try {
             position = adapter.position
+            Log.d(TAG, "onContextItemSelected: position is $position")
         } catch (e: NullPointerException) {
             Log.d(TAG, e.localizedMessage, e)
             return super.onContextItemSelected(item)
