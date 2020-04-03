@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/timeline_line_top"
         android:layout_width="2dp"
-        android:layout_height="145dp"
+        android:layout_height="130dp"
         android:layout_marginStart="38dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -18,7 +18,7 @@
     <ImageView
         android:id="@+id/timeline_line_bottom"
         android:layout_width="2dp"
-        android:layout_height="120dp"
+        android:layout_height="130dp"
         android:layout_marginStart="38dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -145,9 +145,10 @@
         android:id="@+id/icon_star_watched_frame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/timeline_line_bottom"
+        app:layout_constraintBottom_toBottomOf="@+id/timeline_item_poster_holder_cardview"
         app:layout_constraintEnd_toEndOf="@+id/timeline_line_bottom"
-        app:layout_constraintStart_toStartOf="@+id/timeline_line_bottom">
+        app:layout_constraintStart_toStartOf="@+id/timeline_line_bottom"
+        app:layout_constraintTop_toTopOf="@+id/timeline_item_poster_holder_cardview">
 
         <ImageView
             android:id="@+id/imageView2"
