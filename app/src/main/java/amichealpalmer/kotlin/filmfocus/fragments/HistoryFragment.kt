@@ -147,7 +147,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     override fun onEditHistoryItemDialogSubmissionListener(timelineItem: TimelineItem, arrayPosition: Int) {
         val adapter = recyclerView.adapter as HistoryRecyclerAdapter
         timelineList[arrayPosition] = timelineItem
-        adapter.notifyDataSetChanged() // Is this enough?
+        adapter.notifyItemChanged(arrayPosition) // Is this enough?
         callback!!.onTimelineItemSelected(timelineItem, TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_UPDATE)
     }
 
@@ -196,8 +196,6 @@ class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClic
             }
         }
     }
-
-
 
     enum class DIALOG_OUTCOME {
         YES, NO

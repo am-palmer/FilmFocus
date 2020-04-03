@@ -32,19 +32,24 @@ enum class WATCHLIST_FILM_CONTEXT_ACTION_TYPE { // todo: Should this be somewher
     WATCHLIST_REMOVE, WATCHLIST_MARK_WATCHED
 }
 
+enum class WATCHLIST_MENU_ITEM_ACTION_TYPE {
+    REMOVE_ALL
+}
+
 class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
 
     private val TAG = "WatchlistFragment"
-    internal var callback: OnFilmSelectedListener? = null
+    internal var callback: OnWatchlistActionListener? = null
     private lateinit var watchlist: ArrayList<FilmThumbnail>
     lateinit var recyclerView: RecyclerView
 
-    fun setOnFilmSelectedListener(callback: OnFilmSelectedListener) {
+    fun setOnFilmSelectedListener(callback: OnWatchlistActionListener) {
         this.callback = callback
     }
 
-    interface OnFilmSelectedListener {
+    interface OnWatchlistActionListener {
         fun onFilmSelected(bundle: Bundle, typeWATCHLIST: WATCHLIST_FILM_CONTEXT_ACTION_TYPE)
+        fun onWatchlistMenuItemSelected(bundle: Bundle, actionType: WATCHLIST_MENU_ITEM_ACTION_TYPE)
     }
 
 
@@ -72,7 +77,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnFilmSelectedListener) {
+        if (context is OnWatchlistActionListener) {
             callback = context
         } else {
             throw RuntimeException(context.toString() + " must implement onFilmSelectedListener")
@@ -86,13 +91,13 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         Log.d(TAG, ".onCreateOptionsMenu called")
-        inflater.inflate(R.menu.browse_fragment_menu, menu)
+        inflater.inflate(R.menu.watchlist_fragment_menu, menu)
 
         val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext
                 ?: context)
         searchView.isIconifiedByDefault = false
         searchView.requestFocus()
-        menu.findItem(R.id.browse_fragment_search).apply {
+        menu.findItem(R.id.watchlist_fragment_search).apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)
             actionView = searchView
         }
@@ -115,6 +120,21 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
 
         super.onCreateOptionsMenu(menu, inflater)
 
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d(TAG, ".onOptionsItemSelected triggers")
+        when (item.itemId) {
+            R.id.watchlist_fragment_more_menu_removeAll -> {
+                //todo: show an 'are you sure? dialog, and move this below to the listener return function
+                watchlist.clear()
+                val bundle = Bundle()
+                callback?.onWatchlistMenuItemSelected(bundle, WATCHLIST_MENU_ITEM_ACTION_TYPE.REMOVE_ALL)
+                return true
+            }
+            else -> return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {

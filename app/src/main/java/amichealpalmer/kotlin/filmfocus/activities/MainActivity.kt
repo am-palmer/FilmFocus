@@ -36,7 +36,7 @@ import java.lang.reflect.Type
 
 // todo: see trello
 // todo next: implement the dialog box which shows when user marks film as watched (in watchlist view and in the browse view)
-class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener { // todo: disperse as much logic into the fragments as possible
+class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener { // todo: disperse as much logic into the fragments as possible
 
     internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
     internal val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
@@ -304,6 +304,21 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
         }
     }
 
+    override fun onWatchlistMenuItemSelected(bundle: Bundle, actionType: WATCHLIST_MENU_ITEM_ACTION_TYPE) {
+        Log.d(TAG, "watchlist is size ${watchlist.size}") // todo: why is it size zero?????
+        when (actionType) {
+            WATCHLIST_MENU_ITEM_ACTION_TYPE.REMOVE_ALL -> {
+                if (watchlist.isEmpty()) {
+                    Toast.makeText(this, "The Watchlist is already empty", Toast.LENGTH_SHORT).show()
+                } else {
+                    watchlist.clear()
+                    Toast.makeText(this, "Cleared Watchlist", Toast.LENGTH_SHORT).show()
+                    saveData()
+                }
+            }
+        }
+    }
+
     private fun helperAddToWatchlist(film: FilmThumbnail) {
         var inWatchlist = false
         for (f in watchlist) {
@@ -352,8 +367,8 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnFilmSelectedListen
             }
             TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_UPDATE -> {
                 // Somewhat inefficient - but probably won't be called often enough for it to matter
-                for (listItem in timelineList){
-                    if (listItem.date == item.date && listItem.film.imdbID == item.film.imdbID){
+                for (listItem in timelineList) {
+                    if (listItem.date == item.date && listItem.film.imdbID == item.film.imdbID) {
                         val position = timelineList.indexOf(listItem)
                         timelineList[position] = item
                         saveData()

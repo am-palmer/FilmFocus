@@ -32,7 +32,6 @@ class HistoryRecyclerAdapter(
 
     private val TAG = "HistoryRecyclerAdapter"
     var position = 0
-    //lateinit var holder: HelperViewHolder
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelperViewHolder {
         Log.d(TAG, ".onCreateViewHolder called")
@@ -63,10 +62,8 @@ class HistoryRecyclerAdapter(
                     .placeholder(R.drawable.placeholder_imageloading).into(holder.poster)
 
             var date = timelineList[position].date
-            //val dayProperty: LocalDate.Property = date.dayOfWeek()
             val monthProperty: LocalDate.Property = date.monthOfYear()
             // Set the views
-            // holder.dateYearTextView.text = date.year.toString()
             val dayInt = date.dayOfMonth.toInt()
             var dateDay = "null"
 
@@ -102,7 +99,7 @@ class HistoryRecyclerAdapter(
             }
 
             Log.d(TAG, ".onBindViewHolder: configuring review visibility")
-            if (timelineList[position].hasReview()) {
+            if (timelineList[position].hasReview() && timelineList[position].getReview().isNotEmpty()) {
                 val review = "\"" + timelineList[position].getReview() + "\""
                 holder.reviewTextView.text = review
                 holder.reviewTextView.visibility = View.VISIBLE
@@ -118,6 +115,7 @@ class HistoryRecyclerAdapter(
             }
 
             // Programmatically remove portion of line if this is the first or last entry in the list
+            Log.d(TAG, ".onBindViewHolder: about to remove portion of line possibly. Position is: $position")
             if (position == 0) {
                 Log.d(TAG, ".onBindViewHolder: position is 0, hiding top part of time line line")
                 holder.timelineLineTop.visibility = View.INVISIBLE
@@ -163,20 +161,16 @@ class HistoryRecyclerAdapter(
 
     inner class HelperViewHolder(view: View)
         : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
+        // Defining fields we access later from outside the holder
         val poster: ImageView = view.findViewById(R.id.timeline_item_film_poster)
-
         val constraintLayoutWrapper: ConstraintLayout = view.findViewById(R.id.history_timeline_item_constraintLayout)
         val ratingBar: RatingBar = view.findViewById(R.id.timeline_item_ratingBar)
         val dateDayTextView: TextView = view.findViewById(R.id.timeline_item_date_day)
         val dateMonthTextView: TextView = view.findViewById(R.id.timeline_item_date_month)
-
-        //val dateHolderConstraintLayout: ConstraintLayout = view.findViewById(R.id.date_holder_constraintLayout)
         val watchedDroppedTextView: TextView = view.findViewById(R.id.timeline_item_tv_WATCHED_DROPPED)
         val watchedDroppedIcon: ImageView = view.findViewById(R.id.icon_watched_dropped_drawable)
         val timelineLineTop: ImageView = view.findViewById(R.id.timeline_line_top)
         val timelineLineBottom: ImageView = view.findViewById(R.id.timeline_line_bottom)
-
-
         val reviewTextView: TextView = view.findViewById(R.id.timeline_item_review_tv)
 
         init {
@@ -191,8 +185,6 @@ class HistoryRecyclerAdapter(
                 manager.addToBackStack(null)
                 manager.replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
             }
-
-            //constraintLayoutWrapper.setOnCreateContextMenuListener(this)
             poster.setOnCreateContextMenuListener(this)
         }
 

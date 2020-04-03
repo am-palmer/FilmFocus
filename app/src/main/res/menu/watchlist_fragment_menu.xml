@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/watchlist_fragment_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search_title"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="collapseActionView|ifRoom" />
+
+    <item
+        android:id="@+id/browse_fragment_moreVertical"
+        android:icon="@drawable/ic_more_vert_white_24dp"
+        android:title="@string/more"
+        app:showAsAction="ifRoom|withText" >
+    <menu>
+        <item
+            android:id="@+id/watchlist_fragment_more_menu_removeAll"
+            android:title="@string/remove_all_from_watchlist" />
+    </menu>
+</item>
+
+    </menu>
