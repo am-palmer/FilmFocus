@@ -31,6 +31,7 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import org.joda.time.LocalDate
+import java.lang.NullPointerException
 import java.lang.reflect.Type
 
 
@@ -305,15 +306,22 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
     }
 
     override fun onWatchlistMenuItemSelected(bundle: Bundle, actionType: WATCHLIST_MENU_ITEM_ACTION_TYPE) {
-        Log.d(TAG, "watchlist is size ${watchlist.size}") // todo: why is it size zero?????
+        //Log.d(TAG, "currentWatchlist passed size is ${currentWatchlist.size}")
         when (actionType) {
             WATCHLIST_MENU_ITEM_ACTION_TYPE.REMOVE_ALL -> {
-                if (watchlist.isEmpty()) {
-                    Toast.makeText(this, "The Watchlist is already empty", Toast.LENGTH_SHORT).show()
-                } else {
-                    watchlist.clear()
-                    Toast.makeText(this, "Cleared Watchlist", Toast.LENGTH_SHORT).show()
-                    saveData()
+                try {
+                    val currentWatchlist = bundle.getParcelableArrayList<FilmThumbnail>("watchlist")
+                    Log.d(TAG, ".onWatchlistMenuItemSelected: watchlist has ${currentWatchlist!!.size} items")
+                    if (currentWatchlist!!.isEmpty()) {
+                        Toast.makeText(this, "The Watchlist is already empty", Toast.LENGTH_SHORT).show()
+                    } else {
+                        watchlist.clear()
+                        Toast.makeText(this, "Cleared Watchlist", Toast.LENGTH_SHORT).show()
+                        saveData()
+                    }
+                } catch (e: NullPointerException) {
+                    Log.wtf(TAG, ".onWatchlistMenuItemSelected")
+                    Log.wtf(TAG, e.stackTrace.toString())
                 }
             }
         }
@@ -334,24 +342,27 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
     }
 
     override fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE) {
+        // todo: convert to when
         if (type == BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST) {
-            val film = bundle.getParcelable<FilmThumbnail>("film")
-            if (film != null) {
-                helperAddToWatchlist(film)
-            } else {
+            try {
+                val film = bundle.getParcelable<FilmThumbnail>("film")
+                helperAddToWatchlist(film!!)
                 Log.e(TAG, "onSearchResultAction: film from bundle is null.")
+            } catch (e: NullPointerException) {
+                Log.wtf(TAG, ".onSearchResultAction: film in bundle is null.")
             }
         } else if (type == BROWSE_FILM_CONTEXT_ACTION_TYPE.MARK_WATCHED) {
-            // todo: code duplication with above - merge these listeners?
-            val timelineItem = bundle.getParcelable<TimelineItem>("timelineItem")
-            if (timelineItem == null) {
-                Log.e(TAG, ".onFilmSelected: timelineItem null in bundle") // error handling?
-            } else {
-                timelineList.add(timelineItem)
+            // todo: code duplication with above?
+            try {
+                val timelineItem = bundle.getParcelable<TimelineItem>("timelineItem")
+                timelineList.add(timelineItem!!)
                 watchlist.remove(timelineItem.film)
                 Toast.makeText(this, "Marked ${timelineItem.film.title} as watched", Toast.LENGTH_SHORT).show()
                 saveData()
+            } catch (e: NullPointerException) {
+                Log.wtf(TAG, ".onFilmSelected: timelineItem null in bundle")
             }
+
         }
     }
 
@@ -378,21 +389,5 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         }
     }
 }
-
-class ExtraTools {
-
-//    fun createTestWatchlist(): ArrayList<FilmThumbnail> {
-//        var resultList = ArrayList<FilmThumbnail>()
-//        // Add some 'results' to the list
-//        resultList.add(FilmThumbnail("Blade Runner", "", "tt0083658", "", "https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Blade_Runner_(1982_poster).png/220px-Blade_Runner_(1982_poster).png"))
-//        resultList.add(FilmThumbnail("Predator", "", "tt0093773", "", "https://upload.wikimedia.org/wikipedia/en/9/95/Predator_Movie.jpg"))
-//        resultList.add(FilmThumbnail("The Thing", "", "tt0084787", "", "https://upload.wikimedia.org/wikipedia/en/a/a6/The_Thing_(1982)_theatrical_poster.jpg"))
-//        resultList.add(FilmThumbnail("The Fly", "", "tt0091064", "", "https://upload.wikimedia.org/wikipedia/en/a/aa/Fly_poster.jpg"))
-//        return resultList
-//    }
-
-
-}
-
 
 

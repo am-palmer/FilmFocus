@@ -61,6 +61,13 @@ class WatchlistRecyclerAdapter(
         return resultList[position]
     }
 
+    fun clearWatchlist(){
+        resultList.clear()
+        fullList.clear()
+        filteredList.clear()
+        notifyDataSetChanged()
+
+    }
 
     override fun getItemCount(): Int {
         return resultList.size

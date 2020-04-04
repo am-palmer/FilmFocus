@@ -9,21 +9,14 @@ import amichealpalmer.kotlin.filmfocus.activities.MainActivity
 import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.data.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
-import android.app.Dialog
 import android.util.Log
 import android.view.*
-import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_film_details.*
-import kotlinx.android.synthetic.main.fragment_watchlist_watched_dialog.*
-import org.joda.time.LocalDate
-import java.lang.Exception
+import kotlinx.android.synthetic.main.fragment_dialog_generic_confirm.*
 import java.lang.NullPointerException
 
 private const val ARG_LIST = "watchlist"
@@ -36,7 +29,7 @@ enum class WATCHLIST_MENU_ITEM_ACTION_TYPE {
     REMOVE_ALL
 }
 
-class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
+class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener, WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
 
     private val TAG = "WatchlistFragment"
     internal var callback: OnWatchlistActionListener? = null
@@ -126,10 +119,8 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         Log.d(TAG, ".onOptionsItemSelected triggers")
         when (item.itemId) {
             R.id.watchlist_fragment_more_menu_removeAll -> {
-                //todo: show an 'are you sure? dialog, and move this below to the listener return function
-                watchlist.clear()
-                val bundle = Bundle()
-                callback?.onWatchlistMenuItemSelected(bundle, WATCHLIST_MENU_ITEM_ACTION_TYPE.REMOVE_ALL)
+                val fragment = WatchlistConfirmDeleteDialogFragment.newInstance(this)
+                fragment.show(fragmentManager!!, "fragment_confirm_clear_history_dialog")
                 return true
             }
             else -> return true
@@ -143,18 +134,16 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         var position = -1
         try {
             position = adapter.position
-        } catch (e: java.lang.Exception) { // todo: too general
+        } catch (e: NullPointerException) {
             Log.d(TAG, e.localizedMessage, e)
             return super.onContextItemSelected(item)
         }
         when (item.itemId) {
             R.id.film_thumbnail_context_menu_mark_watched -> {
                 val film = adapter.getItem(position)
-                // todo: prompt user for review and rating properly
                 val dialogFragment = WatchedDialogFragment.newInstance(film)
                 dialogFragment.setOnWatchedDialogSubmissionListener(this)
                 dialogFragment.show(fragmentManager!!, "fragment_watched_dialog")
-
             }
             R.id.film_thumbnail_context_menu_remove -> {
                 val film = adapter.getItem(position)
@@ -185,6 +174,24 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         adapter.removeFilmFromWatchlist(timelineItem.film)
     }
 
+    // Clears the watchlist when the user confirms in the dialog prompt
+    override fun onWatchlistConfirmDeleteDialogSubmit() {
+        val bundle = Bundle()
+        Log.d(TAG, ".onWatchlistConfirmDeleteDialogSubmit: watchlist size is ${watchlist.size}")
+        bundle.putParcelableArrayList("watchlist", watchlist)
+        //val watchlistTest = bundle.getParcelableArrayList<FilmThumbnail>("watchlist")
+        //Log.d(TAG, "watchlist test is size ${watchlistTest!!.size}")
+        val currentWatchlist = ArrayList<FilmThumbnail>()
+        currentWatchlist.addAll(watchlist)
+        bundle.putParcelableArrayList("watchlist", currentWatchlist)
+        watchlist.clear()
+        val recyclerAdapter = recyclerView.adapter as WatchlistRecyclerAdapter
+        recyclerAdapter.clearWatchlist()
+        Log.d(TAG, ".onWatchlistConfirmDeleteDialogSubmit: watchlist size is now ${watchlist.size}")
+        callback!!.onWatchlistMenuItemSelected(bundle, WATCHLIST_MENU_ITEM_ACTION_TYPE.REMOVE_ALL)
+
+    }
+
     companion object {
 
         fun newInstance(resultList: ArrayList<FilmThumbnail>): WatchlistFragment {
@@ -192,6 +199,57 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
             val args = Bundle()
             args.putParcelableArrayList(ARG_LIST, resultList)
             fragment.arguments = args
+            return fragment
+        }
+    }
+
+}
+
+// Prompt inflated when the user chooses to clear the watchlist from the app bar menu
+class WatchlistConfirmDeleteDialogFragment : DialogFragment(), View.OnClickListener {
+
+    private val TAG = "WatchlistConfirmDelDia"
+    private lateinit var callback: onWatchlistConfirmDeleteDialogListener
+
+    interface onWatchlistConfirmDeleteDialogListener {
+        fun onWatchlistConfirmDeleteDialogSubmit()
+    }
+
+    fun setOnWatchlistConfirmDeleteDialogListener(callback: WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener) {
+        this.callback = callback
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        isCancelable = true
+        return inflater.inflate(R.layout.fragment_dialog_generic_confirm, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        fragment_dialog_generic_prompt_text.setText(R.string.dialog_clear_watchlist_prompt)
+        fragment_dialog_generic_takeActionButton.setText(R.string.button_clear)
+
+        fragment_dialog_generic_cancelButton.setOnClickListener(this)
+        fragment_dialog_generic_takeActionButton.setOnClickListener(this)
+
+    }
+
+    override fun onClick(v: View?) {
+        Log.d(TAG, ".onClick triggered")
+        when (v?.id) {
+            fragment_dialog_generic_cancelButton.id -> this.dismiss()
+            fragment_dialog_generic_takeActionButton.id -> {
+                callback.onWatchlistConfirmDeleteDialogSubmit()
+                this.dismiss()
+            }
+        }
+    }
+
+    companion object {
+        fun newInstance(callback: onWatchlistConfirmDeleteDialogListener): WatchlistConfirmDeleteDialogFragment {
+            val fragment = WatchlistConfirmDeleteDialogFragment()
+            fragment.setOnWatchlistConfirmDeleteDialogListener(callback)
             return fragment
         }
     }
