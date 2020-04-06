@@ -117,19 +117,14 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         return super.onContextItemSelected(item)
     }
 
-    override fun onConfirmRemoveFilmDialogAction(timelineItem: TimelineItem, answer: ConfirmRemoveFilmFromHistoryDialogFragment.DIALOG_OUTCOME) {
-        when (answer) {
-            ConfirmRemoveFilmFromHistoryDialogFragment.DIALOG_OUTCOME.NO -> true // Do nothing
-            ConfirmRemoveFilmFromHistoryDialogFragment.DIALOG_OUTCOME.YES -> {
-                //val timelineItem = adapter.getItem(position)
-                val adapter = recyclerView.adapter as HistoryRecyclerAdapter
-                timelineList.remove(timelineItem)
-                adapter.removeTimelineItem(timelineItem)
-                adapter.notifyDataSetChanged()
-                // Call listener so stored data can be updated
-                callback!!.onTimelineItemSelected(timelineItem, TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_REMOVE)
-            }
-        }
+    override fun onConfirmRemoveFilmDialogAction(timelineItem: TimelineItem) {
+        //val timelineItem = adapter.getItem(position)
+        val adapter = recyclerView.adapter as HistoryRecyclerAdapter
+        timelineList.remove(timelineItem)
+        adapter.removeTimelineItem(timelineItem)
+        adapter.notifyDataSetChanged()
+        // Call listener so stored data can be updated
+        callback!!.onTimelineItemSelected(timelineItem, TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_REMOVE)
     }
 
     companion object {
@@ -191,18 +186,14 @@ class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClic
         when (v?.id) {
             fragment_dialog_generic_cancelButton.id -> this.dismiss()
             fragment_dialog_generic_takeActionButton.id -> { // We remove the item from the history
-                callback.onConfirmRemoveFilmDialogAction(timelineItem, DIALOG_OUTCOME.YES)
+                callback.onConfirmRemoveFilmDialogAction(timelineItem)
                 this.dismiss()
             }
         }
     }
 
-    enum class DIALOG_OUTCOME {
-        YES, NO
-    }
-
     interface OnConfirmRemoveFilmDialogActionListener {
-        fun onConfirmRemoveFilmDialogAction(timelineItem: TimelineItem, answer: DIALOG_OUTCOME)
+        fun onConfirmRemoveFilmDialogAction(timelineItem: TimelineItem)
     }
 
     fun setOnConfirmRemoveFilmDialogActionListener(callback: OnConfirmRemoveFilmDialogActionListener) {
