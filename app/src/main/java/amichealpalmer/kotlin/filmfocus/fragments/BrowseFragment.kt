@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.fragment_browse.*
 private const val ARG_RESULTS = "resultList"
 private const val ARG_SEARCH_STRING = "searchString"
 
-enum class BROWSE_FILM_CONTEXT_ACTION_TYPE{
+enum class BROWSE_FILM_CONTEXT_ACTION_TYPE {
     ADD_TO_WATCHLIST, MARK_WATCHED
 }
 
@@ -37,6 +37,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
     internal var callback: onResultActionListener? = null
     var resultList = ArrayList<FilmThumbnail>()
     lateinit var recyclerView: RecyclerView
+
     //var progressBar: ProgressBar? = null
     private val TAG = "BrowseFragment"
     private var noMoreResults = false
@@ -53,7 +54,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     override fun onCreate(savedInstanceState: Bundle?) { // Should save the state if user switches between fragments
         Log.d(TAG, ".onCreate called")
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
 
             // we should also restore the position in the scroll view
             Log.d(TAG, "savedInstanceState: retrieving search query")
@@ -98,7 +99,8 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         Log.d(TAG, ".onCreateOptionsMenu called")
         inflater.inflate(R.menu.browse_fragment_menu, menu)
 
-        val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext ?: context)
+        val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext
+                ?: context)
         searchView.isIconifiedByDefault = false
         searchView.requestFocus()
         menu.findItem(R.id.browse_fragment_search).apply {
@@ -119,7 +121,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                 return true
             }
         })
-        searchView.setOnClickListener {view ->  }
+        searchView.setOnClickListener { view -> }
 
         super.onCreateOptionsMenu(menu, inflater)
 
@@ -130,7 +132,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
         fun searchByTitleKeyword(titleContains: String) {
             Log.d(TAG, ".searchByTitleKeyword starts")
-            if (currentPage == 1){
+            if (currentPage == 1) {
                 resultList.clear()
                 fragment_search_empty_container.visibility = View.GONE
                 fragment_browse_recycler_framelayout.visibility = View.VISIBLE
@@ -148,10 +150,22 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {
             browse_fragment_progressBar.visibility = View.GONE
             val adapter = recyclerView.adapter as BrowseRecyclerAdapter
-            if (resultList.size > 0) {
-                adapter.updateList(resultList as List<FilmThumbnail>)
+            Log.d(TAG, "onSearchResultsDownload: RESULTLIST IS EMPTY? ${resultList.isEmpty()}")
+            Log.d(TAG, "and CurrentPage is: $currentPage")
+            if (resultList.isEmpty() && currentPage == 2) { // Indicates there are no results for the search term. Todo: magic numbers...
+                Log.d(TAG, "onSearchResultsDownload -> no results, showing no results view")
+                fragment_browse_no_results_container.visibility = View.VISIBLE
+                fragment_browse_recycler_framelayout.visibility = View.GONE
+                fragment_search_empty_container.visibility = View.GONE
             } else {
-                noMoreResults = true
+                Log.d(TAG, ".onSearchResultsDownload -> results found, showing results in recyclerview")
+                fragment_browse_no_results_container.visibility = View.GONE
+                fragment_browse_recycler_framelayout.visibility = View.VISIBLE
+                if (resultList.size > 0) {
+                    adapter.updateList(resultList as List<FilmThumbnail>)
+                } else {
+                    noMoreResults = true
+                }
             }
 
         }
@@ -159,7 +173,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean { // todo: code duplication with watchlistRecyclerAdapter
-        if (callback == null){
+        if (callback == null) {
             // Todo: throw an exception
         }
         Log.d(TAG, ".onContextItemSelected called")
@@ -195,7 +209,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(ARG_SEARCH_STRING ,searchString)
+        outState.putString(ARG_SEARCH_STRING, searchString)
         outState.putParcelableArrayList(ARG_RESULTS, resultList)
     }
 
