@@ -83,7 +83,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        Log.d(TAG, ".onCreateOptionsMenu called")
+        //Log.d(TAG, ".onCreateOptionsMenu called")
         inflater.inflate(R.menu.watchlist_fragment_menu, menu)
 
         val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext
@@ -97,7 +97,6 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                // the search button will do nothing, so we should probably disable/hide it in the watchlist
                 onQueryTextChange(query)
                 return true
             }
@@ -109,10 +108,9 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
                 return true
             }
         })
-        searchView.setOnClickListener { view -> }
+        searchView.setOnClickListener { view -> } // ??
 
         super.onCreateOptionsMenu(menu, inflater)
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -120,10 +118,10 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         when (item.itemId) {
             R.id.watchlist_fragment_more_menu_removeAll -> {
                 val fragment = WatchlistConfirmDeleteDialogFragment.newInstance(this)
-                fragment.show(fragmentManager!!, "fragment_confirm_clear_history_dialog")
+                fragment.show(fragmentManager!!, "fragment_confirm_clear_watchlist_dialog")
                 return true
             }
-            else -> return true
+            //else -> return true
         }
         return super.onOptionsItemSelected(item)
     }

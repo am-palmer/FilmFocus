@@ -53,6 +53,7 @@ class HistoryRecyclerAdapter(
 
     fun clearList() {
         timelineList.clear()
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: HelperViewHolder, position: Int) {

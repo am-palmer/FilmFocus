@@ -388,6 +388,26 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
             }
         }
     }
+
+    override fun onHistoryMenuItemSelected(bundle: Bundle, actionType: HISTORY_MENU_ITEM_ACTION_TYPE) {
+        when (actionType) {
+            HISTORY_MENU_ITEM_ACTION_TYPE.REMOVE_ALL -> {
+                try {
+                    val currentTimelineList = bundle.getParcelableArrayList<TimelineItem>("timelineList")
+                    if (currentTimelineList!!.isEmpty()) {
+                        Toast.makeText(this, "The History is already empty", Toast.LENGTH_SHORT).show()
+                    } else {
+                        timelineList.clear()
+                        Toast.makeText(this, "Cleared History", Toast.LENGTH_SHORT).show()
+                        saveData()
+                    }
+                } catch (e: NullPointerException) {
+                    Log.wtf(TAG, ".onWatchlistMenuItemSelected")
+                    Log.wtf(TAG, e.stackTrace.toString())
+                }
+            }
+        }
+    }
 }
 
 

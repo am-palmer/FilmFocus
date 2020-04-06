@@ -20,7 +20,11 @@ enum class TIMELINE_ITEM_CONTEXT_ACTION_TYPE {
     TIMELINE_ITEM_REMOVE, TIMELINE_ADD_TO_WATCHLIST, TIMELINE_ITEM_UPDATE
 }
 
-class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener { // note code duplication with other fragments
+enum class HISTORY_MENU_ITEM_ACTION_TYPE {
+    REMOVE_ALL
+}
+
+class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener, ConfirmClearHistoryDialogFragment.onConfirmClearHistoryDialogListener { // note code duplication with other fragments
 
     private val TAG = "HistoryFragment"
 
@@ -34,6 +38,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
 
     interface OnTimelineItemSelectedListener {
         fun onTimelineItemSelected(item: TimelineItem, type: TIMELINE_ITEM_CONTEXT_ACTION_TYPE)
+        fun onHistoryMenuItemSelected(bundle: Bundle, actionType: HISTORY_MENU_ITEM_ACTION_TYPE)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +56,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
             Log.e(TAG, ".onCreate: timelineList null in arguments")
         }
         Log.d(TAG, ".onCreate: timelineList created. list has ${timelineList.size} items")
-        //setHasOptionsMenu(true) ?
+        setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
     }
 
@@ -61,10 +66,26 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         Log.d(TAG, ".onCreateView begins")
         var view = inflater.inflate(R.layout.fragment_history, container, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.fragment_history_timeline_rv)
-        //recyclerView.layoutManager = GridLayoutManager(activity, 3)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = HistoryRecyclerAdapter(activity!!, timelineList)
         return view
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.history_fragment_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.history_fragment_moreMenu_clearHistory -> {
+                val fragment = ConfirmClearHistoryDialogFragment.newInstance(this)
+                fragment.show(fragmentManager!!, "fragment_confirm_clear_history_dialog")
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onAttach(context: Context) {
@@ -125,6 +146,18 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         adapter.notifyDataSetChanged()
         // Call listener so stored data can be updated
         callback!!.onTimelineItemSelected(timelineItem, TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_REMOVE)
+    }
+
+    override fun onConfirmClearHistoryDialogSubmit() {
+        // Clear the history locally, then save the changes in MainActivity
+        val bundle = Bundle()
+        val currentTimelineList = ArrayList<TimelineItem>()
+        currentTimelineList.addAll(timelineList)
+        bundle.putParcelableArrayList("timelineList", currentTimelineList)
+        timelineList.clear()
+        val recyclerAdapter = recyclerView.adapter as HistoryRecyclerAdapter
+        recyclerAdapter.clearList()
+        callback?.onHistoryMenuItemSelected(bundle, HISTORY_MENU_ITEM_ACTION_TYPE.REMOVE_ALL)
     }
 
     companion object {
