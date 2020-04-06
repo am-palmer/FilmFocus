@@ -84,9 +84,14 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                 }
             }
         })
-        //progressBar = browse_fragment_progressBar
-        //progressBar?.visibility = View.GONE
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // Set the empty view as visible by default, turn it off once a query is entered
+        fragment_search_empty_container.visibility = View.VISIBLE
+        fragment_browse_recycler_framelayout.visibility = View.GONE
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -127,6 +132,8 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             Log.d(TAG, ".searchByTitleKeyword starts")
             if (currentPage == 1){
                 resultList.clear()
+                fragment_search_empty_container.visibility = View.GONE
+                fragment_browse_recycler_framelayout.visibility = View.VISIBLE
                 val adapter = recyclerView.adapter as BrowseRecyclerAdapter
                 adapter.clearList()
             }
