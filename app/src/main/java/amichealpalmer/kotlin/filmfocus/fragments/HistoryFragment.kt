@@ -11,7 +11,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_history_confirmremove_dialog.*
+import kotlinx.android.synthetic.main.fragment_dialog_generic_confirm.*
 import java.lang.NullPointerException
 
 private const val ARG_TIMELINE_LIST = "timelineList"
@@ -163,34 +163,34 @@ class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClic
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         try {
             timelineItem = arguments!!.getParcelable<TimelineItem>("timelineItem") as TimelineItem
         } catch (e: NullPointerException) {
-            Log.e(TAG, ".onCreate - failed to retrieve timelineItem")
+            Log.wtf(TAG, ".onCreate - failed to retrieve timelineItem")
         }
 
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         isCancelable = true
-        return inflater.inflate(R.layout.fragment_history_confirmremove_dialog, container, false)
+        return inflater.inflate(R.layout.fragment_dialog_generic_confirm, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val prompt = "Are you sure you want to remove ${timelineItem.film.title} from your history?"
-        fragment_confirm_remove_dialog_button_cancel.setOnClickListener(this)
-        fragment_confirm_remove_dialog_button_remove.setOnClickListener(this)
-        fragment_confirm_remove_dialog_textPrompt.text = prompt
+        fragment_dialog_generic_cancelButton.setOnClickListener(this)
+        fragment_dialog_generic_takeActionButton.setOnClickListener(this)
+        fragment_dialog_generic_prompt_text.text = prompt
+        fragment_dialog_generic_takeActionButton.setText(R.string.remove)
 
         dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            fragment_confirm_remove_dialog_button_cancel.id -> this.dismiss()
-            fragment_confirm_remove_dialog_button_remove.id -> {
+            fragment_dialog_generic_cancelButton.id -> this.dismiss()
+            fragment_dialog_generic_takeActionButton.id -> { // We remove the item from the history
                 callback.onConfirmRemoveFilmDialogAction(timelineItem, DIALOG_OUTCOME.YES)
                 this.dismiss()
             }
@@ -205,7 +205,7 @@ class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClic
         fun onConfirmRemoveFilmDialogAction(timelineItem: TimelineItem, answer: DIALOG_OUTCOME)
     }
 
-    fun setOnConfirmRemoveFilmDialogActionListener(callback: ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener) {
+    fun setOnConfirmRemoveFilmDialogActionListener(callback: OnConfirmRemoveFilmDialogActionListener) {
         this.callback = callback
     }
 
