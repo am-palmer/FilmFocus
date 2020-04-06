@@ -90,8 +90,12 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // Set the empty view as visible by default, turn it off once a query is entered
-        fragment_search_empty_container.visibility = View.VISIBLE
-        fragment_browse_recycler_framelayout.visibility = View.GONE
+        if (searchString.isNullOrBlank()) {
+            fragment_search_empty_container.visibility = View.VISIBLE
+            fragment_browse_recycler_framelayout.visibility = View.GONE
+        } else {
+            fragment_search_empty_container.visibility = View.GONE
+        }
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -174,7 +178,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     override fun onContextItemSelected(item: MenuItem): Boolean { // todo: code duplication with watchlistRecyclerAdapter
         if (callback == null) {
-            // Todo: throw an exception
+            // Todo: convert to try catch
         }
         Log.d(TAG, ".onContextItemSelected called")
         Log.d(TAG, "menu item: ${item}")
