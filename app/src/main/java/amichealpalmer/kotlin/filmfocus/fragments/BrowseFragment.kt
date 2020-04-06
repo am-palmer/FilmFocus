@@ -104,8 +104,8 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 currentPage = 1 // Indicates a fresh search
-                searchString = query.toLowerCase()
-                searchHelper().searchByTitleKeyword(query.toLowerCase())
+                searchString = query.toLowerCase().trim()
+                searchHelper().searchByTitleKeyword(searchString!!)
                 return true
             }
 
