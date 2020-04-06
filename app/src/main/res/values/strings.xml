@@ -37,10 +37,10 @@
 
     <string name="message_no_search_results">Sorry, we couldn\'t find any matching films.</string>
     <string name="message_watchlist_empty">There\'s nothing in your Watchlist yet.</string>
-    <string name="message_watchlist_empty_more">Use Browse to find films and add them to your Watchlist!</string>
+    <string name="message_watchlist_empty_more">Use Browse to find films and add them to your Watchlist.</string>
 
     <string name="message_history_empty">Your history is empty right now.</string>
-    <string name="message_history_empty_more">Films you mark Watched or Dropped will show up here!</string>
+    <string name="message_history_empty_more">Films you mark Watched or Dropped will be recorded here.</string>
 
     <string name="interpunct_unicode">\u00b7</string>
 </resources>

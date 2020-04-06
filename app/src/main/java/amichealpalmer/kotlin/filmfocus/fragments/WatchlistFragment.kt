@@ -17,6 +17,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_dialog_generic_confirm.*
+import kotlinx.android.synthetic.main.fragment_watchlist.*
 import java.lang.NullPointerException
 
 private const val ARG_LIST = "watchlist"
@@ -61,11 +62,19 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView called")
-        var view = inflater.inflate(R.layout.fragment_browse, container, false)
-        recyclerView = view.findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
+
+        var view = inflater.inflate(R.layout.fragment_watchlist, container, false)
+        recyclerView = view.findViewById<RecyclerView>(R.id.watchlist_recyclerview)
         recyclerView.layoutManager = GridLayoutManager(activity, 3)
         recyclerView.adapter = WatchlistRecyclerAdapter(activity!!, watchlist)
         return view
+    }
+
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) { // todo: is this recalled when a film is removed (notifyDataSetChanged?) probably not
+        onWatchlistStateChange()
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onAttach(context: Context) {
@@ -147,6 +156,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
                 val film = adapter.getItem(position)
                 watchlist.remove(film)
                 adapter.removeFilmFromWatchlist(film)
+                onWatchlistStateChange()
                 val bundle = Bundle()
                 bundle.putParcelable("film", film)
                 // Call activity so the shared prefs can be updated
@@ -168,6 +178,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
 
         // Removal
         watchlist.remove(timelineItem.film)
+        onWatchlistStateChange()
         val adapter = this.recyclerView.adapter as WatchlistRecyclerAdapter
         adapter.removeFilmFromWatchlist(timelineItem.film)
     }
@@ -183,11 +194,24 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         currentWatchlist.addAll(watchlist)
         bundle.putParcelableArrayList("watchlist", currentWatchlist)
         watchlist.clear()
+        onWatchlistStateChange()
         val recyclerAdapter = recyclerView.adapter as WatchlistRecyclerAdapter
         recyclerAdapter.clearWatchlist()
         Log.d(TAG, ".onWatchlistConfirmDeleteDialogSubmit: watchlist size is now ${watchlist.size}")
         callback!!.onWatchlistMenuItemSelected(bundle, WATCHLIST_MENU_ITEM_ACTION_TYPE.REMOVE_ALL)
 
+    }
+
+    // Called when any action which might result in an empty watchlist is taken, so we can show the empty view if need be
+    // todo: null safety?
+    private fun onWatchlistStateChange(){
+        if (watchlist.isNotEmpty()) {
+            fragment_watchlist_empty_view_container.visibility = View.GONE
+            watchlist_recyclerview.visibility = View.VISIBLE
+        } else {
+            watchlist_recyclerview.visibility = View.GONE
+            fragment_watchlist_empty_view_container.visibility = View.VISIBLE
+        }
     }
 
     companion object {
