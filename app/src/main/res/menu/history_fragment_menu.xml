@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/history_fragment_moreMenu"
+        android:icon="@drawable/ic_more_vert_white_24dp"
+        android:title="@string/more"
+        app:showAsAction="ifRoom|withText" >
+        <menu>
+            <item
+                android:id="@+id/history_fragment_moreMenu_clearHistory"
+                android:title="@string/history_menu_clear_history" />
+        </menu>
+    </item>
+
+</menu>

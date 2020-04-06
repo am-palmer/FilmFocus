@@ -28,9 +28,11 @@
     <string name="dialog_confirmRemovalFromHistory_prompt">Are you sure you want to remove this item from your History?</string>
     <string name="dialog_remove">Remove</string>
 
+
     <string name="dialog_clear_watchlist_prompt">Are you sure you want to clear the Watchlist?</string>
     <string name="button_clear">Clear</string>
 
+    <string name="history_menu_clear_history">Clear History</string>
     <string name="dialog_clear_history_prompt">Are you sure you want to clear your History?</string>
 
     <string name="interpunct_unicode">\u00b7</string>

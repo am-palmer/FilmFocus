@@ -215,7 +215,7 @@ class WatchlistConfirmDeleteDialogFragment : DialogFragment(), View.OnClickListe
         fun onWatchlistConfirmDeleteDialogSubmit()
     }
 
-    fun setOnWatchlistConfirmDeleteDialogListener(callback: WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener) {
+    fun setOnWatchlistConfirmDeleteDialogListener(callback: onWatchlistConfirmDeleteDialogListener) {
         this.callback = callback
     }
 
