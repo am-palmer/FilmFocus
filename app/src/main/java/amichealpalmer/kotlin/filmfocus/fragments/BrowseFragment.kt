@@ -52,14 +52,14 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         this.callback = callback
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) { // Should save the state if user switches between fragments
+    override fun onCreate(savedInstanceState: Bundle?) { // todo: Should save the state if user switches between fragments
         Log.d(TAG, ".onCreate called")
         if (savedInstanceState != null) {
 
             // we should also restore the position in the scroll view
             Log.d(TAG, "savedInstanceState: retrieving search query")
-            searchString = savedInstanceState.getString(ARG_SEARCH_STRING)!! // Safer way to do this?
-            resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)!!
+            //searchString = savedInstanceState.getString(ARG_SEARCH_STRING)!! // Safer way to do this?
+            //resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)!!
         }
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)

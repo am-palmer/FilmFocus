@@ -117,12 +117,17 @@ class HistoryRecyclerAdapter(
 
             // Programmatically remove portion of line if this is the first or last entry in the list
             Log.d(TAG, ".onBindViewHolder: about to remove portion of line possibly. Position is: $position")
-            if (position == 0) {
-                Log.d(TAG, ".onBindViewHolder: position is 0, hiding top part of time line line")
+            if (timelineList.size == 1) { // Special case
                 holder.timelineLineTop.visibility = View.INVISIBLE
-            } else if (position == (timelineList.size) - 1) {
-                Log.d(TAG, ".onBindViewHolder: position is last in array. hiding bottom part of line")
                 holder.timelineLineBottom.visibility = View.INVISIBLE
+            } else {
+                if (position == 0) {
+                    Log.d(TAG, ".onBindViewHolder: position is 0, hiding top part of time line line")
+                    holder.timelineLineTop.visibility = View.INVISIBLE
+                } else if (position == (timelineList.size) - 1) {
+                    Log.d(TAG, ".onBindViewHolder: position is last in array. hiding bottom part of line")
+                    holder.timelineLineBottom.visibility = View.INVISIBLE
+                }
             }
 
             // Programmatically change views if film is marked as watched or dropped

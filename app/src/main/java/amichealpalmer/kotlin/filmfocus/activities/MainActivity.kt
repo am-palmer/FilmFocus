@@ -37,6 +37,11 @@ import java.lang.reflect.Type
 
 // todo: see trello
 // todo next: implement the dialog box which shows when user marks film as watched (in watchlist view and in the browse view)
+
+enum class CURRENT_FRAGMENT{ // todo: perhaps too idiosyncratic?
+    BROWSE, WATCHLIST, HISTORY
+}
+
 class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener { // todo: disperse as much logic into the fragments as possible
 
     internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
@@ -50,16 +55,47 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
     private lateinit var timelineList: ArrayList<TimelineItem> // List of items in the user's history
 
 
-    private var currentFragment: Fragment? = null // search or watchlist
+    private var currentFragment: CURRENT_FRAGMENT? = null
     private lateinit var mDrawer: DrawerLayout
     private lateinit var drawerToggle: ActionBarDrawerToggle
-    private lateinit var toolbar: androidx.appcompat.widget.Toolbar
+    private lateinit var toolbar: Toolbar
     private val SHARED_PREFS = "sharedPrefs"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, ".onCreate: starts")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        if (savedInstanceState == null) { // First-time load
+
+
+            //Log.d(TAG, "Set content view / navigation drawer done")
+
+//            fab.setOnClickListener { view ->
+//                // todo action button
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show()
+//            }
+
+            // Load search by default
+            val fragment = BrowseFragment.newInstance(null)
+            setTitle("Browse")
+            val fragmentManager = supportFragmentManager
+            fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
+            currentFragment = CURRENT_FRAGMENT.BROWSE
+
+            loadData()
+        } else { // Restore data from saved instance state
+            try {
+                watchlist = savedInstanceState.getParcelableArrayList<FilmThumbnail>("watchlist")!!
+                timelineList = savedInstanceState.getParcelableArrayList<TimelineItem>("timelineList")!!
+            } catch (e: NullPointerException) {
+                Log.wtf(TAG, ".onCreate: failed to load member variables from saved instance state")
+                Log.wtf(TAG, e.stackTrace.toString())
+            }
+
+
+        }
         setSupportActionBar(drawer_layout.toolbar)
         toolbar = findViewById(R.id.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -70,25 +106,8 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         drawerToggle.syncState()
         val nvDrawer = findViewById<NavigationView>(R.id.nvView)
         setupDrawerContent(nvDrawer)
-
-        Log.d(TAG, "Set content view / navigation drawer done")
-
-        fab.setOnClickListener { view ->
-            // todo action button
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
-
-        // Load search by default
-        val fragment = BrowseFragment.newInstance(null)
-        setTitle("Browse")
         supportActionBar!!.setDisplayShowTitleEnabled(true)
-        val fragmentManager = supportFragmentManager
-        fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
-        currentFragment = fragment
-
-        loadData()
-        //clearData()
+        Log.d(TAG, "watchlist check: size is ${watchlist.size}")
         Log.d(TAG, ".onCreate finished")
 
     }
@@ -97,6 +116,14 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         super.onPostCreate(savedInstanceState)
         // Sync the toggle state after onRestoreInstanceState has occurred.
         drawerToggle.syncState()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelableArrayList("watchlist", watchlist)
+        outState.putParcelableArrayList("timelineList", timelineList)
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean { // Handles action bar item taps
@@ -138,36 +165,29 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
     fun selectDrawerItem(menuItem: MenuItem) { // Create a new fragment and specify the fragment to show based on nav item clicked
         var fragment: Fragment? = null
-        val fragmentClass: Class<*>
+        val fragmentClass: CURRENT_FRAGMENT?
         fragmentClass = when (menuItem.itemId) {
-            R.id.nav_first_fragment -> BrowseFragment::class.java
-            R.id.nav_second_fragment -> WatchlistFragment::class.java
-            R.id.nav_third_fragment -> HistoryFragment::class.java
-            else -> BrowseFragment::class.java
+            R.id.nav_first_fragment -> CURRENT_FRAGMENT.BROWSE
+            R.id.nav_second_fragment -> CURRENT_FRAGMENT.WATCHLIST
+            R.id.nav_third_fragment -> CURRENT_FRAGMENT.HISTORY
+            else -> CURRENT_FRAGMENT.BROWSE
         }
 
         // todo: move these to a specific function, keep them out of the UI
         // todo: replace if with when
-        // todo: don't reconstruct the fragments every time?
-        if (currentFragment!!::class.java == fragmentClass) {
+        if (currentFragment == fragmentClass) {
             Log.d(TAG, ".selectDrawerItem: user clicked fragment we're currently in")
             // User clicked the fragment button we're in; do nothing
         } else {
-            if (fragmentClass == BrowseFragment::class.java) { // todo: preserve state if user has already made a search
-                fragment = fragmentClass.newInstance()
-                currentFragment = fragment
-            } else if (fragmentClass == WatchlistFragment::class.java) {
-                fragment = fragmentClass.newInstance()
-                val bundle = Bundle()
-                bundle.putParcelableArrayList("watchlist", watchlist)
-                fragment.arguments = bundle
-                currentFragment = fragment
-            } else if (fragmentClass == HistoryFragment::class.java) {
-                fragment = fragmentClass.newInstance()
-                val bundle = Bundle()
-                bundle.putParcelableArrayList("timelineList", timelineList)
-                fragment.arguments = bundle
-                currentFragment = fragment
+            if (fragmentClass == CURRENT_FRAGMENT.BROWSE) { // todo: preserve state if user has already made a search
+                fragment = BrowseFragment.newInstance(null)
+                currentFragment = CURRENT_FRAGMENT.BROWSE
+            } else if (fragmentClass == CURRENT_FRAGMENT.WATCHLIST) {
+                fragment = WatchlistFragment.newInstance(watchlist)
+                currentFragment = CURRENT_FRAGMENT.WATCHLIST
+            } else if (fragmentClass == CURRENT_FRAGMENT.HISTORY) {
+                fragment = HistoryFragment.newInstance(timelineList)
+                currentFragment = CURRENT_FRAGMENT.HISTORY
             }
 
             // Insert the fragment by replacing any existing fragment
@@ -195,10 +215,10 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
             // Building the search fragment
             val fragment = BrowseFragment()
-            var args = Bundle()
+            val args = Bundle()
             args.putString("searchString", query)
             fragment.arguments = args
-            var transaction = supportFragmentManager.beginTransaction()
+            val transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.main_frame_layout_fragment_holder, fragment)
             transaction.commit()
         } else {
