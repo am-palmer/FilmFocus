@@ -11,6 +11,7 @@ import amichealpalmer.kotlin.filmfocus.data.json.GetJSONSearch
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.res.Configuration
 import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
@@ -23,6 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
+import java.lang.NullPointerException
 
 
 private const val ARG_RESULTS = "resultList"
@@ -58,8 +60,8 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
             // we should also restore the position in the scroll view
             Log.d(TAG, "savedInstanceState: retrieving search query")
-            //searchString = savedInstanceState.getString(ARG_SEARCH_STRING)!! // Safer way to do this?
-            //resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)!!
+            searchString = savedInstanceState.getString(ARG_SEARCH_STRING)
+            resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS) ?: ArrayList<FilmThumbnail>()
         }
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -72,19 +74,32 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         Log.d(TAG, ".onCreateView called")
         var view = inflater.inflate(R.layout.fragment_browse, container, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
-        recyclerView.layoutManager = GridLayoutManager(activity, 3)
-        recyclerView.adapter = BrowseRecyclerAdapter(activity!!, resultList)
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                // could perhaps rewrite this so it loads new entries before the bottom is reached, right now it is jarring
-                if (!recyclerView.canScrollVertically(1)) { // todo: UI and backend logic are completely wrapped up together using this method
-                    if (!noMoreResults && searchString != null) {
-                        searchHelper().searchByTitleKeyword(searchString!!)
+
+        // Check current orientation so we can change number of items displayed per row in the adapter
+        when (resources.configuration.orientation){
+            Configuration.ORIENTATION_PORTRAIT -> recyclerView.layoutManager = GridLayoutManager(activity, 3)
+            Configuration.ORIENTATION_LANDSCAPE -> recyclerView.layoutManager = GridLayoutManager(activity, 5)
+        }
+        //recyclerView.layoutManager = GridLayoutManager(activity, 3)
+        try {
+            Log.d(TAG, "onCreateView: trying")
+            recyclerView.adapter = BrowseRecyclerAdapter(activity!!, resultList!!)
+            Log.d(TAG, "onCreateView: adapter is initiated")
+            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    // could perhaps rewrite this so it loads new entries before the bottom is reached, right now it is jarring
+                    if (!recyclerView.canScrollVertically(1)) { // todo: UI and backend logic are completely wrapped up together using this method
+                        if (!noMoreResults && searchString != null) {
+                            searchHelper().searchByTitleKeyword(searchString!!)
+                        }
                     }
                 }
-            }
-        })
+            })
+        } catch (e: NullPointerException){
+            Log.e(TAG, "onCreateView: npe")
+            Log.e(TAG, e.printStackTrace().toString())
+        }
         return view
     }
 
@@ -97,6 +112,26 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             fragment_search_empty_container.visibility = View.GONE
         }
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) { // Called when i.e. screen orientation changes
+        super.onSaveInstanceState(outState)
+        outState.putString(ARG_SEARCH_STRING, searchString)
+        outState.putParcelableArrayList(ARG_RESULTS, resultList)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is BrowseFragment.onResultActionListener) {
+            callback = context
+        } else {
+            throw RuntimeException(context.toString() + " must implement onRequestResultsListener")
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        callback = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -128,51 +163,6 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         searchView.setOnClickListener { view -> }
 
         super.onCreateOptionsMenu(menu, inflater)
-
-    }
-
-    inner class searchHelper {
-        val activity = callback as MainActivity
-
-        fun searchByTitleKeyword(titleContains: String) {
-            Log.d(TAG, ".searchByTitleKeyword starts")
-            if (currentPage == 1) {
-                resultList.clear()
-                fragment_search_empty_container.visibility = View.GONE
-                fragment_browse_recycler_framelayout.visibility = View.VISIBLE
-                val adapter = recyclerView.adapter as BrowseRecyclerAdapter
-                adapter.clearList()
-            }
-            searchString = titleContains
-            var query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
-            currentPage++
-            browse_fragment_progressBar.visibility = View.VISIBLE
-            GetJSONSearch(this, (activity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries
-        }
-
-
-        fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {
-            browse_fragment_progressBar.visibility = View.GONE
-            val adapter = recyclerView.adapter as BrowseRecyclerAdapter
-            Log.d(TAG, "onSearchResultsDownload: RESULTLIST IS EMPTY? ${resultList.isEmpty()}")
-            Log.d(TAG, "and CurrentPage is: $currentPage")
-            if (resultList.isEmpty() && currentPage == 2) { // Indicates there are no results for the search term. Todo: magic numbers...
-                Log.d(TAG, "onSearchResultsDownload -> no results, showing no results view")
-                fragment_browse_no_results_container.visibility = View.VISIBLE
-                fragment_browse_recycler_framelayout.visibility = View.GONE
-                fragment_search_empty_container.visibility = View.GONE
-            } else {
-                Log.d(TAG, ".onSearchResultsDownload -> results found, showing results in recyclerview")
-                fragment_browse_no_results_container.visibility = View.GONE
-                fragment_browse_recycler_framelayout.visibility = View.VISIBLE
-                if (resultList.size > 0) {
-                    adapter.updateList(resultList as List<FilmThumbnail>)
-                } else {
-                    noMoreResults = true
-                }
-            }
-
-        }
 
     }
 
@@ -211,24 +201,49 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         return super.onContextItemSelected(item)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(ARG_SEARCH_STRING, searchString)
-        outState.putParcelableArrayList(ARG_RESULTS, resultList)
-    }
+    inner class searchHelper {
+        val activity = callback as MainActivity
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is BrowseFragment.onResultActionListener) {
-            callback = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement onRequestResultsListener")
+        fun searchByTitleKeyword(titleContains: String) {
+            Log.d(TAG, ".searchByTitleKeyword starts")
+            if (currentPage == 1) {
+                resultList?.clear()
+                fragment_search_empty_container.visibility = View.GONE
+                fragment_browse_recycler_framelayout.visibility = View.VISIBLE
+                val adapter = recyclerView.adapter as BrowseRecyclerAdapter
+                adapter.clearList()
+            }
+            searchString = titleContains
+            var query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
+            currentPage++
+            browse_fragment_progressBar.visibility = View.VISIBLE
+            GetJSONSearch(this, (activity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries
         }
-    }
 
-    override fun onDetach() {
-        super.onDetach()
-        callback = null
+
+        fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {
+            browse_fragment_progressBar.visibility = View.GONE
+            val adapter = recyclerView.adapter as BrowseRecyclerAdapter
+            Log.d(TAG, "onSearchResultsDownload: RESULTLIST IS EMPTY? ${resultList.isEmpty()}")
+            Log.d(TAG, "and CurrentPage is: $currentPage")
+            if (resultList.isEmpty() && currentPage == 2) { // Indicates there are no results for the search term. Todo: magic numbers...
+                Log.d(TAG, "onSearchResultsDownload -> no results, showing no results view")
+                fragment_browse_no_results_container.visibility = View.VISIBLE
+                fragment_browse_recycler_framelayout.visibility = View.GONE
+                fragment_search_empty_container.visibility = View.GONE
+            } else {
+                Log.d(TAG, ".onSearchResultsDownload -> results found, showing results in recyclerview")
+                fragment_browse_no_results_container.visibility = View.GONE
+                fragment_browse_recycler_framelayout.visibility = View.VISIBLE
+                if (resultList.size > 0) {
+                    adapter.updateList(resultList as List<FilmThumbnail>)
+                } else {
+                    noMoreResults = true
+                }
+            }
+
+        }
+
     }
 
     override fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem) { // todo: code duplication with watchlist fragment

@@ -10,6 +10,7 @@ import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
+import android.content.res.Configuration
 import android.util.Log
 import android.view.*
 import android.widget.*
@@ -66,7 +67,10 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
 
         var view = inflater.inflate(R.layout.fragment_watchlist, container, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.watchlist_recyclerview)
-        recyclerView.layoutManager = GridLayoutManager(activity, 3)
+        when (resources.configuration.orientation){
+            Configuration.ORIENTATION_PORTRAIT -> recyclerView.layoutManager = GridLayoutManager(activity, 3)
+            Configuration.ORIENTATION_LANDSCAPE -> recyclerView.layoutManager = GridLayoutManager(activity, 5)
+        }
         recyclerView.adapter = WatchlistRecyclerAdapter(activity!!, watchlist)
         return view
     }
