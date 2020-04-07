@@ -38,7 +38,7 @@ import java.lang.reflect.Type
 // todo: see trello
 // todo next: implement the dialog box which shows when user marks film as watched (in watchlist view and in the browse view)
 
-enum class CURRENT_FRAGMENT{ // todo: perhaps too idiosyncratic?
+enum class CURRENT_FRAGMENT { // todo: perhaps too idiosyncratic?
     BROWSE, WATCHLIST, HISTORY
 }
 
@@ -68,15 +68,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null) { // First-time load
 
-
-            //Log.d(TAG, "Set content view / navigation drawer done")
-
-//            fab.setOnClickListener { view ->
-//                // todo action button
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show()
-//            }
-
             // Load search by default
             val fragment = BrowseFragment.newInstance(null)
             setTitle("Browse")
@@ -89,6 +80,8 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
             try {
                 watchlist = savedInstanceState.getParcelableArrayList<FilmThumbnail>("watchlist")!!
                 timelineList = savedInstanceState.getParcelableArrayList<TimelineItem>("timelineList")!!
+                currentFragment = CURRENT_FRAGMENT.valueOf(savedInstanceState.getString("currentFragment")!!)
+
             } catch (e: NullPointerException) {
                 Log.wtf(TAG, ".onCreate: failed to load member variables from saved instance state")
                 Log.wtf(TAG, e.stackTrace.toString())
@@ -122,6 +115,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         super.onSaveInstanceState(outState)
         outState.putParcelableArrayList("watchlist", watchlist)
         outState.putParcelableArrayList("timelineList", timelineList)
+        outState.putString("currentFragment", currentFragment!!.name)
 
 
     }
@@ -130,7 +124,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         if (drawerToggle.onOptionsItemSelected(item)) return true
 
         return when (item.itemId) {
-            //R.id.action_settings -> true
             android.R.id.home -> {
                 Log.d(TAG, ".onOptionsItemSelected: drawer button tapped")
                 mDrawer.openDrawer(GravityCompat.START)
@@ -141,6 +134,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
+        Log.d(TAG, ".onConfiguration changed: starts")
         super.onConfigurationChanged(newConfig)
         // Pass any configuration change to the drawer toggles
         drawerToggle.onConfigurationChanged(newConfig)

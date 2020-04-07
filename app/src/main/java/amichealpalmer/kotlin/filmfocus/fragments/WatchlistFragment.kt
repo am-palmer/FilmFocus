@@ -48,6 +48,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, ".onCreate starts")
         if (arguments != null) {
             watchlist = arguments!!.getParcelableArrayList<FilmThumbnail>(ARG_LIST) as ArrayList<FilmThumbnail>
         } else {
@@ -70,6 +71,10 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         return view
     }
 
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        Log.d(TAG, ".onViewStateRestored starts")
+        super.onViewStateRestored(savedInstanceState)
+    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) { // todo: is this recalled when a film is removed (notifyDataSetChanged?) probably not
