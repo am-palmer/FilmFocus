@@ -69,7 +69,6 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView called")
         var view = inflater.inflate(R.layout.fragment_browse, container, false)
@@ -80,7 +79,9 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             Configuration.ORIENTATION_PORTRAIT -> recyclerView.layoutManager = GridLayoutManager(activity, 3)
             Configuration.ORIENTATION_LANDSCAPE -> recyclerView.layoutManager = GridLayoutManager(activity, 5)
         }
-        //recyclerView.layoutManager = GridLayoutManager(activity, 3)
+
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+
         try {
             Log.d(TAG, "onCreateView: trying")
             recyclerView.adapter = BrowseRecyclerAdapter(activity!!, resultList!!)

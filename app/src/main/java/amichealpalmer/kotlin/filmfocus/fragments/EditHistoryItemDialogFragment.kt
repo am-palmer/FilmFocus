@@ -78,6 +78,8 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
         fragment_watchlist_watched_dialog_cancelButton.setOnClickListener(this)
         fragment_watchlist_watched_dialog_doneButton.setOnClickListener(this)
 
+        fragment_watchlist_watched_dialog_title.setText(R.string.edit_review)
+
         Picasso.get().load(timelineItem.film.posterURL).error(R.drawable.placeholder_imageloading)
                 .placeholder(R.drawable.placeholder_imageloading).into(fragment_watchlist_watched_dialog_poster_iv)
 

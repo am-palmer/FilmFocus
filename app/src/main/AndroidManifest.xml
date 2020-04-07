@@ -27,9 +27,6 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
-<!--        <activity-->
-<!--            android:name=".activities.WatchlistActivity"-->
-<!--            android:label="@string/watchlist_generic_title"></activity>-->
     </application>
 
 </manifest>

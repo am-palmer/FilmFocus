@@ -81,7 +81,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
     }
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) { // todo: is this recalled when a film is removed (notifyDataSetChanged?) probably not
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         onWatchlistStateChange()
         super.onViewCreated(view, savedInstanceState)
     }
@@ -212,7 +212,6 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
     }
 
     // Called when any action which might result in an empty watchlist is taken, so we can show the empty view if need be
-    // todo: null safety?
     private fun onWatchlistStateChange(){
         if (watchlist.isNotEmpty()) {
             fragment_watchlist_empty_view_container.visibility = View.GONE

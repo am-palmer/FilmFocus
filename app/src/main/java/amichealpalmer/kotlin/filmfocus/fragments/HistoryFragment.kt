@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_dialog_generic_confirm.*
 import kotlinx.android.synthetic.main.fragment_history.*
+import kotlinx.android.synthetic.main.fragment_watchlist_watched_dialog.*
 import java.lang.NullPointerException
 
 private const val ARG_TIMELINE_LIST = "timelineList"
