@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.FilmDetailsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/film_details_constraint_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="TextView"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            tools:text="The Princess Bride" />
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_DIRECTEDBY"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="DIRECTED BY"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_title"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_title"
+            tools:text="DIRECTED BY" />
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_director"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="TextView"
+            app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_DIRECTEDBY"
+            app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_DIRECTEDBY"
+            android:textColor="@color/colorPrimaryDark"
+            tools:text="Rob Reiner" />
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_year"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="TextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_DIRECTEDBY"
+            tools:text="1987 " />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_year"
+            app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_year"
+            tools:text="@string/interpunct_unicode"
+            android:text="@string/interpunct_unicode"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_runtime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="TextView"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textView2"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            tools:text="99 mins" />
+
+        <ImageView
+            android:id="@+id/fragment_film_details_iv_poster"
+            android:layout_width="150dp"
+            android:layout_height="240dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="Movie poster"
+            android:scaleType="fitXY"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_year"
+            app:srcCompat="@drawable/placeholder_imageloading"
+            tools:srcCompat="@drawable/cover_placeholder" />
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_plot"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="TextView"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/fragment_film_details_iv_poster"
+            app:layout_constraintTop_toTopOf="@+id/fragment_film_details_iv_poster"
+            tools:text="While home sick in bed, a young boy's grandfather reads him the story of a farmboy-turned-pirate who encounters numerous obstacles, enemies and allies in his quest to be reunited with his true love. " />
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_awards"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="TextView"
+            app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_plot"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_plot"
+            tools:text="7 wins and 9 nominations" />
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_STARRING"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="STARRING"
+            app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_plot"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_awards"
+            tools:text="STARRING" />
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_cast"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_STARRING"
+            app:layout_constraintTop_toTopOf="@+id/fragment_film_details_tv_STARRING"
+            tools:text="Cary Elwes, Robin Wright, Mandy Patinkin, Andre the Giant"
+            android:textColor="@color/colorPrimaryDark"/>
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_genre"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="TextView"
+            app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_STARRING"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_cast"
+            tools:text="Adventure, Fantasy, Comedy, Family" />
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_IMDB"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="IMDB"
+            app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_genre"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_genre"
+            tools:text="IMDB" />
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_imdbScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="TextView"
+            app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_IMDB"
+            app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_IMDB"
+            android:textColor="@color/colorPrimaryDark"
+            tools:text="8.1" />
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_METACRITIC"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="METACRITIC"
+            app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_imdbScore"
+            app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_imdbScore"
+            tools:text="METACRITIC" />
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_metacriticScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="TextView"
+            app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_METACRITIC"
+            app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_METACRITIC"
+            android:textColor="@color/colorPrimaryDark"
+            tools:text="77" />
+
+        <TextView
+            android:id="@+id/fragment_film_details_tv_language"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="TextView"
+            app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_IMDB"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_IMDB"
+            tools:text="English" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
