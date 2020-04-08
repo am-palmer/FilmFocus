@@ -10,7 +10,6 @@ import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -24,8 +23,6 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
@@ -38,7 +35,7 @@ import java.lang.reflect.Type
 // todo: see trello
 // todo next: implement the dialog box which shows when user marks film as watched (in watchlist view and in the browse view)
 
-enum class CURRENT_FRAGMENT { // todo: perhaps too idiosyncratic?
+enum class FRAGMENT_ID { // todo: perhaps too idiosyncratic?
     BROWSE, WATCHLIST, HISTORY
 }
 
@@ -55,11 +52,16 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
     private lateinit var timelineList: ArrayList<TimelineItem> // List of items in the user's history
 
 
-    private var currentFragment: CURRENT_FRAGMENT? = null
+    private var fragmentID: FRAGMENT_ID? = null
     private lateinit var mDrawer: DrawerLayout
     private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var toolbar: Toolbar
     private val SHARED_PREFS = "sharedPrefs"
+
+    // References to fragment instances
+    private var browseFragment: Fragment? = null
+    private var watchlistFragment: Fragment? = null
+    private var historyFragment: Fragment? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,14 +75,14 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
             setTitle("Browse")
             val fragmentManager = supportFragmentManager
             fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
-            currentFragment = CURRENT_FRAGMENT.BROWSE
-
+            fragmentID = FRAGMENT_ID.BROWSE
+            browseFragment = fragment
             loadData()
         } else { // Restore data from saved instance state
             try {
                 watchlist = savedInstanceState.getParcelableArrayList<FilmThumbnail>("watchlist")!!
                 timelineList = savedInstanceState.getParcelableArrayList<TimelineItem>("timelineList")!!
-                currentFragment = CURRENT_FRAGMENT.valueOf(savedInstanceState.getString("currentFragment")!!)
+                fragmentID = FRAGMENT_ID.valueOf(savedInstanceState.getString("currentFragment")!!)
 
             } catch (e: NullPointerException) {
                 Log.wtf(TAG, ".onCreate: failed to load member variables from saved instance state")
@@ -115,7 +117,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         super.onSaveInstanceState(outState)
         outState.putParcelableArrayList("watchlist", watchlist)
         outState.putParcelableArrayList("timelineList", timelineList)
-        outState.putString("currentFragment", currentFragment!!.name)
+        outState.putString("currentFragment", fragmentID!!.name)
 
 
     }
@@ -159,29 +161,50 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
     fun selectDrawerItem(menuItem: MenuItem) { // Create a new fragment and specify the fragment to show based on nav item clicked
         var fragment: Fragment? = null
-        val fragmentClass: CURRENT_FRAGMENT?
-        fragmentClass = when (menuItem.itemId) {
-            R.id.nav_first_fragment -> CURRENT_FRAGMENT.BROWSE
-            R.id.nav_second_fragment -> CURRENT_FRAGMENT.WATCHLIST
-            R.id.nav_third_fragment -> CURRENT_FRAGMENT.HISTORY
-            else -> CURRENT_FRAGMENT.BROWSE
+        val fragmentIDClass: FRAGMENT_ID?
+        Log.d("TAG", "menuItem itemId is: ${menuItem.itemId.toString()}")
+        fragmentIDClass = when (menuItem.itemId) {
+            R.id.nav_first_fragment -> FRAGMENT_ID.BROWSE
+            R.id.nav_second_fragment -> FRAGMENT_ID.WATCHLIST
+            R.id.nav_third_fragment -> FRAGMENT_ID.HISTORY
+            else -> FRAGMENT_ID.BROWSE
         }
-
-        // todo: move these to a specific function, keep them out of the UI
-        // todo: replace if with when
-        if (currentFragment == fragmentClass) {
-            Log.d(TAG, ".selectDrawerItem: user clicked fragment we're currently in")
-            // User clicked the fragment button we're in; do nothing
+        Log.d(TAG, "fragmentIDClass is: ${fragmentIDClass.name} ")
+        Log.d(TAG, "fragmentID is: ${fragmentID!!.name}")
+        if (fragmentIDClass == fragmentID) {
+            Log.d(TAG, "user clicked fragment we're already in (fragmentIDClass == fragmentID)")
+            // Do nothing
         } else {
-            if (fragmentClass == CURRENT_FRAGMENT.BROWSE) { // todo: preserve state if user has already made a search
-                fragment = BrowseFragment.newInstance(null)
-                currentFragment = CURRENT_FRAGMENT.BROWSE
-            } else if (fragmentClass == CURRENT_FRAGMENT.WATCHLIST) {
-                fragment = WatchlistFragment.newInstance(watchlist)
-                currentFragment = CURRENT_FRAGMENT.WATCHLIST
-            } else if (fragmentClass == CURRENT_FRAGMENT.HISTORY) {
-                fragment = HistoryFragment.newInstance(timelineList)
-                currentFragment = CURRENT_FRAGMENT.HISTORY
+            when (fragmentIDClass) {
+                FRAGMENT_ID.BROWSE -> {
+                    Log.d(TAG, "fragmentIDClass = browse")
+                    if (browseFragment == null) {
+                        fragment = BrowseFragment.newInstance(null)
+                        browseFragment = fragment
+                    } else fragment = browseFragment
+                    fragmentID = FRAGMENT_ID.BROWSE
+                }
+                FRAGMENT_ID.WATCHLIST -> {
+                    Log.d(TAG, "fragmentIDClass = watchlist")
+                    if (watchlistFragment == null) {
+                        fragment = WatchlistFragment.newInstance(watchlist)
+                        watchlistFragment = fragment
+                    } else {
+                        fragment = watchlistFragment
+                    }
+                    fragmentID = FRAGMENT_ID.WATCHLIST
+                }
+                FRAGMENT_ID.HISTORY -> {
+                    Log.d(TAG, "fragmentIDClass = history")
+                    if (historyFragment == null) {
+                        fragment = HistoryFragment.newInstance(timelineList)
+                        historyFragment = fragment
+                    } else {
+                        fragment = historyFragment
+                    }
+                    fragmentID = FRAGMENT_ID.HISTORY
+                }
+                else -> true
             }
 
             // Insert the fragment by replacing any existing fragment
