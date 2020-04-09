@@ -26,7 +26,7 @@ class BrowseRecyclerAdapter(
 
     private val TAG = "BrowseRecyclerAdapter"
     var position = 0
-
+    var helperViewHolder: BrowseRecyclerAdapter.HelperViewHolder? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelperViewHolder {
         Log.d(TAG, ".onCreateViewHolder called")
@@ -34,7 +34,12 @@ class BrowseRecyclerAdapter(
         val mInflater = LayoutInflater.from(context)
         view = mInflater.inflate(R.layout.browse_films_item, parent, false)
 
-        return HelperViewHolder(view)
+        helperViewHolder = HelperViewHolder(view)
+        return helperViewHolder!!
+    }
+
+    fun getAdapterPosition(): Int{
+        return helperViewHolder?.adapterPosition ?: 0
     }
 
     fun updateList(resultList: List<FilmThumbnail>) {
@@ -98,13 +103,12 @@ class BrowseRecyclerAdapter(
 
         }
 
-        override fun onCreateContextMenu(menu: ContextMenu?, v: View, menuInfo: ContextMenu.ContextMenuInfo?) { // does not return true and performs normal click. todo fix
+        override fun onCreateContextMenu(menu: ContextMenu?, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
             Log.d(TAG, ".onCreateContextMenu called.")
             val inflater = MenuInflater(context)
             inflater.inflate(R.menu.browse_film_context_menu, menu)
 
         }
-
 
     }
 

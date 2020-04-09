@@ -3,28 +3,19 @@ package amichealpalmer.kotlin.filmfocus.fragments
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.activities.MainActivity
 import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
-import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
-import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
 import amichealpalmer.kotlin.filmfocus.data.json.GetJSONSearch
-import android.app.SearchManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.res.Configuration
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.ProgressBar
 import android.widget.SearchView
-import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
-import java.lang.NullPointerException
 
 
 private const val ARG_RESULTS = "resultList"
@@ -37,7 +28,7 @@ enum class BROWSE_FILM_CONTEXT_ACTION_TYPE {
 class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
     internal var callback: onResultActionListener? = null
-    var resultList = ArrayList<FilmThumbnail>()
+    private var resultList: ArrayList<FilmThumbnail>? = null
     lateinit var recyclerView: RecyclerView
 
     //var progressBar: ProgressBar? = null
@@ -45,6 +36,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
     private var noMoreResults = false
     var searchString: String? = null
     private var currentPage = 1
+   // private var recyclerScollPosition = 0
 
     interface onResultActionListener {
         fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE)
@@ -61,7 +53,12 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             // we should also restore the position in the scroll view
             Log.d(TAG, "savedInstanceState: retrieving search query")
             searchString = savedInstanceState.getString(ARG_SEARCH_STRING)
-            resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS) ?: ArrayList<FilmThumbnail>()
+            resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)
+                    ?: ArrayList<FilmThumbnail>()
+            noMoreResults = savedInstanceState.getBoolean("noMoreResults")
+           // recyclerScollPosition = savedInstanceState.getInt("recyclerScrollPosition")
+        } else {
+            resultList = ArrayList<FilmThumbnail>()
         }
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -69,13 +66,14 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView called")
         var view = inflater.inflate(R.layout.fragment_browse, container, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
 
         // Check current orientation so we can change number of items displayed per row in the adapter
-        when (resources.configuration.orientation){
+        when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> recyclerView.layoutManager = GridLayoutManager(activity, 3)
             Configuration.ORIENTATION_LANDSCAPE -> recyclerView.layoutManager = GridLayoutManager(activity, 5)
         }
@@ -97,28 +95,49 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                     }
                 }
             })
-        } catch (e: NullPointerException){
+        } catch (e: NullPointerException) {
             Log.e(TAG, "onCreateView: npe")
             Log.e(TAG, e.printStackTrace().toString())
         }
+        if (savedInstanceState != null){
+            recyclerView.post(Runnable {
+                val pos = savedInstanceState.getInt("recyclerScrollPosition")
+                recyclerView.scrollToPosition(pos)
+               // recyclerScollPosition = pos
+            })
+        }
+
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // Set the empty view as visible by default, turn it off once a query is entered
-        if (searchString.isNullOrBlank()) {
-            fragment_search_empty_container.visibility = View.VISIBLE
-            fragment_browse_recycler_framelayout.visibility = View.GONE
-        } else {
+        if (savedInstanceState != null && resultList!!.size > 0) {
             fragment_search_empty_container.visibility = View.GONE
+            fragment_browse_recycler_framelayout.visibility = View.VISIBLE
+        } else {
+            if (searchString.isNullOrBlank()) {
+                fragment_search_empty_container.visibility = View.VISIBLE
+                fragment_browse_recycler_framelayout.visibility = View.GONE
+            } else {
+                fragment_search_empty_container.visibility = View.GONE
+            }
         }
         super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onSaveInstanceState(outState: Bundle) { // Called when i.e. screen orientation changes
         super.onSaveInstanceState(outState)
-        outState.putString(ARG_SEARCH_STRING, searchString)
-        outState.putParcelableArrayList(ARG_RESULTS, resultList)
+        if (searchString != null) {
+            outState.putString(ARG_SEARCH_STRING, searchString)
+        }
+        if (resultList != null) {
+            outState.putParcelableArrayList(ARG_RESULTS, resultList)
+        }
+        val adapter = recyclerView.adapter as BrowseRecyclerAdapter
+        //recyclerScollPosition = adapter.getAdapterPosition
+        outState.putInt("recyclerScrollPosition", adapter.getAdapterPosition())
+        outState.putBoolean("noMoreResults", noMoreResults)
     }
 
     override fun onAttach(context: Context) {
@@ -264,8 +283,11 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             if (searchString != null) {
                 //args.putParcelableArrayList(ARG_RESULTS, resultList)
                 args.putString(ARG_SEARCH_STRING, searchString)
-                fragment.arguments = args
             }
+//            if (resultList != null) {
+//                args.putParcelableArrayList("resultList", resultList)
+//            }
+            fragment.arguments = args
             return fragment
         }
 

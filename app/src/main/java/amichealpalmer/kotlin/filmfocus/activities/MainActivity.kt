@@ -22,6 +22,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
     private lateinit var watchlist: ArrayList<FilmThumbnail> // The user's Watchlist, stored in SharedPrefs
     private lateinit var timelineList: ArrayList<TimelineItem> // List of items in the user's history
-
+    //private var resultList: ArrayList<FilmThumbnail>? = null // This list is updated if the user performs a search
 
     private var fragmentID: FRAGMENT_ID? = null
     private lateinit var mDrawer: DrawerLayout
@@ -58,31 +59,41 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
     private lateinit var toolbar: Toolbar
     private val SHARED_PREFS = "sharedPrefs"
 
-    // References to fragment instances
-    private var browseFragment: Fragment? = null
-    private var watchlistFragment: Fragment? = null
-    private var historyFragment: Fragment? = null
+//    // References to fragment instances
+//    private var browseFragment: Fragment? = null
+//    private var watchlistFragment: Fragment? = null
+//    private var historyFragment: Fragment? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".onCreate: starts")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        if (savedInstanceState == null) { // First-time load
-
-            // Load search by default
+        if (savedInstanceState == null) { // First-time load, show a new browseFragment
             val fragment = BrowseFragment.newInstance(null)
-            setTitle("Browse")
+            title = "Browse"
             val fragmentManager = supportFragmentManager
-            fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
+            fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment, "browse").commit()
+
             fragmentID = FRAGMENT_ID.BROWSE
-            browseFragment = fragment
+            //browseFragment = fragment
             loadData()
         } else { // Restore data from saved instance state
             try {
                 watchlist = savedInstanceState.getParcelableArrayList<FilmThumbnail>("watchlist")!!
                 timelineList = savedInstanceState.getParcelableArrayList<TimelineItem>("timelineList")!!
-                fragmentID = FRAGMENT_ID.valueOf(savedInstanceState.getString("currentFragment")!!)
+                fragmentID = FRAGMENT_ID.valueOf(savedInstanceState.getString("currentFragment")!!) // Use this to figure out which fragment should be selected?
+
+                // Todo: check this is necessary
+                when (fragmentID) {
+                    FRAGMENT_ID.BROWSE -> title = "Browse"
+                    FRAGMENT_ID.HISTORY -> title = "History"
+                    FRAGMENT_ID.WATCHLIST -> title = "Watchlist"
+                }
+
+//                browseFragment = supportFragmentManager.getFragment(savedInstanceState, "browseFragment")
+//                watchlistFragment = supportFragmentManager.getFragment(savedInstanceState, "watchlistFragment")
+//                historyFragment = supportFragmentManager.getFragment(savedInstanceState, "historyFragment")
 
             } catch (e: NullPointerException) {
                 Log.wtf(TAG, ".onCreate: failed to load member variables from saved instance state")
@@ -118,6 +129,15 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         outState.putParcelableArrayList("watchlist", watchlist)
         outState.putParcelableArrayList("timelineList", timelineList)
         outState.putString("currentFragment", fragmentID!!.name)
+//        if (browseFragment != null) {
+//            supportFragmentManager.putFragment(outState, "browseFragment", browseFragment!!)
+//        }
+//        if (watchlistFragment != null) {
+//            supportFragmentManager.putFragment(outState, "watchlistFragment", watchlistFragment!!)
+//        }
+//        if (historyFragment != null) {
+//            supportFragmentManager.putFragment(outState, "historyFragment", historyFragment!!)
+//        }
 
 
     }
@@ -159,9 +179,12 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         }
     }
 
-    fun selectDrawerItem(menuItem: MenuItem) { // Create a new fragment and specify the fragment to show based on nav item clicked
+    fun selectDrawerItem(menuItem: MenuItem) { // Todo: nowhere close to a good solution -> need to use back stack?
         var fragment: Fragment? = null
         val fragmentIDClass: FRAGMENT_ID?
+        val previousFragment = fragmentID
+        val fragmentManager = supportFragmentManager
+        //var fragmentName = "browse"
         Log.d("TAG", "menuItem itemId is: ${menuItem.itemId.toString()}")
         fragmentIDClass = when (menuItem.itemId) {
             R.id.nav_first_fragment -> FRAGMENT_ID.BROWSE
@@ -178,40 +201,35 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
             when (fragmentIDClass) {
                 FRAGMENT_ID.BROWSE -> {
                     Log.d(TAG, "fragmentIDClass = browse")
-                    if (browseFragment == null) {
-                        fragment = BrowseFragment.newInstance(null)
-                        browseFragment = fragment
-                    } else fragment = browseFragment
+                    fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_ID.BROWSE.name)
+                            ?: BrowseFragment.newInstance(null)
+                    title = "Browse"
                     fragmentID = FRAGMENT_ID.BROWSE
                 }
                 FRAGMENT_ID.WATCHLIST -> {
                     Log.d(TAG, "fragmentIDClass = watchlist")
-                    if (watchlistFragment == null) {
-                        fragment = WatchlistFragment.newInstance(watchlist)
-                        watchlistFragment = fragment
-                    } else {
-                        fragment = watchlistFragment
-                    }
+                    //fragmentName = "watchlist"
+                    fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_ID.WATCHLIST.name)
+                            ?: WatchlistFragment.newInstance(watchlist)
+                    title = "Watchlist"
                     fragmentID = FRAGMENT_ID.WATCHLIST
                 }
                 FRAGMENT_ID.HISTORY -> {
                     Log.d(TAG, "fragmentIDClass = history")
-                    if (historyFragment == null) {
-                        fragment = HistoryFragment.newInstance(timelineList)
-                        historyFragment = fragment
-                    } else {
-                        fragment = historyFragment
-                    }
+                    fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_ID.HISTORY.name)
+                            ?: HistoryFragment.newInstance(timelineList)
+                    title = "History"
                     fragmentID = FRAGMENT_ID.HISTORY
                 }
                 else -> true
             }
 
             // Insert the fragment by replacing any existing fragment
-            val fragmentManager = supportFragmentManager
-
-            fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment!!).commit()
-
+            val transaction = fragmentManager.beginTransaction()
+            transaction.replace(R.id.main_frame_layout_fragment_holder, fragment!!, fragmentID!!.name.toString())
+            transaction.addToBackStack(null)
+            transaction.commit()
+            fragmentManager.executePendingTransactions()
             menuItem.isChecked = true
             title = menuItem.title
         }
