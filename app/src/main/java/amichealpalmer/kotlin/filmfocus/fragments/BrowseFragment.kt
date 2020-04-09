@@ -29,14 +29,14 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     internal var callback: onResultActionListener? = null
     private var resultList: ArrayList<FilmThumbnail>? = null
-    lateinit var recyclerView: RecyclerView
+    private var recyclerView: RecyclerView? = null
 
     //var progressBar: ProgressBar? = null
     private val TAG = "BrowseFragment"
     private var noMoreResults = false
     var searchString: String? = null
     private var currentPage = 1
-   // private var recyclerScollPosition = 0
+    // private var recyclerScollPosition = 0
 
     interface onResultActionListener {
         fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE)
@@ -56,7 +56,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)
                     ?: ArrayList<FilmThumbnail>()
             noMoreResults = savedInstanceState.getBoolean("noMoreResults")
-           // recyclerScollPosition = savedInstanceState.getInt("recyclerScrollPosition")
+            // recyclerScollPosition = savedInstanceState.getInt("recyclerScrollPosition")
         } else {
             resultList = ArrayList<FilmThumbnail>()
         }
@@ -74,17 +74,17 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
         // Check current orientation so we can change number of items displayed per row in the adapter
         when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> recyclerView.layoutManager = GridLayoutManager(activity, 3)
-            Configuration.ORIENTATION_LANDSCAPE -> recyclerView.layoutManager = GridLayoutManager(activity, 5)
+            Configuration.ORIENTATION_PORTRAIT -> recyclerView?.layoutManager = GridLayoutManager(activity, 3)
+            Configuration.ORIENTATION_LANDSCAPE -> recyclerView?.layoutManager = GridLayoutManager(activity, 5)
         }
 
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
 
         try {
             Log.d(TAG, "onCreateView: trying")
-            recyclerView.adapter = BrowseRecyclerAdapter(activity!!, resultList!!)
+            recyclerView?.adapter = BrowseRecyclerAdapter(activity!!, resultList!!)
             Log.d(TAG, "onCreateView: adapter is initiated")
-            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                     // could perhaps rewrite this so it loads new entries before the bottom is reached, right now it is jarring
@@ -99,11 +99,11 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             Log.e(TAG, "onCreateView: npe")
             Log.e(TAG, e.printStackTrace().toString())
         }
-        if (savedInstanceState != null){
-            recyclerView.post(Runnable {
+        if (savedInstanceState != null) {
+            recyclerView?.post(Runnable {
                 val pos = savedInstanceState.getInt("recyclerScrollPosition")
-                recyclerView.scrollToPosition(pos)
-               // recyclerScollPosition = pos
+                recyclerView?.scrollToPosition(pos)
+                // recyclerScollPosition = pos
             })
         }
 
@@ -134,9 +134,17 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         if (resultList != null) {
             outState.putParcelableArrayList(ARG_RESULTS, resultList)
         }
-        val adapter = recyclerView.adapter as BrowseRecyclerAdapter
-        //recyclerScollPosition = adapter.getAdapterPosition
-        outState.putInt("recyclerScrollPosition", adapter.getAdapterPosition())
+        if (recyclerView != null) {
+
+        }
+
+        // Store the scroll position of the
+        var scrollPos: Int? = null
+        if (recyclerView?.adapter != null) {
+            val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
+            scrollPos = adapter.getAdapterPosition()
+        }
+        outState.putInt("recyclerScrollPosition", scrollPos ?: 0)
         outState.putBoolean("noMoreResults", noMoreResults)
     }
 
@@ -192,7 +200,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         }
         Log.d(TAG, ".onContextItemSelected called")
         Log.d(TAG, "menu item: ${item}")
-        val adapter = recyclerView.adapter as BrowseRecyclerAdapter
+        val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
         var position = -1
         try {
             position = adapter.position
@@ -230,7 +238,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                 resultList?.clear()
                 fragment_search_empty_container.visibility = View.GONE
                 fragment_browse_recycler_framelayout.visibility = View.VISIBLE
-                val adapter = recyclerView.adapter as BrowseRecyclerAdapter
+                val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
                 adapter.clearList()
             }
             searchString = titleContains
@@ -243,7 +251,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
         fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {
             browse_fragment_progressBar.visibility = View.GONE
-            val adapter = recyclerView.adapter as BrowseRecyclerAdapter
+            val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
             Log.d(TAG, "onSearchResultsDownload: RESULTLIST IS EMPTY? ${resultList.isEmpty()}")
             Log.d(TAG, "and CurrentPage is: $currentPage")
             if (resultList.isEmpty() && currentPage == 2) { // Indicates there are no results for the search term. Todo: magic numbers...

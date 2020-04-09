@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
             val fragment = BrowseFragment.newInstance(null)
             title = "Browse"
             val fragmentManager = supportFragmentManager
-            fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment, "browse").commit()
+            fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment, FRAGMENT_ID.BROWSE.name).commit()
 
             fragmentID = FRAGMENT_ID.BROWSE
             //browseFragment = fragment
@@ -129,15 +129,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         outState.putParcelableArrayList("watchlist", watchlist)
         outState.putParcelableArrayList("timelineList", timelineList)
         outState.putString("currentFragment", fragmentID!!.name)
-//        if (browseFragment != null) {
-//            supportFragmentManager.putFragment(outState, "browseFragment", browseFragment!!)
-//        }
-//        if (watchlistFragment != null) {
-//            supportFragmentManager.putFragment(outState, "watchlistFragment", watchlistFragment!!)
-//        }
-//        if (historyFragment != null) {
-//            supportFragmentManager.putFragment(outState, "historyFragment", historyFragment!!)
-//        }
 
 
     }
@@ -179,12 +170,10 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         }
     }
 
-    fun selectDrawerItem(menuItem: MenuItem) { // Todo: nowhere close to a good solution -> need to use back stack?
+    fun selectDrawerItem(menuItem: MenuItem) {
         var fragment: Fragment? = null
         val fragmentIDClass: FRAGMENT_ID?
-        val previousFragment = fragmentID
         val fragmentManager = supportFragmentManager
-        //var fragmentName = "browse"
         Log.d("TAG", "menuItem itemId is: ${menuItem.itemId.toString()}")
         fragmentIDClass = when (menuItem.itemId) {
             R.id.nav_first_fragment -> FRAGMENT_ID.BROWSE
@@ -201,6 +190,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
             when (fragmentIDClass) {
                 FRAGMENT_ID.BROWSE -> {
                     Log.d(TAG, "fragmentIDClass = browse")
+                    Log.d(TAG, "finding browse fragment by tag - does it exist? ${supportFragmentManager.findFragmentByTag(FRAGMENT_ID.BROWSE.name)}")
                     fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_ID.BROWSE.name)
                             ?: BrowseFragment.newInstance(null)
                     title = "Browse"
@@ -208,7 +198,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
                 }
                 FRAGMENT_ID.WATCHLIST -> {
                     Log.d(TAG, "fragmentIDClass = watchlist")
-                    //fragmentName = "watchlist"
+                    Log.d(TAG, "finding watchlist fragment by tag - does it exist? ${supportFragmentManager.findFragmentByTag(FRAGMENT_ID.WATCHLIST.name)}")
                     fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_ID.WATCHLIST.name)
                             ?: WatchlistFragment.newInstance(watchlist)
                     title = "Watchlist"
@@ -216,6 +206,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
                 }
                 FRAGMENT_ID.HISTORY -> {
                     Log.d(TAG, "fragmentIDClass = history")
+                    Log.d(TAG, "finding watchlist fragment by tag - does it exist? ${supportFragmentManager.findFragmentByTag(FRAGMENT_ID.HISTORY.name)}")
                     fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_ID.HISTORY.name)
                             ?: HistoryFragment.newInstance(timelineList)
                     title = "History"
@@ -226,7 +217,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
             // Insert the fragment by replacing any existing fragment
             val transaction = fragmentManager.beginTransaction()
-            transaction.replace(R.id.main_frame_layout_fragment_holder, fragment!!, fragmentID!!.name.toString())
+            transaction.replace(R.id.main_frame_layout_fragment_holder, fragment!!, fragmentID!!.name)
             transaction.addToBackStack(null)
             transaction.commit()
             fragmentManager.executePendingTransactions()
