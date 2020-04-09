@@ -114,7 +114,11 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            val activity = callback as MainActivity
+
+
             override fun onQueryTextSubmit(query: String): Boolean {
+                activity.closeKeyboard() // Todo: obscene solution
                 onQueryTextChange(query)
                 return true
             }

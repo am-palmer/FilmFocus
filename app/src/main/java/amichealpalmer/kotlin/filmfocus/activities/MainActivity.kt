@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -59,12 +60,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
     private lateinit var toolbar: Toolbar
     private val SHARED_PREFS = "sharedPrefs"
 
-//    // References to fragment instances
-//    private var browseFragment: Fragment? = null
-//    private var watchlistFragment: Fragment? = null
-//    private var historyFragment: Fragment? = null
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".onCreate: starts")
         super.onCreate(savedInstanceState)
@@ -91,17 +86,14 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
                     FRAGMENT_ID.WATCHLIST -> title = "Watchlist"
                 }
 
-//                browseFragment = supportFragmentManager.getFragment(savedInstanceState, "browseFragment")
-//                watchlistFragment = supportFragmentManager.getFragment(savedInstanceState, "watchlistFragment")
-//                historyFragment = supportFragmentManager.getFragment(savedInstanceState, "historyFragment")
 
             } catch (e: NullPointerException) {
                 Log.wtf(TAG, ".onCreate: failed to load member variables from saved instance state")
                 Log.wtf(TAG, e.stackTrace.toString())
             }
 
-
         }
+
         setSupportActionBar(drawer_layout.toolbar)
         toolbar = findViewById(R.id.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -133,18 +125,19 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean { // Handles action bar item taps
-        if (drawerToggle.onOptionsItemSelected(item)) return true
-
-        return when (item.itemId) {
-            android.R.id.home -> {
-                Log.d(TAG, ".onOptionsItemSelected: drawer button tapped")
-                mDrawer.openDrawer(GravityCompat.START)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean { // Handles action bar item taps
+//        if (drawerToggle.onOptionsItemSelected(item)) return true
+//
+//        return when (item.itemId) {
+//            android.R.id.home -> {
+//                Log.d(TAG, ".onOptionsItemSelected: drawer button tapped")
+//                closeKeyboard()
+//                mDrawer.openDrawer(GravityCompat.START)
+//                true
+//            }
+//            else -> super.onOptionsItemSelected(item)
+//        }
+//    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.d(TAG, ".onConfiguration changed: starts")
@@ -231,15 +224,18 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         return ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close)
     }
 
-    override fun onNewIntent(intent: Intent?) { // todo: move this logic into the browse fragment, then delete
+    // Todo: find the method that is called when drawer button is pressed, overrride it, and close keyboard when it is called
+
+    override fun onNewIntent(intent: Intent?) { // todo: move this logic into the browse fragment?
         super.onNewIntent(intent)
         Log.d(TAG, ".onNewIntent called")
         if (Intent.ACTION_SEARCH == intent!!.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
             Log.d(TAG, ".handleIntent: received new searchHelper query: $query")
             // searchHelper().searchByTitleKeyword(query!!)
-
+            closeKeyboard()
             // Building the search fragment
+            // todo: this is creating another browsefragment, get the current browsefragment instance instead
             val fragment = BrowseFragment()
             val args = Bundle()
             args.putString("searchString", query)
@@ -310,6 +306,14 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
             Log.d(TAG, ".loadData: timeline retrieved")
             timelineList = timelineRetrieved
             //timelineList = ArrayList<TimelineItem>()
+        }
+    }
+
+    fun closeKeyboard() {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 
