@@ -1,7 +1,7 @@
 FilmFocus
 =================
 
-An Android App written in Kotlin, which helps users to manage a film watchlist and log films they have watched, with a rating and review.
+An Android App written in Kotlin, which helps users to manage a film watchlist, as well as track the films they have watched
 
 ![searching for films](https://github.com/am-palmer/FilmFocus/blob/master/screenshots/searching.png)
 ![film details](https://github.com/am-palmer/FilmFocus/blob/master/screenshots/film_details.png)
