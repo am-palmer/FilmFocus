@@ -6,7 +6,7 @@ An Android App written in Kotlin, which helps users to manage a film watchlist a
 (screenshots)
 
 
-Please note that to run the app you will need a res/values/keys.xml file containing an OMDB_API_KEY string resource, which should be an API key for OMDB (![see here for details](https://www.omdbapi.com/apikey.aspx)) 
+Please note that to run the app you will need a res/values/keys.xml file containing an OMDB_API_KEY string resource, which should be an API key for OMDB: ([see here for details](https://www.omdbapi.com/apikey.aspx))
 
 Features
 ------------
@@ -16,7 +16,7 @@ Users can leave a short review and rating for films as they please, and these wi
 Technical Details
 ------------
 
-FilmFocus uses a !(single activity pattern)[https://www.youtube.com/watch?v=2k8x8V77CrU], with UI information contained within fragments. Users switch between fragments using a navigation drawer. Fragments communicate with the Activity using listener interfaces, such as when a user adds a film to their watchlist from the Browse Fragment, or chooses to edit an item in their History.
+FilmFocus uses a [single activity pattern](https://www.youtube.com/watch?v=2k8x8V77CrU), with UI information contained within fragments. Users switch between fragments using a navigation drawer. Fragments communicate with the Activity using listener interfaces, such as when a user adds a film to their watchlist from the Browse Fragment, or chooses to edit an item in their History.
 Film details are loaded from the OMDB API, and stored as objects which are collected in ArrayLists for display in the UI. The app makes calls to the API to load given information such as a film's poster or plot, and views are programmatically modified to display details about a given film.
 
 Each of the three main views - Browse, Watchlist and History - use RecyclerViews to show content, for resource efficiency. The Browse Fragment uses a listener interface to detect when the user has scrolled to the end of the RecyclerView, at which point more search results are loaded from the API (if they are available).
