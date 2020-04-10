@@ -1,12 +1,11 @@
 package amichealpalmer.kotlin.filmfocus.activities
 
-//import amichealpalmer.kotlin.filmfocus.fragments.ACTION_TYPE
+
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
 import amichealpalmer.kotlin.filmfocus.fragments.*
 import amichealpalmer.kotlin.filmfocus.helpers.LocalDateSerializer
-import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -15,7 +14,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -31,18 +29,14 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 import org.joda.time.LocalDate
 import java.lang.reflect.Type
 
-
-// todo: see trello
-// todo next: implement the dialog box which shows when user marks film as watched (in watchlist view and in the browse view)
-
-enum class FRAGMENT_ID { // todo: perhaps too idiosyncratic?
+enum class FRAGMENT_ID {
     BROWSE, WATCHLIST, HISTORY
 }
 
 class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener { // todo: disperse as much logic into the fragments as possible
 
-    internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
-    internal val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
+    //internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
+    //internal val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
     internal val SHAREDPREFS_KEY_WATCHLIST = "watchlist"
     internal val SHAREDPREFS_KEY_TIMELINE = "timelineList"
 
@@ -50,7 +44,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
     private lateinit var watchlist: ArrayList<FilmThumbnail> // The user's Watchlist, stored in SharedPrefs
     private lateinit var timelineList: ArrayList<TimelineItem> // List of items in the user's history
-    //private var resultList: ArrayList<FilmThumbnail>? = null // This list is updated if the user performs a search
 
     private var fragmentID: FRAGMENT_ID? = null
     private lateinit var mDrawer: DrawerLayout
@@ -58,18 +51,18 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
     private lateinit var toolbar: Toolbar
     private val SHARED_PREFS = "sharedPrefs"
 
+    private var browseFragment: Fragment? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, ".onCreate: starts")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null) { // First-time load, show a new browseFragment
             val fragment = BrowseFragment.newInstance(null)
+            browseFragment = fragment
             title = "Browse"
             val fragmentManager = supportFragmentManager
             fragmentManager.beginTransaction().replace(R.id.main_frame_layout_fragment_holder, fragment, FRAGMENT_ID.BROWSE.name).commit()
-
             fragmentID = FRAGMENT_ID.BROWSE
-            //browseFragment = fragment
             loadData()
         } else { // Restore data from saved instance state
             try {
@@ -77,13 +70,12 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
                 timelineList = savedInstanceState.getParcelableArrayList<TimelineItem>("timelineList")!!
                 fragmentID = FRAGMENT_ID.valueOf(savedInstanceState.getString("currentFragment")!!) // Use this to figure out which fragment should be selected?
 
-                // Todo: check this is necessary
+                // May not be necessary
                 when (fragmentID) {
                     FRAGMENT_ID.BROWSE -> title = "Browse"
                     FRAGMENT_ID.HISTORY -> title = "History"
                     FRAGMENT_ID.WATCHLIST -> title = "Watchlist"
                 }
-
 
             } catch (e: NullPointerException) {
                 Log.wtf(TAG, ".onCreate: failed to load member variables from saved instance state")
@@ -110,6 +102,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
+
         // Sync the toggle state after onRestoreInstanceState has occurred.
         drawerToggle.syncState()
     }
@@ -123,20 +116,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
     }
 
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean { // Handles action bar item taps
-//        if (drawerToggle.onOptionsItemSelected(item)) return true
-//
-//        return when (item.itemId) {
-//            android.R.id.home -> {
-//                Log.d(TAG, ".onOptionsItemSelected: drawer button tapped")
-//                closeKeyboard()
-//                mDrawer.openDrawer(GravityCompat.START)
-//                true
-//            }
-//            else -> super.onOptionsItemSelected(item)
-//        }
-//    }
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.d(TAG, ".onConfiguration changed: starts")
         super.onConfigurationChanged(newConfig)
@@ -148,11 +127,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         return super.onCreateOptionsMenu(menu)
     }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        closeKeyboard()
-//        return super.onOptionsItemSelected(item)
-//    }
 
     private fun setupDrawerContent(navigationView: NavigationView) {
         Log.d(TAG, ".setupDrawerContent: setting nav view itemselectedlistener")
@@ -221,27 +195,20 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
     }
 
     private fun setupDrawerToggle(): ActionBarDrawerToggle {
-        val mDrawerToggle = object : ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close) {
-//            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
-//                Log.d(TAG, "onDrawerSlide is called")
-//                closeKeyboard()
-//                super.onDrawerSlide(drawerView, slideOffset)
-//            }
+        return object : ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close) {
         }
-        return mDrawerToggle
     }
 
-    override fun onNewIntent(intent: Intent?) { // todo: move this logic into the browse fragment?
+    override fun onNewIntent(intent: Intent?) { // Todo: move the associated listener to the browse fragment, and then move this logic also
         super.onNewIntent(intent)
         Log.d(TAG, ".onNewIntent called")
         if (Intent.ACTION_SEARCH == intent!!.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
             Log.d(TAG, ".handleIntent: received new searchHelper query: $query")
-            // searchHelper().searchByTitleKeyword(query!!)
             closeKeyboard()
-            // Building the search fragment
-            // todo: this is creating another browsefragment, get the current browsefragment instance instead
-            val fragment = BrowseFragment()
+
+            // Building the search fragment, or using existing one
+            val fragment = browseFragment ?: BrowseFragment()
             val args = Bundle()
             args.putString("searchString", query)
             fragment.arguments = args
@@ -259,9 +226,9 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         val editor = sharedPreferences.edit()
 
         // We use GSON to do custom objects (specifically, an ArrayList of FilmThumbnails, and an ArrayList of TimelineItems)
-        //val gson = Gson()
-        val builder: GsonBuilder = GsonBuilder()
+        val builder = GsonBuilder()
         builder.registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
+
         // Watchlist
         val gson = builder.create()
         var watchlistJson = gson.toJson(watchlist)
@@ -310,7 +277,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
             val timelineRetrieved = gson.fromJson(timelineJson, timelineType) as ArrayList<TimelineItem>
             Log.d(TAG, ".loadData: timeline retrieved")
             timelineList = timelineRetrieved
-            //timelineList = ArrayList<TimelineItem>()
         }
     }
 
@@ -335,22 +301,20 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         }
     }
 
-    override fun onFilmSelected(bundle: Bundle, typeWATCHLIST: WATCHLIST_FILM_CONTEXT_ACTION_TYPE) { // todo: merge this listener with the below into an 'on context item selected' listener
+    override fun onFilmSelected(bundle: Bundle, typeWATCHLIST: WATCHLIST_FILM_CONTEXT_ACTION_TYPE) { // todo: merge this listener with the below into an 'on context item selected' listener, and use bundle
         Log.d(TAG, ".onFilmSelected is called with TYPE: ${typeWATCHLIST.name}")
         if (typeWATCHLIST == WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE) {
             val film = bundle.getParcelable<FilmThumbnail>("film")
             if (film == null) {
-                Log.e(TAG, ".onFilmSelected: film null in bundle") // error handling?
+                Log.e(TAG, ".onFilmSelected: film null in bundle")
             } else {
                 watchlist.remove(film)
-                // Update local data
-                // Todo: make sure this is not a costly operation, if it is must save changes via some other method
                 saveData()
             }
         } else if (typeWATCHLIST == WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_MARK_WATCHED) {
             val timelineItem = bundle.getParcelable<TimelineItem>("timelineItem")
             if (timelineItem == null) {
-                Log.e(TAG, ".onFilmSelected: timelineItem null in bundle") // error handling?
+                Log.e(TAG, ".onFilmSelected: timelineItem null in bundle")
             } else {
                 timelineList.add(timelineItem)
                 watchlist.remove(timelineItem.film)
@@ -361,7 +325,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
     }
 
     override fun onWatchlistMenuItemSelected(bundle: Bundle, actionType: WATCHLIST_MENU_ITEM_ACTION_TYPE) {
-        //Log.d(TAG, "currentWatchlist passed size is ${currentWatchlist.size}")
         when (actionType) {
             WATCHLIST_MENU_ITEM_ACTION_TYPE.REMOVE_ALL -> {
                 try {
@@ -397,27 +360,27 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
     }
 
     override fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE) {
-        // todo: convert to when
-        if (type == BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST) {
-            try {
-                val film = bundle.getParcelable<FilmThumbnail>("film")
-                helperAddToWatchlist(film!!)
-                Log.e(TAG, "onSearchResultAction: film from bundle is null.")
-            } catch (e: NullPointerException) {
-                Log.wtf(TAG, ".onSearchResultAction: film in bundle is null.")
+        when (type) {
+            BROWSE_FILM_CONTEXT_ACTION_TYPE.MARK_WATCHED -> {
+                try {
+                    val timelineItem = bundle.getParcelable<TimelineItem>("timelineItem")
+                    timelineList.add(timelineItem!!)
+                    watchlist.remove(timelineItem.film)
+                    Toast.makeText(this, "Marked ${timelineItem.film.title} as watched", Toast.LENGTH_SHORT).show()
+                    saveData()
+                } catch (e: NullPointerException) {
+                    Log.wtf(TAG, ".onFilmSelected: timelineItem null in bundle")
+                }
             }
-        } else if (type == BROWSE_FILM_CONTEXT_ACTION_TYPE.MARK_WATCHED) {
-            // todo: code duplication with above?
-            try {
-                val timelineItem = bundle.getParcelable<TimelineItem>("timelineItem")
-                timelineList.add(timelineItem!!)
-                watchlist.remove(timelineItem.film)
-                Toast.makeText(this, "Marked ${timelineItem.film.title} as watched", Toast.LENGTH_SHORT).show()
-                saveData()
-            } catch (e: NullPointerException) {
-                Log.wtf(TAG, ".onFilmSelected: timelineItem null in bundle")
+            BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST -> {
+                try {
+                    val film = bundle.getParcelable<FilmThumbnail>("film")
+                    helperAddToWatchlist(film!!)
+                    Log.e(TAG, "onSearchResultAction: film from bundle is null.")
+                } catch (e: NullPointerException) {
+                    Log.wtf(TAG, ".onSearchResultAction: film in bundle is null.")
+                }
             }
-
         }
     }
 
