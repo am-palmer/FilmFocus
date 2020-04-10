@@ -8,7 +8,7 @@ An Android App written in Kotlin, which helps users to manage a film watchlist a
 ![marking a film as watched](https://github.com/am-palmer/FilmFocus/blob/master/screenshots/marking_watched.png)
 ![history](https://github.com/am-palmer/FilmFocus/blob/master/screenshots/history.png)
 
-Please note that to run the app you will need a res/values/keys.xml file containing an OMDB_API_KEY string resource, which should be a valid API key for OMDB: ([see here for details](https://www.omdbapi.com/apikey.aspx))
+Please note that to run the app you will need a res/values/keys.xml file containing an `OMDB_API_KEY` string resource, which should be a valid API key for OMDB: ([see here for details](https://www.omdbapi.com/apikey.aspx))
 
 Features
 ------------
