@@ -13,6 +13,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -20,17 +21,14 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import org.joda.time.LocalDate
-import java.lang.NullPointerException
 import java.lang.reflect.Type
 
 
@@ -146,19 +144,21 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         drawerToggle.onConfigurationChanged(newConfig)
     }
 
-    @SuppressLint("RestrictedApi")
-    internal fun activateToolbar(enableHome: Boolean) {
-        Log.d(TAG, ".activateToolbar")
-
-        var toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDefaultDisplayHomeAsUpEnabled(enableHome)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        return super.onCreateOptionsMenu(menu)
     }
+
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        closeKeyboard()
+//        return super.onOptionsItemSelected(item)
+//    }
 
     private fun setupDrawerContent(navigationView: NavigationView) {
         Log.d(TAG, ".setupDrawerContent: setting nav view itemselectedlistener")
         navigationView.setNavigationItemSelectedListener { menuItem ->
             selectDrawerItem(menuItem)
+            closeKeyboard()
             true
         }
     }
@@ -220,11 +220,16 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         mDrawer.closeDrawers()
     }
 
-    fun setupDrawerToggle(): ActionBarDrawerToggle {
-        return ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close)
+    private fun setupDrawerToggle(): ActionBarDrawerToggle {
+        val mDrawerToggle = object : ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close) {
+//            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+//                Log.d(TAG, "onDrawerSlide is called")
+//                closeKeyboard()
+//                super.onDrawerSlide(drawerView, slideOffset)
+//            }
+        }
+        return mDrawerToggle
     }
-
-    // Todo: find the method that is called when drawer button is pressed, overrride it, and close keyboard when it is called
 
     override fun onNewIntent(intent: Intent?) { // todo: move this logic into the browse fragment?
         super.onNewIntent(intent)
