@@ -4,7 +4,9 @@ FilmFocus
 An Android App written in Kotlin, which helps users to manage a film watchlist and log films they have watched, with a rating and review.
 
 ![searching for films](https://github.com/am-palmer/FilmFocus/blob/master/screenshots/searching.png)
-
+![film details](https://github.com/am-palmer/FilmFocus/blob/master/screenshots/film_details.png)
+![marking a film as watched](https://github.com/am-palmer/FilmFocus/blob/master/screenshots/marking_watched.png)
+![history](https://github.com/am-palmer/FilmFocus/blob/master/screenshots/history.png)
 
 Please note that to run the app you will need a res/values/keys.xml file containing an OMDB_API_KEY string resource, which should be an API key for OMDB: ([see here for details](https://www.omdbapi.com/apikey.aspx))
 
