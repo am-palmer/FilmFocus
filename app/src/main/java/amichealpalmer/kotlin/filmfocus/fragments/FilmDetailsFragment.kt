@@ -54,6 +54,9 @@ class FilmDetailsFragment : Fragment() {
     fun onFilmInfoDownload(film: Film) { // Sub-optimal?
         Log.d(TAG, ".onFilmInfoDownload called")
         this.film = film
+
+        // Note that we need to use null safety here, as if user clicks out of the view before the ASyncTask finishes, the views won't exist when this function is called
+
         fragment_film_details_tv_title?.text = film.title
         fragment_film_details_tv_director?.text = film.director
         fragment_film_details_tv_year?.text = film.year
@@ -67,8 +70,10 @@ class FilmDetailsFragment : Fragment() {
         fragment_film_details_tv_language?.text = film.language
 
         Log.d(TAG, "Picasso: setting poster url for the layout")
-        Picasso.get().load(film.posterURL).error(R.drawable.placeholder_imageloading)
-                .placeholder(R.drawable.placeholder_imageloading).into(fragment_film_details_iv_poster)
+        if (fragment_film_details_iv_poster != null) {
+            Picasso.get().load(film.posterURL).error(R.drawable.placeholder_imageloading)
+                    .placeholder(R.drawable.placeholder_imageloading).into(fragment_film_details_iv_poster)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -81,22 +86,23 @@ class FilmDetailsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_film_details, container, false)
         Log.d(TAG, "Setting text fields for the layout")
 
-        view.fragment_film_details_tv_title.text = "..."
-        view.fragment_film_details_tv_director.text = "..."
-        view.fragment_film_details_tv_year.text = "..."
-        view.fragment_film_details_tv_runtime.text = "..."
-        view.fragment_film_details_tv_plot.text = "..."
-        view.fragment_film_details_tv_awards.text = "..."
-        view.fragment_film_details_tv_cast.text = "..."
-        view.fragment_film_details_tv_genre.text = "..."
-        view.fragment_film_details_tv_imdbScore.text = "..."
-        view.fragment_film_details_tv_metacriticScore.text = "..."
-        view.fragment_film_details_tv_language.text = "..."
+        view.fragment_film_details_tv_title?.text = "..."
+        view.fragment_film_details_tv_director?.text = "..."
+        view.fragment_film_details_tv_year?.text = "..."
+        view.fragment_film_details_tv_runtime?.text = "..."
+        view.fragment_film_details_tv_plot?.text = "..."
+        view.fragment_film_details_tv_awards?.text = "..."
+        view.fragment_film_details_tv_cast?.text = "..."
+        view.fragment_film_details_tv_genre?.text = "..."
+        view.fragment_film_details_tv_imdbScore?.text = "..."
+        view.fragment_film_details_tv_metacriticScore?.text = "..."
+        view.fragment_film_details_tv_language?.text = "..."
 
         //  Log.d(TAG, "Picasso: setting poster url for the layout")
-        Picasso.get().load(R.drawable.placeholder_imageloading).error(R.drawable.placeholder_imageloading)
-                .placeholder(R.drawable.placeholder_imageloading).into(view.fragment_film_details_iv_poster)
-
+        if (fragment_film_details_iv_poster != null) {
+            Picasso.get().load(R.drawable.placeholder_imageloading).error(R.drawable.placeholder_imageloading)
+                    .placeholder(R.drawable.placeholder_imageloading).into(view.fragment_film_details_iv_poster)
+        }
         return view
     }
 
