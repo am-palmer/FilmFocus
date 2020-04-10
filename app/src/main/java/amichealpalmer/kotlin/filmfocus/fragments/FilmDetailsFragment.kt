@@ -54,17 +54,17 @@ class FilmDetailsFragment : Fragment() {
     fun onFilmInfoDownload(film: Film) { // Sub-optimal?
         Log.d(TAG, ".onFilmInfoDownload called")
         this.film = film
-        fragment_film_details_tv_title.text = film.title
-        fragment_film_details_tv_director.text = film.director
-        fragment_film_details_tv_year.text = film.year
-        fragment_film_details_tv_runtime.text = film.runtime
-        fragment_film_details_tv_plot.text = film.plot
-        fragment_film_details_tv_awards.text = film.awards
-        fragment_film_details_tv_cast.text = film.actors
-        fragment_film_details_tv_genre.text = film.genre
-        fragment_film_details_tv_imdbScore.text = film.imdbRating
-        fragment_film_details_tv_metacriticScore.text = film.metascore
-        fragment_film_details_tv_language.text = film.language
+        fragment_film_details_tv_title?.text = film.title
+        fragment_film_details_tv_director?.text = film.director
+        fragment_film_details_tv_year?.text = film.year
+        fragment_film_details_tv_runtime?.text = film.runtime
+        fragment_film_details_tv_plot?.text = film.plot
+        fragment_film_details_tv_awards?.text = film.awards
+        fragment_film_details_tv_cast?.text = film.actors
+        fragment_film_details_tv_genre?.text = film.genre
+        fragment_film_details_tv_imdbScore?.text = film.imdbRating
+        fragment_film_details_tv_metacriticScore?.text = film.metascore
+        fragment_film_details_tv_language?.text = film.language
 
         Log.d(TAG, "Picasso: setting poster url for the layout")
         Picasso.get().load(film.posterURL).error(R.drawable.placeholder_imageloading)
