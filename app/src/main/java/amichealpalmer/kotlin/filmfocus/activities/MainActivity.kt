@@ -35,8 +35,6 @@ enum class FRAGMENT_ID {
 
 class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener { // todo: disperse as much logic into the fragments as possible
 
-    //internal val OMDB_SEARCH_QUERY = "OMDB_SEACH_QUERY"
-    //internal val FILM_DETAILS_TRANSFER = "FILM_DETAILS_TRANSFER"
     internal val SHAREDPREFS_KEY_WATCHLIST = "watchlist"
     internal val SHAREDPREFS_KEY_TIMELINE = "timelineList"
 
@@ -156,26 +154,28 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         } else {
             when (fragmentIDClass) {
                 FRAGMENT_ID.BROWSE -> {
-                    Log.d(TAG, "fragmentIDClass = browse")
-                    Log.d(TAG, "finding browse fragment by tag - does it exist? ${supportFragmentManager.findFragmentByTag(FRAGMENT_ID.BROWSE.name)}")
+                    //Log.d(TAG, "fragmentIDClass = browse")
+                    //Log.d(TAG, "finding browse fragment by tag - does it exist? ${supportFragmentManager.findFragmentByTag(FRAGMENT_ID.BROWSE.name)}")
                     fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_ID.BROWSE.name)
                             ?: BrowseFragment.newInstance(null)
                     title = "Browse"
                     fragmentID = FRAGMENT_ID.BROWSE
                 }
                 FRAGMENT_ID.WATCHLIST -> {
-                    Log.d(TAG, "fragmentIDClass = watchlist")
-                    Log.d(TAG, "finding watchlist fragment by tag - does it exist? ${supportFragmentManager.findFragmentByTag(FRAGMENT_ID.WATCHLIST.name)}")
+                    //Log.d(TAG, "fragmentIDClass = watchlist")
+                    //Log.d(TAG, "finding watchlist fragment by tag - does it exist? ${supportFragmentManager.findFragmentByTag(FRAGMENT_ID.WATCHLIST.name)}")
                     fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_ID.WATCHLIST.name)
                             ?: WatchlistFragment.newInstance(watchlist)
                     title = "Watchlist"
                     fragmentID = FRAGMENT_ID.WATCHLIST
                 }
                 FRAGMENT_ID.HISTORY -> {
-                    Log.d(TAG, "fragmentIDClass = history")
-                    Log.d(TAG, "finding watchlist fragment by tag - does it exist? ${supportFragmentManager.findFragmentByTag(FRAGMENT_ID.HISTORY.name)}")
+                    //Log.d(TAG, "fragmentIDClass = history")
+                    //Log.d(TAG, "finding watchlist fragment by tag - does it exist? ${supportFragmentManager.findFragmentByTag(FRAGMENT_ID.HISTORY.name)}")
                     fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_ID.HISTORY.name)
                             ?: HistoryFragment.newInstance(timelineList)
+                    val historyFragment = fragment as HistoryFragment
+                    historyFragment.forceTimelineRefresh(timelineList) // Ensuring the view is updated correctly
                     title = "History"
                     fragmentID = FRAGMENT_ID.HISTORY
                 }

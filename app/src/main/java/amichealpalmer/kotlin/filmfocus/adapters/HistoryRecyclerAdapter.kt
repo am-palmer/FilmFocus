@@ -51,6 +51,11 @@ class HistoryRecyclerAdapter(
         timelineList.remove(item)
     }
 
+    fun replaceList(timelineList: ArrayList<TimelineItem>){
+        this.timelineList = timelineList
+        notifyDataSetChanged()
+    }
+
     fun clearList() {
         timelineList.clear()
         notifyDataSetChanged()

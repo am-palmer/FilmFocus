@@ -32,7 +32,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
 
     private var callback: OnTimelineItemSelectedListener? = null
     private lateinit var timelineList: ArrayList<TimelineItem>
-    lateinit var recyclerView: RecyclerView
+    var recyclerView: RecyclerView? = null
 
     fun setOnTimelineItemSelectedListener(callback: OnTimelineItemSelectedListener) {
         this.callback = callback
@@ -57,7 +57,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         } catch (e: NullPointerException) {
             Log.e(TAG, ".onCreate: timelineList null in arguments")
         }
-        Log.d(TAG, ".onCreate: timelineList created. list has ${timelineList.size} items")
+//        Log.d(TAG, ".onCreate: timelineList created. list has ${timelineList.size} items")
         setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
     }
@@ -66,10 +66,11 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView begins")
+
         var view = inflater.inflate(R.layout.fragment_history, container, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.fragment_history_timeline_rv)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = HistoryRecyclerAdapter(activity!!, timelineList)
+        recyclerView?.layoutManager = LinearLayoutManager(activity)
+        recyclerView?.adapter = HistoryRecyclerAdapter(activity!!, timelineList)
         return view
     }
 
@@ -113,7 +114,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, ".onContextItemSelected begins")
-        val adapter = recyclerView.adapter as HistoryRecyclerAdapter
+        val adapter = recyclerView?.adapter as HistoryRecyclerAdapter
         var position = -1
         try {
             position = adapter.position
@@ -147,7 +148,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
 
     override fun onConfirmRemoveFilmDialogAction(timelineItem: TimelineItem) {
         //val timelineItem = adapter.getItem(position)
-        val adapter = recyclerView.adapter as HistoryRecyclerAdapter
+        val adapter = recyclerView?.adapter as HistoryRecyclerAdapter
         timelineList.remove(timelineItem)
         onTimelineItemListStateChange()
         adapter.removeTimelineItem(timelineItem)
@@ -164,27 +165,40 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         bundle.putParcelableArrayList("timelineList", currentTimelineList)
         timelineList.clear()
         onTimelineItemListStateChange()
-        val recyclerAdapter = recyclerView.adapter as HistoryRecyclerAdapter
+        val recyclerAdapter = recyclerView?.adapter as HistoryRecyclerAdapter
         recyclerAdapter.clearList()
         callback?.onHistoryMenuItemSelected(bundle, HISTORY_MENU_ITEM_ACTION_TYPE.REMOVE_ALL)
     }
 
     override fun onEditHistoryItemDialogSubmissionListener(timelineItem: TimelineItem, arrayPosition: Int) {
-        val adapter = recyclerView.adapter as HistoryRecyclerAdapter
+        val adapter = recyclerView?.adapter as HistoryRecyclerAdapter
         timelineList[arrayPosition] = timelineItem
         adapter.notifyItemChanged(arrayPosition) // Is this enough?
         callback!!.onTimelineItemSelected(timelineItem, TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_UPDATE)
     }
 
     // Called when we need to check if we should display the empty view for the Timeline fragment
-    // todo: null safety on calls?
-    private fun onTimelineItemListStateChange(){
-        if (timelineList.isNotEmpty()){
+    private fun onTimelineItemListStateChange() {
+        if (timelineList.isNotEmpty()) {
             fragment_history_empty_view_container.visibility = View.GONE
             fragment_history_timeline_rv.visibility = View.VISIBLE
         } else {
             fragment_history_empty_view_container.visibility = View.VISIBLE
             fragment_history_timeline_rv.visibility = View.GONE
+        }
+    }
+
+    // Called when we switch to this fragment because it is stubborn
+    fun forceTimelineRefresh(timelineList: ArrayList<TimelineItem>) {
+        Log.d(TAG, ".forceTimelineRefresh is called")
+        if (recyclerView != null) {
+            this.timelineList.clear()
+            this.timelineList.addAll(timelineList)
+
+            //this.timelineList = timelineList
+            this.timelineList.reverse()
+            val historyRecyclerViewAdapter = recyclerView?.adapter as HistoryRecyclerAdapter
+            historyRecyclerViewAdapter.replaceList(timelineList)
         }
     }
 
