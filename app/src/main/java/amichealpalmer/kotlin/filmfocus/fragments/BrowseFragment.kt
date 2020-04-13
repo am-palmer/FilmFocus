@@ -50,7 +50,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         Log.d(TAG, ".onCreate called")
         if (savedInstanceState != null) {
 
-            // we should also restore the position in the scroll view
+            // Todo: we should also restore the position in the scroll view
             Log.d(TAG, "savedInstanceState: retrieving search query")
             searchString = savedInstanceState.getString(ARG_SEARCH_STRING)
             resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)
@@ -137,7 +137,6 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
         }
 
-        // Store the scroll position of the
         var scrollPos: Int? = null
         if (recyclerView?.adapter != null) {
             val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
@@ -176,14 +175,23 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                currentPage = 1 // Indicates a fresh search
+                // We reset the fields holding search data for a new search
+                currentPage = 1
+                noMoreResults = false
                 searchString = query.toLowerCase().trim()
+
+                // Clear the UI
+                resultList?.clear()
+                fragment_search_empty_container.visibility = View.GONE
+                fragment_browse_recycler_framelayout.visibility = View.VISIBLE
+                val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
+                adapter.clearList()
+
                 searchHelper().searchByTitleKeyword(searchString!!)
                 return true
             }
 
-            override fun onQueryTextChange(newText: String): Boolean {
-                // Does nothing right now
+            override fun onQueryTextChange(newText: String): Boolean { // Unused in this context
                 return true
             }
         })
@@ -233,20 +241,6 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
         fun searchByTitleKeyword(titleContains: String) { // This method is called multiple times to load each subsequent page
             Log.d(TAG, ".searchByTitleKeyword starts")
-            if (searchString != titleContains){ // Indicates a new search has been performed, we reset our fields tracking the search state
-                Log.d(TAG, "searchByTitleKeyword: a new search starts with query ${titleContains}")
-                searchString = titleContains
-                currentPage = 1
-                noMoreResults = false
-            }
-            if (currentPage == 1) {
-                resultList?.clear()
-                fragment_search_empty_container.visibility = View.GONE
-                fragment_browse_recycler_framelayout.visibility = View.VISIBLE
-                val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
-                adapter.clearList()
-            }
-            //searchString = titleContains
             var query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
             currentPage++
             browse_fragment_progressBar?.visibility = View.VISIBLE
@@ -259,7 +253,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
             Log.d(TAG, "onSearchResultsDownload: RESULTLIST IS EMPTY? ${resultList.isEmpty()}")
             Log.d(TAG, "and CurrentPage is: $currentPage")
-            if (resultList.isEmpty() && currentPage == 2) { // Indicates there are no results for the search term. Todo: magic numbers...
+            if (resultList.isEmpty() && currentPage == 2) { // Indicates there are no results for the search term. Todo: magic numbers... also doesn't work as intended
                 Log.d(TAG, "onSearchResultsDownload -> no results, showing no results view")
                 fragment_browse_no_results_container?.visibility = View.VISIBLE
                 fragment_browse_recycler_framelayout?.visibility = View.GONE
