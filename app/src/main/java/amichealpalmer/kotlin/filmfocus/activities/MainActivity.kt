@@ -190,22 +190,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        Log.d(TAG, ".onNewIntent called")
-        if (Intent.ACTION_SEARCH == intent!!.action) {
-            closeKeyboard()
-            try {
-                val browse = browseFragment as BrowseFragment
-                browse.searchHelper().searchByTitleKeyword(intent.getStringExtra(SearchManager.QUERY)!!)
-            } catch (e: java.lang.NullPointerException) {
-                Log.wtf(TAG, ".onNewIntent Action Search: but browseFragment is null?")
-            }
-        } else {
-            Log.d(TAG, "intent.action != Intent.ACTION_SEARCH")
-        }
-    }
-
     private fun saveData() {
         Log.d(TAG, ".saveData called, saving data to Shared Preferences")
         val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)

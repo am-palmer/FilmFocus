@@ -193,10 +193,6 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     }
 
-//    fun onNewSearchIntent(query: String){
-//        searchHelper().searchByTitleKeyword(query)
-//    }
-
     override fun onContextItemSelected(item: MenuItem): Boolean { // todo: code duplication with watchlistRecyclerAdapter
         if (callback == null) {
             // Todo: convert to try catch
@@ -235,8 +231,14 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
     inner class searchHelper {
         val activity = callback as MainActivity
 
-        fun searchByTitleKeyword(titleContains: String) {
+        fun searchByTitleKeyword(titleContains: String) { // This method is called multiple times to load each subsequent page
             Log.d(TAG, ".searchByTitleKeyword starts")
+            if (searchString != titleContains){ // Indicates a new search has been performed, we reset our fields tracking the search state
+                Log.d(TAG, "searchByTitleKeyword: a new search starts with query ${titleContains}")
+                searchString = titleContains
+                currentPage = 1
+                noMoreResults = false
+            }
             if (currentPage == 1) {
                 resultList?.clear()
                 fragment_search_empty_container.visibility = View.GONE
@@ -244,7 +246,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                 val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
                 adapter.clearList()
             }
-            searchString = titleContains
+            //searchString = titleContains
             var query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
             currentPage++
             browse_fragment_progressBar?.visibility = View.VISIBLE
