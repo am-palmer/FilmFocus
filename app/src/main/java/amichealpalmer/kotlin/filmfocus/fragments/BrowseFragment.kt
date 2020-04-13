@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 private const val ARG_RESULTS = "resultList"
@@ -178,7 +180,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                 // We reset the fields holding search data for a new search
                 currentPage = 1
                 noMoreResults = false
-                searchString = query.toLowerCase().trim()
+                searchString = query.toLowerCase(Locale.US).trim()
 
                 // Clear the UI
                 resultList?.clear()

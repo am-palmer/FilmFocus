@@ -199,7 +199,7 @@ class HistoryRecyclerAdapter(
             poster.setOnCreateContextMenuListener(this)
         }
 
-        override fun onCreateContextMenu(menu: ContextMenu?, v: View, menuInfo: ContextMenu.ContextMenuInfo?) { // does not return true and performs normal click. todo fix
+        override fun onCreateContextMenu(menu: ContextMenu?, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
             val inflater = MenuInflater(context)
             inflater.inflate(R.menu.history_timeline_item_context_menu, menu)
         }

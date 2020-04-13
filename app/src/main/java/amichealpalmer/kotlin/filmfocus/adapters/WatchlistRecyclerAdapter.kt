@@ -15,8 +15,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import java.util.*
+import kotlin.collections.ArrayList
 
-// todo: could inherit / reduce code using browserecycleradapter
+// todo: Could inherit / reduce code using browserecycleradapter
 class WatchlistRecyclerAdapter(
         private val context: Context,
         private var resultList: ArrayList<FilmThumbnail> // The list of films currently being displayed in the browser
@@ -88,9 +90,9 @@ class WatchlistRecyclerAdapter(
                 if (constraint == null || constraint.length == 0) {
                     filteredList.addAll(fullList)
                 } else {
-                    val pattern = constraint.toString().toLowerCase().trim()
+                    val pattern = constraint.toString().toLowerCase(Locale.US).trim()
                     for (item in fullList) {
-                        if (item.title.toLowerCase().contains(pattern) || item.year.contains(pattern)) {
+                        if (item.title.toLowerCase(Locale.US).contains(pattern) || item.year.contains(pattern)) {
                             filteredList.add(item)
                         }
                     }

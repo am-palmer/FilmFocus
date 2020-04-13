@@ -33,7 +33,7 @@ enum class FRAGMENT_ID {
     BROWSE, WATCHLIST, HISTORY
 }
 
-class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener { // todo: disperse as much logic into the fragments as possible
+class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener {
 
     private val SHAREDPREFS_KEY_WATCHLIST = "watchlist"
     private val SHAREDPREFS_KEY_TIMELINE = "timelineList"
@@ -272,7 +272,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         }
     }
 
-    override fun onFilmSelected(bundle: Bundle, typeWATCHLIST: WATCHLIST_FILM_CONTEXT_ACTION_TYPE) { // todo: merge this listener with the below into an 'on context item selected' listener, and use bundle
+    override fun onFilmSelected(bundle: Bundle, typeWATCHLIST: WATCHLIST_FILM_CONTEXT_ACTION_TYPE) {
         Log.d(TAG, ".onFilmSelected is called with TYPE: ${typeWATCHLIST.name}")
         if (typeWATCHLIST == WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE) {
             val film = bundle.getParcelable<FilmThumbnail>("film")
