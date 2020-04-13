@@ -46,7 +46,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         this.callback = callback
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) { // todo: Should save the state if user switches between fragments
+    override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".onCreate called")
         if (savedInstanceState != null) {
 
@@ -192,6 +192,10 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         super.onCreateOptionsMenu(menu, inflater)
 
     }
+
+//    fun onNewSearchIntent(query: String){
+//        searchHelper().searchByTitleKeyword(query)
+//    }
 
     override fun onContextItemSelected(item: MenuItem): Boolean { // todo: code duplication with watchlistRecyclerAdapter
         if (callback == null) {

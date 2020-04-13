@@ -190,22 +190,17 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         }
     }
 
-    override fun onNewIntent(intent: Intent?) { // Todo: move the associated listener to the browse fragment, and then move this logic also
+    override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         Log.d(TAG, ".onNewIntent called")
         if (Intent.ACTION_SEARCH == intent!!.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            Log.d(TAG, ".handleIntent: received new searchHelper query: $query")
             closeKeyboard()
-
-            // Building the search fragment, or using existing one
-            val fragment = browseFragment ?: BrowseFragment()
-            val args = Bundle()
-            args.putString("searchString", query)
-            fragment.arguments = args
-            val transaction = supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.main_frame_layout_fragment_holder, fragment)
-            transaction.commit()
+            try {
+                val browse = browseFragment as BrowseFragment
+                browse.searchHelper().searchByTitleKeyword(intent.getStringExtra(SearchManager.QUERY)!!)
+            } catch (e: java.lang.NullPointerException) {
+                Log.wtf(TAG, ".onNewIntent Action Search: but browseFragment is null?")
+            }
         } else {
             Log.d(TAG, "intent.action != Intent.ACTION_SEARCH")
         }
