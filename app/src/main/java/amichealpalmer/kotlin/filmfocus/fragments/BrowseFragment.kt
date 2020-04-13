@@ -103,7 +103,6 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             recyclerView?.post(Runnable {
                 val pos = savedInstanceState.getInt("recyclerScrollPosition")
                 recyclerView?.scrollToPosition(pos)
-                // recyclerScollPosition = pos
             })
         }
 
@@ -244,25 +243,25 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             searchString = titleContains
             var query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
             currentPage++
-            browse_fragment_progressBar.visibility = View.VISIBLE
+            browse_fragment_progressBar?.visibility = View.VISIBLE
             GetJSONSearch(this, (activity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries
         }
 
 
         fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {
-            browse_fragment_progressBar.visibility = View.GONE
+            browse_fragment_progressBar?.visibility = View.GONE
             val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
             Log.d(TAG, "onSearchResultsDownload: RESULTLIST IS EMPTY? ${resultList.isEmpty()}")
             Log.d(TAG, "and CurrentPage is: $currentPage")
             if (resultList.isEmpty() && currentPage == 2) { // Indicates there are no results for the search term. Todo: magic numbers...
                 Log.d(TAG, "onSearchResultsDownload -> no results, showing no results view")
-                fragment_browse_no_results_container.visibility = View.VISIBLE
-                fragment_browse_recycler_framelayout.visibility = View.GONE
-                fragment_search_empty_container.visibility = View.GONE
+                fragment_browse_no_results_container?.visibility = View.VISIBLE
+                fragment_browse_recycler_framelayout?.visibility = View.GONE
+                fragment_search_empty_container?.visibility = View.GONE
             } else {
                 Log.d(TAG, ".onSearchResultsDownload -> results found, showing results in recyclerview")
-                fragment_browse_no_results_container.visibility = View.GONE
-                fragment_browse_recycler_framelayout.visibility = View.VISIBLE
+                fragment_browse_no_results_container?.visibility = View.GONE
+                fragment_browse_recycler_framelayout?.visibility = View.VISIBLE
                 if (resultList.size > 0) {
                     adapter.updateList(resultList as List<FilmThumbnail>)
                 } else {
