@@ -1,25 +1,22 @@
 package amichealpalmer.kotlin.filmfocus.fragments
 
-import android.content.Context
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.activities.MainActivity
 import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
-import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
+import android.content.Context
 import android.content.res.Configuration
+import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.*
+import android.widget.SearchView
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_dialog_generic_confirm.*
 import kotlinx.android.synthetic.main.fragment_watchlist.*
-import java.lang.NullPointerException
 
 private const val ARG_LIST = "watchlist"
 
@@ -65,7 +62,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView called")
 
-        var view = inflater.inflate(R.layout.fragment_watchlist, container, false)
+        val view = inflater.inflate(R.layout.fragment_watchlist, container, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.watchlist_recyclerview)
         when (resources.configuration.orientation){
             Configuration.ORIENTATION_PORTRAIT -> recyclerView.layoutManager = GridLayoutManager(activity, 3)

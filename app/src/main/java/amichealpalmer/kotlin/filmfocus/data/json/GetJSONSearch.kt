@@ -9,7 +9,7 @@ import org.json.JSONException
 
 // Retrieve OMDB JSON Search Data and return it to the calling class.
 
-class GetJSONSearch(val listener: BrowseFragment.searchHelper, val apikey: String) :
+class GetJSONSearch(private val listener: BrowseFragment.searchHelper, private val apikey: String) :
         GetJSONBase<ArrayList<FilmThumbnail?>>() { // Example input query is "?s=ghost". We then append the website and API key to form a valid URL (in the super class helper method)
 
     private val TAG = "GetJSONSearch"
@@ -23,7 +23,7 @@ class GetJSONSearch(val listener: BrowseFragment.searchHelper, val apikey: Strin
 
     private fun createResultsFromJSON(result: JSONObject): ArrayList<FilmThumbnail?> { // JSONObject is turned into an ArrayList<Result>
         Log.d(TAG, ".createResultsFromJSON starting with raw input JSON data")
-        var resultList = ArrayList<FilmThumbnail?>()
+        val resultList = ArrayList<FilmThumbnail?>()
 //        try {
 //            return resultList
 //        } catch (e: JSONException){
@@ -51,11 +51,11 @@ class GetJSONSearch(val listener: BrowseFragment.searchHelper, val apikey: Strin
 
     override fun doInBackground(vararg params: String): ArrayList<FilmThumbnail?> { // params[0] should contain our query
         Log.d(TAG, ".doInBackground started")
-        var defaultResult = ArrayList<FilmThumbnail?>() // todo better handling of nullability
+        val defaultResult = ArrayList<FilmThumbnail?>() // todo better handling of nullability
 
         // Get our JSON object from the parent class
         Log.d(TAG, "calling super.getJSONDataObject and passing our search query")
-        var JSONResult = super.getJSONDataObject(apikey, params[0])
+        val JSONResult = super.getJSONDataObject(apikey, params[0])
 
         if (JSONResult != null) {
             Log.d(TAG, "JSONResult not null")

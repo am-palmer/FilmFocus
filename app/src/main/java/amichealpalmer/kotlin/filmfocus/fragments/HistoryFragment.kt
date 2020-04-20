@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_dialog_generic_confirm.*
 import kotlinx.android.synthetic.main.fragment_history.*
-import kotlinx.android.synthetic.main.fragment_watchlist_watched_dialog.*
-import java.lang.NullPointerException
 
 private const val ARG_TIMELINE_LIST = "timelineList"
 
@@ -32,7 +30,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
 
     private var callback: OnTimelineItemSelectedListener? = null
     private lateinit var timelineList: ArrayList<TimelineItem>
-    var recyclerView: RecyclerView? = null
+    private var recyclerView: RecyclerView? = null
 
     fun setOnTimelineItemSelectedListener(callback: OnTimelineItemSelectedListener) {
         this.callback = callback
@@ -67,7 +65,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView begins")
 
-        var view = inflater.inflate(R.layout.fragment_history, container, false)
+        val view = inflater.inflate(R.layout.fragment_history, container, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.fragment_history_timeline_rv)
         recyclerView?.layoutManager = LinearLayoutManager(activity)
         recyclerView?.adapter = HistoryRecyclerAdapter(activity!!, timelineList)

@@ -2,20 +2,17 @@ package amichealpalmer.kotlin.filmfocus.fragments
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.data.*
-import amichealpalmer.kotlin.filmfocus.data.FilmRating
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.*
+import android.widget.CompoundButton
+import android.widget.RatingBar
 import androidx.fragment.app.DialogFragment
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_watchlist_watched_dialog.*
-import kotlinx.android.synthetic.main.history_list_item.*
-import org.joda.time.LocalDate
-import java.lang.NullPointerException
 
 // todo: code duplication with watchedDialogFragment - should they inherit from a parent class?
 
@@ -101,7 +98,7 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
                 // We send all the info to the Watchlist Fragment as a timeline item
                 val date = timelineItem.date
                 val text = fragment_watchlist_watched_dialog_review_et.text.toString()
-                var ratingObject: FilmRating?
+                val ratingObject: FilmRating?
                 if (hasRating) {
                     ratingObject = FilmRating(rating!!.toFloat(), RATING_VALUE.HAS_RATING)
                 } else {

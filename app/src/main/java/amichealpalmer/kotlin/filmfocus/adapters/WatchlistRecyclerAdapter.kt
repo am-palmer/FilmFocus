@@ -116,7 +116,7 @@ class WatchlistRecyclerAdapter(
     inner class HelperViewHolder(view: View)
         : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
         val poster: ImageView = view.findViewById(R.id.film_poster_id)
-        val cardView: CardView = view.findViewById(R.id.film_item_cardview_id)
+        private val cardView: CardView = view.findViewById(R.id.film_item_cardview_id)
 
         init {
             cardView.setOnClickListener {

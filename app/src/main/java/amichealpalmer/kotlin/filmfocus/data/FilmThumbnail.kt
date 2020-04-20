@@ -6,7 +6,7 @@ import android.os.Parcelable
 class FilmThumbnail(val title: String,
                     val year: String,
                     val imdbID: String,
-                    val type: String,
+                    private val type: String,
                     val posterURL: String) : Parcelable {
     override fun toString(): String {
         return "FilmThumbnail(title='$title', year='$year', imdbID='$imdbID', type='$type', posterURL='$posterURL')"

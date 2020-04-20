@@ -80,7 +80,7 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
                 // We send all the info to the Watchlist Fragment as a timeline item
                 val date = LocalDate.now()
                 val text = fragment_watchlist_watched_dialog_review_et.text.toString()
-                var ratingObject: FilmRating?
+                val ratingObject: FilmRating?
                 if (hasRating) {
                     ratingObject = FilmRating(rating!!.toFloat(), RATING_VALUE.HAS_RATING)
                 } else {

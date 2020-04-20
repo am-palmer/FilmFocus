@@ -71,7 +71,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView called")
-        var view = inflater.inflate(R.layout.fragment_browse, container, false)
+        val view = inflater.inflate(R.layout.fragment_browse, container, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
 
         // Check current orientation so we can change number of items displayed per row in the adapter
@@ -102,7 +102,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             Log.e(TAG, e.printStackTrace().toString())
         }
         if (savedInstanceState != null) {
-            recyclerView?.post(Runnable {
+            recyclerView?.post({
                 val pos = savedInstanceState.getInt("recyclerScrollPosition")
                 recyclerView?.scrollToPosition(pos)
             })
@@ -135,9 +135,6 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         if (resultList != null) {
             outState.putParcelableArrayList(ARG_RESULTS, resultList)
         }
-        if (recyclerView != null) {
-
-        }
 
         var scrollPos: Int? = null
         if (recyclerView?.adapter != null) {
@@ -150,7 +147,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is BrowseFragment.onResultActionListener) {
+        if (context is onResultActionListener) {
             callback = context
         } else {
             throw RuntimeException(context.toString() + " must implement onRequestResultsListener")
@@ -204,46 +201,48 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean { // todo: code duplication with watchlistRecyclerAdapter
-        if (callback == null) {
-            // Todo: convert to try catch
-        }
-        Log.d(TAG, ".onContextItemSelected called")
-        Log.d(TAG, "menu item: ${item}")
-        val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
-        var position = -1
         try {
-            position = adapter.position
-        } catch (e: java.lang.Exception) { // todo: too generalized, catch specific exceptions
-            Log.d(TAG, e.localizedMessage, e)
+            Log.d(TAG, ".onContextItemSelected called")
+            Log.d(TAG, "menu item: ${item}")
+            val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
+            var position = -1
+            try {
+                position = adapter.position
+            } catch (e: java.lang.Exception) { // todo: too generalized, catch specific exceptions
+                Log.d(TAG, e.localizedMessage, e)
+                return super.onContextItemSelected(item)
+            }
+            when (item.itemId) {
+                R.id.browse_film_context_menu_add -> {
+                    val film = adapter.getItem(position)
+                    val bundle = Bundle()
+                    bundle.putParcelable("film", film)
+                    callback!!.onSearchResultAction(bundle, BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST)
+                }
+                R.id.browse_film_context_menu_mark_watched -> {
+                    // todo: code duplication with watchlist fragment
+                    val film = adapter.getItem(position)
+                    // todo: prompt user for review and rating properly
+                    val dialogFragment = WatchedDialogFragment.newInstance(film)
+                    dialogFragment.setOnWatchedDialogSubmissionListener(this)
+                    dialogFragment.show(fragmentManager!!, "fragment_watched_dialog")
+                }
+                else -> true
+            }
             return super.onContextItemSelected(item)
-        }
-        when (item.itemId) {
-            R.id.browse_film_context_menu_add -> {
-                val film = adapter.getItem(position)
-                val bundle = Bundle()
-                bundle.putParcelable("film", film)
-                callback!!.onSearchResultAction(bundle, BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST)
-            }
-            R.id.browse_film_context_menu_mark_watched -> {
-                // todo: code duplication with watchlist fragment
-                val film = adapter.getItem(position)
-                // todo: prompt user for review and rating properly
-                val dialogFragment = WatchedDialogFragment.newInstance(film)
-                dialogFragment.setOnWatchedDialogSubmissionListener(this)
-                dialogFragment.show(fragmentManager!!, "fragment_watched_dialog")
-            }
-            else -> true
-        }
 
-        return super.onContextItemSelected(item)
+        } catch (e: NullPointerException) {
+            Log.e(TAG, ".onContextItemSelected: NPE - callback null?")
+        }
+        return false
     }
 
     inner class searchHelper {
-        val activity = callback as MainActivity
+        private val activity = callback as MainActivity
 
         fun searchByTitleKeyword(titleContains: String) { // This method is called multiple times to load each subsequent page
             Log.d(TAG, ".searchByTitleKeyword starts")
-            var query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
+            val query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
             currentPage++
             browse_fragment_progressBar?.visibility = View.VISIBLE
             GetJSONSearch(this, (activity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries

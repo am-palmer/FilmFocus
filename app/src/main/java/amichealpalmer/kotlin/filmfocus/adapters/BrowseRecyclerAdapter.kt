@@ -26,7 +26,7 @@ class BrowseRecyclerAdapter(
 
     private val TAG = "BrowseRecyclerAdapter"
     var position = 0
-    var helperViewHolder: BrowseRecyclerAdapter.HelperViewHolder? = null
+    private var helperViewHolder: BrowseRecyclerAdapter.HelperViewHolder? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelperViewHolder {
         Log.d(TAG, ".onCreateViewHolder called")
@@ -83,7 +83,7 @@ class BrowseRecyclerAdapter(
     inner class HelperViewHolder(view: View)
         : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
         val poster: ImageView = view.findViewById(R.id.film_poster_id)
-        val cardView: CardView = view.findViewById(R.id.film_item_cardview_id)
+        private val cardView: CardView = view.findViewById(R.id.film_item_cardview_id)
 
         init {
             cardView.setOnClickListener {

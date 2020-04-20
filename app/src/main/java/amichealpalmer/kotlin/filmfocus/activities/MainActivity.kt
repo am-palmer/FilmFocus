@@ -6,9 +6,7 @@ import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.data.TimelineItem
 import amichealpalmer.kotlin.filmfocus.fragments.*
 import amichealpalmer.kotlin.filmfocus.helpers.LocalDateSerializer
-import android.app.SearchManager
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log

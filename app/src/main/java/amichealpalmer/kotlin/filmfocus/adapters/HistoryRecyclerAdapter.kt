@@ -67,15 +67,15 @@ class HistoryRecyclerAdapter(
             Picasso.get().load(timelineList[position].film.posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
                     .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(holder.poster)
 
-            var date = timelineList[position].date
+            val date = timelineList[position].date
             val monthProperty: LocalDate.Property = date.monthOfYear()
             // Set the views
-            val dayInt = date.dayOfMonth.toInt()
+            val dayInt = date.dayOfMonth
             var dateDay = "null"
 
             // Figure out the ordinal indicator
-            var j = dayInt % 10
-            var k = dayInt % 100
+            val j = dayInt % 10
+            val k = dayInt % 100
             if (j == 1 && k != 11) {
                 dateDay = dayInt.toString() + "st"
             } else if (j == 2 && k != 12) {

@@ -15,7 +15,7 @@ abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
     private var downloadStatus = DownloadStatus.NOT_INITIALIZED
 
     enum class DownloadStatus { // Track status of download
-        OK, IDLE, NOT_INITIALIZED, FAILED_OR_EMPTY, PERMISSIONS_ERROR, ERROR
+        OK, NOT_INITIALIZED, FAILED_OR_EMPTY, PERMISSIONS_ERROR, ERROR
     }
 
     abstract override fun onPostExecute(result: T)
@@ -29,7 +29,7 @@ abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
         // val defaultList = ArrayList<GetJSONSearch.Result?>() // Not a good solution...
 
         val searchURL = omdbUrl + query + "&apikey=${apikey}"
-        var rawData: String?
+        val rawData: String?
 
         // Attempt to retrieve raw data and store as String object
 

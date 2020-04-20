@@ -6,7 +6,7 @@ import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
 
-class GetJSONFilm(val listener: FilmSearch, val apikey: String) :
+class GetJSONFilm(private val listener: FilmSearch, private val apikey: String) :
         GetJSONBase<Film?>() { // Retrieve OMDB JSON Film Data and return it to the calling class.
 
     val TAG = "GetJSONFilm"
@@ -24,11 +24,11 @@ class GetJSONFilm(val listener: FilmSearch, val apikey: String) :
     override fun doInBackground(vararg params: String): Film? { // params[0] should be imdbID
         val query = "?i=${params[0]}" // i= Search by IMDB id.
         Log.d(TAG, ".doInBackground started")
-        var defaultResult = null // todo better handling of nullability
+        val defaultResult = null // todo better handling of nullability
 
         // Get our JSON object from the parent class
         Log.d(TAG, "calling super.getJSONDataObject and passing our search query")
-        var JSONResult = super.getJSONDataObject(apikey, query)
+        val JSONResult = super.getJSONDataObject(apikey, query)
 
         if (JSONResult != null) {
             Log.d(TAG, "JSONResult not null")
@@ -41,7 +41,7 @@ class GetJSONFilm(val listener: FilmSearch, val apikey: String) :
 
     private fun createFilmFromJSON(jsonItem: JSONObject): Film? {
         Log.d(TAG, ".createFilmFromJSON starting")
-        var film: Film?
+        val film: Film?
         try {
             val title = jsonItem.getString("Title")
             val year = jsonItem.getString("Year")

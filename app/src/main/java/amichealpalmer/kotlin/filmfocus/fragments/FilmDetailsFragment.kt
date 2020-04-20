@@ -3,7 +3,6 @@ package amichealpalmer.kotlin.filmfocus.fragments
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.data.Film
 import amichealpalmer.kotlin.filmfocus.helpers.FilmSearch
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater

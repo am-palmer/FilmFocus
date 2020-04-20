@@ -10,7 +10,7 @@ import android.util.Log
 
 // Uses an IMDB id to get results about a film
 //todo: roll into getjson film
-class FilmSearch(val listener: FilmDetailsFragment) {
+class FilmSearch(private val listener: FilmDetailsFragment) {
 
     private val TAG = "FilmSearch"
 

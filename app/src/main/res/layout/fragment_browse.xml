@@ -21,7 +21,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/browse_films_recyclerview_id"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></androidx.recyclerview.widget.RecyclerView>
+            android:layout_height="match_parent" />
 
         <ProgressBar
             android:id="@+id/browse_fragment_progressBar"
