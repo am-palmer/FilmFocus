@@ -71,8 +71,8 @@ class FilmDetailsFragment : Fragment() {
 
         Log.d(TAG, "Picasso: setting poster url for the layout")
         if (fragment_film_details_iv_poster != null) {
-            Picasso.get().load(film.posterURL).error(R.drawable.placeholder_imageloading)
-                    .placeholder(R.drawable.placeholder_imageloading).into(fragment_film_details_iv_poster)
+            Picasso.get().load(film.posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
+                    .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(fragment_film_details_iv_poster)
         }
     }
 
@@ -100,8 +100,8 @@ class FilmDetailsFragment : Fragment() {
 
         //  Log.d(TAG, "Picasso: setting poster url for the layout")
         if (fragment_film_details_iv_poster != null) {
-            Picasso.get().load(R.drawable.placeholder_imageloading).error(R.drawable.placeholder_imageloading)
-                    .placeholder(R.drawable.placeholder_imageloading).into(view.fragment_film_details_iv_poster)
+            Picasso.get().load(R.drawable.ic_image_loading_darkgreen_48dp).error(R.drawable.ic_image_loading_darkgreen_48dp)
+                    .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(view.fragment_film_details_iv_poster)
         }
         return view
     }

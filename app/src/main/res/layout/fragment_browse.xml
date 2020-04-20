@@ -49,7 +49,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.25"
-            app:srcCompat="@drawable/ic_search_darkgreen_96dp" />
+            app:srcCompat="@drawable/ic_search_darkgreen_96dp"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/textView"
@@ -98,7 +99,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.25"
-            app:srcCompat="@drawable/ic_cancel_grey_96dp" />
+            app:srcCompat="@drawable/ic_cancel_grey_96dp"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/textView_noResults"

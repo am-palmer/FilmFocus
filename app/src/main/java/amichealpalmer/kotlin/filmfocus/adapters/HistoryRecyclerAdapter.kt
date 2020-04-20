@@ -64,8 +64,8 @@ class HistoryRecyclerAdapter(
     override fun onBindViewHolder(holder: HelperViewHolder, position: Int) {
         Log.d(TAG, ".onBindViewHolder begins for position $position")
         if (timelineList.size > 0) {
-            Picasso.get().load(timelineList[position].film.posterURL).error(R.drawable.placeholder_imageloading)
-                    .placeholder(R.drawable.placeholder_imageloading).into(holder.poster)
+            Picasso.get().load(timelineList[position].film.posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
+                    .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(holder.poster)
 
             var date = timelineList[position].date
             val monthProperty: LocalDate.Property = date.monthOfYear()
@@ -138,12 +138,12 @@ class HistoryRecyclerAdapter(
             // Programmatically change views if film is marked as watched or dropped
             when (timelineList[position].status) {
                 TIMELINE_ITEM_STATUS.WATCHED -> {
-                    holder.watchedDroppedTextView.text = "Watched"
+                    holder.watchedDroppedTextView.setText(R.string.watched)
                     holder.watchedDroppedIcon.setImageResource(R.drawable.ic_watched_darkgreen_24dp)
                 }
                 TIMELINE_ITEM_STATUS.DROPPED -> {
                     holder.watchedDroppedIcon.setImageResource(R.drawable.ic_dropped_darkgreen_24dp)
-                    holder.watchedDroppedTextView.text = "Dropped"
+                    holder.watchedDroppedTextView.setText(R.string.dropped)
                 }
             }
 

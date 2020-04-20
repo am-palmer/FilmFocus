@@ -13,7 +13,8 @@
         android:layout_marginStart="38dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/colorPrimaryDark" />
+        app:srcCompat="@color/colorPrimaryDark"
+        tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/timeline_line_bottom"
@@ -22,7 +23,8 @@
         android:layout_marginStart="38dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@color/colorPrimaryDark" />
+        app:srcCompat="@color/colorPrimaryDark"
+        tools:ignore="ContentDescription" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="120dp"
@@ -45,7 +47,8 @@
             android:layout_height="match_parent"
             android:background="#2d2d2d"
             android:scaleType="fitXY"
-            tools:srcCompat="@drawable/cover_placeholder"></ImageView>
+            tools:srcCompat="@drawable/cover_placeholder"
+            android:contentDescription="@string/film_poster"></ImageView>
     </androidx.cardview.widget.CardView>
 
 
@@ -155,14 +158,16 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:scaleType="fitXY"
-            app:srcCompat="@drawable/ic_white_solid_24dp" />
+            app:srcCompat="@drawable/ic_white_solid_24dp"
+            tools:ignore="ContentDescription" />
 
         <ImageView
             android:id="@+id/icon_watched_dropped_drawable"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:scaleType="fitXY"
-            app:srcCompat="@drawable/ic_watched_darkgreen_24dp" />
+            app:srcCompat="@drawable/ic_watched_darkgreen_24dp"
+            tools:ignore="ContentDescription" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

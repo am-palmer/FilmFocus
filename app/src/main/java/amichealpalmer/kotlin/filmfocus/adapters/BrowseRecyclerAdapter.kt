@@ -54,8 +54,8 @@ class BrowseRecyclerAdapter(
     override fun onBindViewHolder(holder: HelperViewHolder, position: Int) {
         //Log.d(TAG, ".onBindViewHolder called. Title of film is: ${resultList[position].title}")
         if (resultList.size > 0) {
-            Picasso.get().load(resultList[position].posterURL).error(R.drawable.placeholder_imageloading)
-                    .placeholder(R.drawable.placeholder_imageloading).into(holder.poster)
+            Picasso.get().load(resultList[position].posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
+                    .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(holder.poster)
 
             holder.itemView.setOnLongClickListener {
                 this.position = (holder.adapterPosition)

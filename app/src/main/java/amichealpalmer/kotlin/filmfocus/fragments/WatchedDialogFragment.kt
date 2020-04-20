@@ -59,8 +59,8 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
         fragment_watchlist_watched_dialog_cancelButton.setOnClickListener(this)
         fragment_watchlist_watched_dialog_doneButton.setOnClickListener(this)
 
-        Picasso.get().load(film.posterURL).error(R.drawable.placeholder_imageloading)
-                .placeholder(R.drawable.placeholder_imageloading).into(fragment_watchlist_watched_dialog_poster_iv)
+        Picasso.get().load(film.posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
+                .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(fragment_watchlist_watched_dialog_poster_iv)
 
         // ?
         dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
