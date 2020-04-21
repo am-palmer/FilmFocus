@@ -2,7 +2,7 @@ package amichealpalmer.kotlin.filmfocus.view
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.Film
-import amichealpalmer.kotlin.filmfocus.utilities.FilmSearch
+import amichealpalmer.kotlin.filmfocus.utilities.GetJSONFilm
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,12 +14,10 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_film_details.*
 import kotlinx.android.synthetic.main.fragment_film_details.view.*
 
-
 private const val ARG_IMDBID = "imdbID"
 
 class FilmDetailsFragment : Fragment() {
 
-    //private var listener: OnFragmentInteractionListener? = null
     private lateinit var film: Film
     private lateinit var imdbID: String
 
@@ -35,7 +33,7 @@ class FilmDetailsFragment : Fragment() {
         }
 
         // Use id to set film object
-        FilmSearch(this).getFilmByID(imdbID)
+        GetJSONFilm(this, getString(R.string.OMDB_API_KEY)).execute(imdbID)
 
         super.onCreate(savedInstanceState)
     }
@@ -50,7 +48,7 @@ class FilmDetailsFragment : Fragment() {
         (activity as AppCompatActivity?)!!.supportActionBar!!.show()
     }
 
-    fun onFilmInfoDownload(film: Film) { // Sub-optimal?
+    fun onFilmInfoDownload(film: Film) {
         Log.d(TAG, ".onFilmInfoDownload called")
         this.film = film
 
