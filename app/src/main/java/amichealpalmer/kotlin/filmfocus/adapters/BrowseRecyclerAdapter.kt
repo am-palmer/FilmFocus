@@ -1,17 +1,16 @@
 package amichealpalmer.kotlin.filmfocus.adapters
 
 
-import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.R
 //import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
 //import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
-import amichealpalmer.kotlin.filmfocus.view.FilmDetailsFragment
-import android.content.Context
-import android.os.Bundle
-import android.util.Log
-import android.view.*
 //import android.support.v7.widget.CardView
 //import android.support.v7.widget.RecyclerView
+import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.view.FilmDetailsFragment
+import android.content.Context
+import android.util.Log
+import android.view.*
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -87,16 +86,11 @@ class BrowseRecyclerAdapter(
 
         init {
             cardView.setOnClickListener {
-
-                // Using fragment
-                val fragment = FilmDetailsFragment()
-                val bundle = Bundle()
-                bundle.putString("imdbID", resultList[adapterPosition].imdbID)
-                fragment.arguments = bundle
+                // Display FilmDetailsFragment
                 val manager = (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                 manager.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 manager.addToBackStack(null)
-                manager.replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
+                manager.replace(R.id.main_frame_layout_fragment_holder, FilmDetailsFragment.newInstance(resultList[adapterPosition].imdbID)).commit()
             }
 
             cardView.setOnCreateContextMenuListener(this)

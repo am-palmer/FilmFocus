@@ -23,12 +23,7 @@ class FilmDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".OnCreate called")
-        if (arguments != null) {
-            Log.d(TAG, "arguments non-null, retrieving film/show details")
-            imdbID = arguments!!.getString(ARG_IMDBID) as String
-        } else {
-            Log.d(TAG, ".onCreate: arguments null")
-        }
+        imdbID = arguments?.getString(ARG_IMDBID) as String
 
         // Use the IMDB ID to retrieve film object
         GetJSONFilm(this, getString(R.string.OMDB_API_KEY)).execute(imdbID)
@@ -102,10 +97,10 @@ class FilmDetailsFragment : Fragment() {
 
         private const val ARG_IMDBID = "imdbID"
 
-        fun newInstance(film: Film): FilmDetailsFragment {
+        fun newInstance(imdbID: String): FilmDetailsFragment {
             val fragment = FilmDetailsFragment()
             val args = Bundle()
-            args.putParcelable(ARG_IMDBID, film)
+            args.putString(ARG_IMDBID, imdbID)
             fragment.arguments = args
             return fragment
         }

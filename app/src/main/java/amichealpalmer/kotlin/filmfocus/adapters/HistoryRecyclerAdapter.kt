@@ -1,19 +1,18 @@
 package amichealpalmer.kotlin.filmfocus.adapters
 
 
+//import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
+//import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
+//import android.support.v7.widget.CardView
+//import android.support.v7.widget.RecyclerView
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.RATING_VALUE
 import amichealpalmer.kotlin.filmfocus.model.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
-//import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
-//import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
 import amichealpalmer.kotlin.filmfocus.view.FilmDetailsFragment
 import android.content.Context
-import android.os.Bundle
 import android.util.Log
 import android.view.*
-//import android.support.v7.widget.CardView
-//import android.support.v7.widget.RecyclerView
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
@@ -51,7 +50,7 @@ class HistoryRecyclerAdapter(
         timelineList.remove(item)
     }
 
-    fun replaceList(timelineList: ArrayList<TimelineItem>){
+    fun replaceList(timelineList: ArrayList<TimelineItem>) {
         this.timelineList = timelineList
         notifyDataSetChanged()
     }
@@ -185,16 +184,12 @@ class HistoryRecyclerAdapter(
         val reviewTextView: TextView = view.findViewById(R.id.timeline_item_review_tv)
 
         init {
-            Log.d(TAG, "HelperViewHolder: init segment")
             poster.setOnClickListener {
-                val fragment = FilmDetailsFragment()
-                val bundle = Bundle()
-                bundle.putString("imdbID", timelineList[adapterPosition].film.imdbID)
-                fragment.arguments = bundle
+                // Display FilmDetailsFragment
                 val manager = (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                 manager.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 manager.addToBackStack(null)
-                manager.replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
+                manager.replace(R.id.main_frame_layout_fragment_holder, FilmDetailsFragment.newInstance(timelineList[adapterPosition].film.imdbID)).commit()
             }
             poster.setOnCreateContextMenuListener(this)
         }

@@ -1,11 +1,10 @@
 package amichealpalmer.kotlin.filmfocus.adapters
 
 
-import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.view.FilmDetailsFragment
 import android.content.Context
-import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Filter
@@ -63,7 +62,7 @@ class WatchlistRecyclerAdapter(
         return resultList[position]
     }
 
-    fun clearWatchlist(){
+    fun clearWatchlist() {
         resultList.clear()
         fullList.clear()
         filteredList.clear()
@@ -75,7 +74,7 @@ class WatchlistRecyclerAdapter(
         return resultList.size
     }
 
-    fun removeFilmFromWatchlist(film: FilmThumbnail){
+    fun removeFilmFromWatchlist(film: FilmThumbnail) {
         resultList.remove(film)
         fullList.remove(film)
         filteredList.remove(film)
@@ -111,8 +110,6 @@ class WatchlistRecyclerAdapter(
         }
     }
 
-
-
     inner class HelperViewHolder(view: View)
         : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
         val poster: ImageView = view.findViewById(R.id.film_poster_id)
@@ -120,16 +117,11 @@ class WatchlistRecyclerAdapter(
 
         init {
             cardView.setOnClickListener {
-
-                // Using fragment
-                val fragment = FilmDetailsFragment()
-                val bundle = Bundle()
-                bundle.putString("imdbID", resultList[adapterPosition].imdbID)
-                fragment.arguments = bundle
+                // Display FilmDetailsFragment
                 val manager = (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                 manager.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 manager.addToBackStack(null)
-                manager.replace(R.id.main_frame_layout_fragment_holder, fragment).commit()
+                manager.replace(R.id.main_frame_layout_fragment_holder, FilmDetailsFragment.newInstance(resultList[adapterPosition].imdbID)).commit()
             }
 
             cardView.setOnCreateContextMenuListener(this)
