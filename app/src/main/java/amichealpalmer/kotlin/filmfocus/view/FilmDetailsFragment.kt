@@ -12,22 +12,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_film_details.*
-import kotlinx.android.synthetic.main.fragment_film_details.view.*
 
 class FilmDetailsFragment : Fragment() {
 
-    private lateinit var film: Film
-    private lateinit var imdbID: String
+    //private lateinit var film: Film
+    //private lateinit var imdbID: String
     private val ARG_IMDBID = "imdbID"
     private val TAG = "FilmDetailsFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".OnCreate called")
-        imdbID = arguments?.getString(ARG_IMDBID) as String
-
-        // Use the IMDB ID to retrieve film object
-        GetJSONFilm(this, getString(R.string.OMDB_API_KEY)).execute(imdbID)
-
         super.onCreate(savedInstanceState)
     }
 
@@ -45,36 +39,49 @@ class FilmDetailsFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView starts")
-
-
-        // While the ASyncTask runs, we display the view devoid of information. Perhaps not the most user friendly experience? Might want to display a single loading icon
         val view = inflater.inflate(R.layout.fragment_film_details, container, false)
-        Log.d(TAG, "Setting text fields for the layout")
-
-        view.fragment_film_details_tv_title?.text = "..."
-        view.fragment_film_details_tv_director?.text = "..."
-        view.fragment_film_details_tv_year?.text = "..."
-        view.fragment_film_details_tv_runtime?.text = "..."
-        view.fragment_film_details_tv_plot?.text = "..."
-        view.fragment_film_details_tv_awards?.text = "..."
-        view.fragment_film_details_tv_cast?.text = "..."
-        view.fragment_film_details_tv_genre?.text = "..."
-        view.fragment_film_details_tv_imdbScore?.text = "..."
-        view.fragment_film_details_tv_metacriticScore?.text = "..."
-        view.fragment_film_details_tv_language?.text = "..."
-
-        if (fragment_film_details_iv_poster != null) {
-            Picasso.get().load(R.drawable.ic_image_loading_darkgreen_48dp).error(R.drawable.ic_image_loading_darkgreen_48dp)
-                    .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(view.fragment_film_details_iv_poster)
-        }
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        // While the ASyncTask runs, we show a ProgressBar
+        film_details_progressBar?.visibility = View.VISIBLE
+
+        // Hiding views
+        fragment_film_details_tv_title?.visibility = View.GONE
+        fragment_film_details_tv_director?.visibility = View.GONE
+        fragment_film_details_tv_year?.visibility = View.GONE
+        fragment_film_details_tv_runtime?.visibility = View.GONE
+        fragment_film_details_tv_plot?.visibility = View.GONE
+        fragment_film_details_tv_awards?.visibility = View.GONE
+        fragment_film_details_tv_cast?.visibility = View.GONE
+        fragment_film_details_tv_genre?.visibility = View.GONE
+        fragment_film_details_tv_imdbScore?.visibility = View.GONE
+        fragment_film_details_tv_metacriticScore?.visibility = View.GONE
+        fragment_film_details_tv_language?.visibility = View.GONE
+        fragment_film_details_iv_poster?.visibility = View.GONE
+        fragment_film_details_tv_DIRECTEDBY?.visibility = View.GONE
+        fragment_film_details_tv_METACRITIC?.visibility = View.GONE
+        fragment_film_details_tv_IMDB?.visibility = View.GONE
+        fragment_film_details_tv_STARRING?.visibility = View.GONE
+
+        // Use the IMDB ID to retrieve film object todo: move this logic out of view
+        val imdbID = arguments?.getString(ARG_IMDBID) as String
+        GetJSONFilm(this, getString(R.string.OMDB_API_KEY)).execute(imdbID)
+
+        super.onViewCreated(view, savedInstanceState)
     }
 
     // Called by GetJSONFilm to pass the film object
     fun onFilmInfoDownload(film: Film) {
         Log.d(TAG, ".onFilmInfoDownload starts")
-        this.film = film
+        //this.film = film
 
+        // Hide the ProgressBar
+        film_details_progressBar?.visibility = View.GONE
+
+        // Set view fields
         fragment_film_details_tv_title?.text = film.title
         fragment_film_details_tv_director?.text = film.director
         fragment_film_details_tv_year?.text = film.year
@@ -86,6 +93,25 @@ class FilmDetailsFragment : Fragment() {
         fragment_film_details_tv_imdbScore?.text = film.imdbRating
         fragment_film_details_tv_metacriticScore?.text = film.metascore
         fragment_film_details_tv_language?.text = film.language
+
+        // Un-hide Views
+        fragment_film_details_tv_title?.visibility = View.VISIBLE
+        fragment_film_details_tv_director?.visibility = View.VISIBLE
+        fragment_film_details_tv_year?.visibility = View.VISIBLE
+        fragment_film_details_tv_runtime?.visibility = View.VISIBLE
+        fragment_film_details_tv_plot?.visibility = View.VISIBLE
+        fragment_film_details_tv_awards?.visibility = View.VISIBLE
+        fragment_film_details_tv_cast?.visibility = View.VISIBLE
+        fragment_film_details_tv_genre?.visibility = View.VISIBLE
+        fragment_film_details_tv_imdbScore?.visibility = View.VISIBLE
+        fragment_film_details_tv_metacriticScore?.visibility = View.VISIBLE
+        fragment_film_details_tv_language?.visibility = View.VISIBLE
+        fragment_film_details_iv_poster?.visibility = View.VISIBLE
+        fragment_film_details_tv_DIRECTEDBY?.visibility = View.VISIBLE
+        fragment_film_details_tv_METACRITIC?.visibility = View.VISIBLE
+        fragment_film_details_tv_IMDB?.visibility = View.VISIBLE
+        fragment_film_details_tv_STARRING?.visibility = View.VISIBLE
+
 
         if (fragment_film_details_iv_poster != null) {
             Picasso.get().load(film.posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
