@@ -24,19 +24,16 @@ class GetJSONFilm(private val listener: FilmDetailsFragment, private val apikey:
     override fun doInBackground(vararg params: String): Film? { // params[0] should be imdbID
         val query = "?i=${params[0]}" // i= Search by IMDB id.
         Log.d(TAG, ".doInBackground started")
-        val defaultResult = null // todo better handling of nullability
 
         // Get our JSON object from the parent class
-        Log.d(TAG, "calling super.getJSONDataObject and passing our search query")
-        val JSONResult = super.getJSONDataObject(apikey, query)
-
-        if (JSONResult != null) {
-            Log.d(TAG, "JSONResult not null")
-            return createFilmFromJSON(JSONResult)
-        } else {
-            Log.d(TAG, "JSONResult is null")
-            return defaultResult
+        return try {
+            val JSONResult = super.getJSONDataObject(apikey, query)
+            createFilmFromJSON(JSONResult!!)
+        } catch (e: NullPointerException) {
+            Log.e(TAG, ".doInBackground: NPE")
+            null
         }
+
     }
 
     private fun createFilmFromJSON(jsonItem: JSONObject): Film? {
@@ -50,7 +47,6 @@ class GetJSONFilm(private val listener: FilmDetailsFragment, private val apikey:
             val runtime = jsonItem.getString("Runtime")
             val genre = jsonItem.getString("Genre")
             val director = jsonItem.getString("Director")
-            //val writer = jsonItem.getString("Writer")
             val actors = jsonItem.getString("Actors")
             val plot = jsonItem.getString("Plot")
             val language = jsonItem.getString("Language")

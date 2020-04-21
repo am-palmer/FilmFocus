@@ -14,13 +14,11 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_film_details.*
 import kotlinx.android.synthetic.main.fragment_film_details.view.*
 
-private const val ARG_IMDBID = "imdbID"
-
 class FilmDetailsFragment : Fragment() {
 
     private lateinit var film: Film
     private lateinit var imdbID: String
-
+    private val ARG_IMDBID = "imdbID"
     private val TAG = "FilmDetailsFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +30,7 @@ class FilmDetailsFragment : Fragment() {
             Log.d(TAG, ".onCreate: arguments null")
         }
 
-        // Use id to set film object
+        // Use the IMDB ID to retrieve film object
         GetJSONFilm(this, getString(R.string.OMDB_API_KEY)).execute(imdbID)
 
         super.onCreate(savedInstanceState)
@@ -48,35 +46,10 @@ class FilmDetailsFragment : Fragment() {
         (activity as AppCompatActivity?)!!.supportActionBar!!.show()
     }
 
-    fun onFilmInfoDownload(film: Film) {
-        Log.d(TAG, ".onFilmInfoDownload called")
-        this.film = film
-
-        // Note that we need to use null safety here, as if user clicks out of the view before the ASyncTask finishes, the views won't exist when this function is called
-
-        fragment_film_details_tv_title?.text = film.title
-        fragment_film_details_tv_director?.text = film.director
-        fragment_film_details_tv_year?.text = film.year
-        fragment_film_details_tv_runtime?.text = film.runtime
-        fragment_film_details_tv_plot?.text = film.plot
-        fragment_film_details_tv_awards?.text = film.awards
-        fragment_film_details_tv_cast?.text = film.actors
-        fragment_film_details_tv_genre?.text = film.genre
-        fragment_film_details_tv_imdbScore?.text = film.imdbRating
-        fragment_film_details_tv_metacriticScore?.text = film.metascore
-        fragment_film_details_tv_language?.text = film.language
-
-        Log.d(TAG, "Picasso: setting poster url for the layout")
-        if (fragment_film_details_iv_poster != null) {
-            Picasso.get().load(film.posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
-                    .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(fragment_film_details_iv_poster)
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        Log.d(TAG, ".onCreateView called")
+        Log.d(TAG, ".onCreateView starts")
 
 
         // While the ASyncTask runs, we display the view devoid of information. Perhaps not the most user friendly experience? Might want to display a single loading icon
@@ -95,7 +68,6 @@ class FilmDetailsFragment : Fragment() {
         view.fragment_film_details_tv_metacriticScore?.text = "..."
         view.fragment_film_details_tv_language?.text = "..."
 
-        //  Log.d(TAG, "Picasso: setting poster url for the layout")
         if (fragment_film_details_iv_poster != null) {
             Picasso.get().load(R.drawable.ic_image_loading_darkgreen_48dp).error(R.drawable.ic_image_loading_darkgreen_48dp)
                     .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(view.fragment_film_details_iv_poster)
@@ -103,7 +75,32 @@ class FilmDetailsFragment : Fragment() {
         return view
     }
 
+    // Called by GetJSONFilm to pass the film object
+    fun onFilmInfoDownload(film: Film) {
+        Log.d(TAG, ".onFilmInfoDownload starts")
+        this.film = film
+
+        fragment_film_details_tv_title?.text = film.title
+        fragment_film_details_tv_director?.text = film.director
+        fragment_film_details_tv_year?.text = film.year
+        fragment_film_details_tv_runtime?.text = film.runtime
+        fragment_film_details_tv_plot?.text = film.plot
+        fragment_film_details_tv_awards?.text = film.awards
+        fragment_film_details_tv_cast?.text = film.actors
+        fragment_film_details_tv_genre?.text = film.genre
+        fragment_film_details_tv_imdbScore?.text = film.imdbRating
+        fragment_film_details_tv_metacriticScore?.text = film.metascore
+        fragment_film_details_tv_language?.text = film.language
+
+        if (fragment_film_details_iv_poster != null) {
+            Picasso.get().load(film.posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
+                    .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(fragment_film_details_iv_poster)
+        }
+    }
+
     companion object {
+
+        private const val ARG_IMDBID = "imdbID"
 
         fun newInstance(film: Film): FilmDetailsFragment {
             val fragment = FilmDetailsFragment()
