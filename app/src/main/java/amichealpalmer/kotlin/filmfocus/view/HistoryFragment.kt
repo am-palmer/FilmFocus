@@ -1,8 +1,8 @@
-package amichealpalmer.kotlin.filmfocus.fragments
+package amichealpalmer.kotlin.filmfocus.view
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapters.HistoryRecyclerAdapter
-import amichealpalmer.kotlin.filmfocus.data.TimelineItem
+import amichealpalmer.kotlin.filmfocus.model.TimelineItem
 import android.content.Context
 import android.os.Bundle
 import android.util.Log

@@ -2,12 +2,12 @@ package amichealpalmer.kotlin.filmfocus.adapters
 
 
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.data.RATING_VALUE
-import amichealpalmer.kotlin.filmfocus.data.TIMELINE_ITEM_STATUS
-import amichealpalmer.kotlin.filmfocus.data.TimelineItem
+import amichealpalmer.kotlin.filmfocus.model.RATING_VALUE
+import amichealpalmer.kotlin.filmfocus.model.TIMELINE_ITEM_STATUS
+import amichealpalmer.kotlin.filmfocus.model.TimelineItem
 //import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
 //import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
-import amichealpalmer.kotlin.filmfocus.fragments.FilmDetailsFragment
+import amichealpalmer.kotlin.filmfocus.view.FilmDetailsFragment
 import android.content.Context
 import android.os.Bundle
 import android.util.Log

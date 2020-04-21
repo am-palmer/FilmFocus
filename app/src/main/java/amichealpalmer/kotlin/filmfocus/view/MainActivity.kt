@@ -1,11 +1,10 @@
-package amichealpalmer.kotlin.filmfocus.activities
+package amichealpalmer.kotlin.filmfocus.view
 
 
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.data.TimelineItem
-import amichealpalmer.kotlin.filmfocus.fragments.*
-import amichealpalmer.kotlin.filmfocus.helpers.LocalDateSerializer
+import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.model.TimelineItem
+import amichealpalmer.kotlin.filmfocus.utilities.LocalDateSerializer
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle

@@ -1,11 +1,11 @@
 package amichealpalmer.kotlin.filmfocus.adapters
 
 
-import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.R
 //import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
 //import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
-import amichealpalmer.kotlin.filmfocus.fragments.FilmDetailsFragment
+import amichealpalmer.kotlin.filmfocus.view.FilmDetailsFragment
 import android.content.Context
 import android.os.Bundle
 import android.util.Log

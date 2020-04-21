@@ -1,10 +1,9 @@
-package amichealpalmer.kotlin.filmfocus.fragments
+package amichealpalmer.kotlin.filmfocus.view
 
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.activities.MainActivity
 import amichealpalmer.kotlin.filmfocus.adapters.WatchlistRecyclerAdapter
-import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.data.TimelineItem
+import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.model.TimelineItem
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle

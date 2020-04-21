@@ -1,4 +1,4 @@
-package amichealpalmer.kotlin.filmfocus.data
+package amichealpalmer.kotlin.filmfocus.model
 
 import android.os.Parcel
 import android.os.Parcelable

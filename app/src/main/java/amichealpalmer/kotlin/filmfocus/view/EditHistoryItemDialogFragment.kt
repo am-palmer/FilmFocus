@@ -1,7 +1,7 @@
-package amichealpalmer.kotlin.filmfocus.fragments
+package amichealpalmer.kotlin.filmfocus.view
 
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.data.*
+import amichealpalmer.kotlin.filmfocus.model.*
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater

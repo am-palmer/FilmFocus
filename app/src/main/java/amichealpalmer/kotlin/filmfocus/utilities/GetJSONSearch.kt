@@ -1,8 +1,8 @@
-package amichealpalmer.kotlin.filmfocus.data.json
+package amichealpalmer.kotlin.filmfocus.utilities
 
 //import amichealpalmer.kotlin.filmfocus.activities.SearchActivity
-import amichealpalmer.kotlin.filmfocus.data.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.fragments.BrowseFragment
+import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
 import org.json.JSONObject
 import android.util.Log
 import org.json.JSONException

@@ -1,10 +1,10 @@
-package amichealpalmer.kotlin.filmfocus.helpers
+package amichealpalmer.kotlin.filmfocus.utilities
 
-import amichealpalmer.kotlin.filmfocus.data.Film
+import amichealpalmer.kotlin.filmfocus.model.Film
 import amichealpalmer.kotlin.filmfocus.R
 //import amichealpalmer.kotlin.filmfocus.activities.FilmDetailsActivity
-import amichealpalmer.kotlin.filmfocus.data.json.GetJSONFilm
-import amichealpalmer.kotlin.filmfocus.fragments.FilmDetailsFragment
+import amichealpalmer.kotlin.filmfocus.utilities.GetJSONFilm
+import amichealpalmer.kotlin.filmfocus.view.FilmDetailsFragment
 import android.util.Log
 
 
