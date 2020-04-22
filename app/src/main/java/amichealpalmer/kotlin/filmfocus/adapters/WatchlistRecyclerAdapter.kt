@@ -3,7 +3,7 @@ package amichealpalmer.kotlin.filmfocus.adapters
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.view.FilmDetailsFragment
+import amichealpalmer.kotlin.filmfocus.view.FilmDetailFragment
 import android.content.Context
 import android.util.Log
 import android.view.*
@@ -121,7 +121,7 @@ class WatchlistRecyclerAdapter(
                 val manager = (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                 manager.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 manager.addToBackStack(null)
-                manager.replace(R.id.main_frame_layout_fragment_holder, FilmDetailsFragment.newInstance(resultList[adapterPosition].imdbID)).commit()
+                manager.replace(R.id.main_frame_layout_fragment_holder, FilmDetailFragment.newInstance(resultList[adapterPosition].imdbID)).commit()
             }
 
             cardView.setOnCreateContextMenuListener(this)

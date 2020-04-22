@@ -81,9 +81,9 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
                 val text = fragment_watchlist_watched_dialog_review_et.text.toString()
                 val ratingObject: FilmRating?
                 if (hasRating) {
-                    ratingObject = FilmRating(rating!!.toFloat(), RATING_VALUE.HAS_RATING)
+                    ratingObject = FilmRating(rating!!.toFloat(), FILM_RATING_VALUE.HAS_RATING)
                 } else {
-                    ratingObject = FilmRating(0f, RATING_VALUE.NO_RATING)
+                    ratingObject = FilmRating(0f, FILM_RATING_VALUE.NO_RATING)
                 }
                 val item = TimelineItem(film, ratingObject, date, text, status)
                 callback.onWatchedDialogSubmissionListener(item)

@@ -1,12 +1,12 @@
 package amichealpalmer.kotlin.filmfocus.utilities
 
 import amichealpalmer.kotlin.filmfocus.model.Film
-import amichealpalmer.kotlin.filmfocus.view.FilmDetailsFragment
+import amichealpalmer.kotlin.filmfocus.view.FilmDetailFragment
 import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
 
-class GetJSONFilm(private val listener: FilmDetailsFragment, private val apikey: String) :
+class GetJSONFilm(private val listener: FilmDetailFragment, private val apikey: String) :
         GetJSONBase<Film?>() { // Retrieve OMDB JSON Film Data and return it to the calling class.
 
     val TAG = "GetJSONFilm"

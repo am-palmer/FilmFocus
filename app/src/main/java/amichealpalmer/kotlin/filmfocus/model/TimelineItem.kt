@@ -8,7 +8,10 @@ enum class TIMELINE_ITEM_STATUS {
     WATCHED, DROPPED
 }
 
-// Holds FilmThumbnail, ID, Review, Star Rating, and Date marked watched. Displayed in the watched film timeline
+/*
+ Model which represents an individual item in the Timeline view.
+ */
+
 class TimelineItem(val film: FilmThumbnail, val rating: FilmRating, val date: LocalDate, private var review: String?, val status: TIMELINE_ITEM_STATUS) : Parcelable {
 
     fun hasReview(): Boolean {

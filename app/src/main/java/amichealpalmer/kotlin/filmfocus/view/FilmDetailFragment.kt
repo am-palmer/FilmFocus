@@ -13,10 +13,8 @@ import androidx.fragment.app.Fragment
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_film_details.*
 
-class FilmDetailsFragment : Fragment() {
+class FilmDetailFragment : Fragment() {
 
-    //private lateinit var film: Film
-    //private lateinit var imdbID: String
     private val ARG_IMDBID = "imdbID"
     private val TAG = "FilmDetailsFragment"
 
@@ -76,7 +74,6 @@ class FilmDetailsFragment : Fragment() {
     // Called by GetJSONFilm to pass the film object
     fun onFilmInfoDownload(film: Film) {
         Log.d(TAG, ".onFilmInfoDownload starts")
-        //this.film = film
 
         // Hide the ProgressBar
         film_details_progressBar?.visibility = View.GONE
@@ -123,8 +120,8 @@ class FilmDetailsFragment : Fragment() {
 
         private const val ARG_IMDBID = "imdbID"
 
-        fun newInstance(imdbID: String): FilmDetailsFragment {
-            val fragment = FilmDetailsFragment()
+        fun newInstance(imdbID: String): FilmDetailFragment {
+            val fragment = FilmDetailFragment()
             val args = Bundle()
             args.putString(ARG_IMDBID, imdbID)
             fragment.arguments = args

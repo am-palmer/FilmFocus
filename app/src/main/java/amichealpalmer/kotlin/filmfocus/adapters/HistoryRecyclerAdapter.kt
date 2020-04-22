@@ -6,10 +6,10 @@ package amichealpalmer.kotlin.filmfocus.adapters
 //import android.support.v7.widget.CardView
 //import android.support.v7.widget.RecyclerView
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.model.RATING_VALUE
+import amichealpalmer.kotlin.filmfocus.model.FILM_RATING_VALUE
 import amichealpalmer.kotlin.filmfocus.model.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
-import amichealpalmer.kotlin.filmfocus.view.FilmDetailsFragment
+import amichealpalmer.kotlin.filmfocus.view.FilmDetailFragment
 import android.content.Context
 import android.util.Log
 import android.view.*
@@ -88,7 +88,7 @@ class HistoryRecyclerAdapter(
             holder.dateMonthTextView.text = monthProperty.asText
             holder.dateDayTextView.text = dateDay
             Log.d(TAG, ".onBindViewHolder: configuring rating bar")
-            if (timelineList[position].rating.state == RATING_VALUE.NO_RATING || timelineList[position].rating.value == 0f) {
+            if (timelineList[position].rating.state == FILM_RATING_VALUE.NO_RATING || timelineList[position].rating.value == 0f) {
                 holder.ratingBar.visibility = View.GONE // Hide the rating bar if a rating hasn't been set
                 // We also change the constraints on the review so there isn't a weird gap
                 Log.d(TAG, ".onBindViewHolder: rating constraintset")
@@ -189,7 +189,7 @@ class HistoryRecyclerAdapter(
                 val manager = (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                 manager.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 manager.addToBackStack(null)
-                manager.replace(R.id.main_frame_layout_fragment_holder, FilmDetailsFragment.newInstance(timelineList[adapterPosition].film.imdbID)).commit()
+                manager.replace(R.id.main_frame_layout_fragment_holder, FilmDetailFragment.newInstance(timelineList[adapterPosition].film.imdbID)).commit()
             }
             poster.setOnCreateContextMenuListener(this)
         }
