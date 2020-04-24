@@ -7,6 +7,7 @@ import org.joda.time.format.ISODateTimeFormat
 import java.lang.reflect.Type
 
 // Used to serialize the Joda Time LocalDate class for GSON so we can store it in sharedPrefs. Usage: registerTypeAdapter()
+
 class LocalDateSerializer : JsonDeserializer<LocalDate?>, JsonSerializer<LocalDate?> {
     @Throws(JsonParseException::class)
     override fun deserialize(je: JsonElement, type: Type?,

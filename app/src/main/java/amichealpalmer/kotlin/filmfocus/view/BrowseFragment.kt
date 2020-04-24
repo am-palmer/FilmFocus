@@ -34,12 +34,11 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
     private var resultList: ArrayList<FilmThumbnail>? = null
     private var recyclerView: RecyclerView? = null
 
-    //var progressBar: ProgressBar? = null
     private val TAG = "BrowseFragment"
     private var noMoreResults = false
     var searchString: String? = null
     private var currentPage = 1
-    // private var recyclerScollPosition = 0
+    //private var recyclerScollPosition = 0
 
     interface onResultActionListener {
         fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE)
@@ -53,15 +52,12 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         Log.d(TAG, ".onCreate called")
         if (savedInstanceState != null) {
 
-            // Todo: we should also restore the position in the scroll view
             Log.d(TAG, "savedInstanceState: retrieving search query")
             searchString = savedInstanceState.getString(ARG_SEARCH_STRING)
-            resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)
-                    ?: ArrayList<FilmThumbnail>()
+            //resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)
+            //        ?: ArrayList<FilmThumbnail>()
             noMoreResults = savedInstanceState.getBoolean("noMoreResults")
-            // recyclerScollPosition = savedInstanceState.getInt("recyclerScrollPosition")
-        } else {
-            resultList = ArrayList<FilmThumbnail>()
+            currentPage = savedInstanceState.getInt("currentPage")
         }
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -82,7 +78,10 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         }
 
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-
+        Log.d(TAG, "is resultList null? ${resultList?.size}")
+        resultList = savedInstanceState?.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)
+                ?: ArrayList() // todo: we somehow have 2 copies showing up after this
+        //Log.d(TAG, ".oncreateview: resultlist size is ${resultList?.size}")
         try {
             Log.d(TAG, "onCreateView: trying")
             recyclerView?.adapter = BrowseRecyclerAdapter(activity!!, resultList!!)
@@ -103,10 +102,11 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             Log.e(TAG, e.printStackTrace().toString())
         }
         if (savedInstanceState != null) {
-            recyclerView?.post({
+            Log.d(TAG, "savedInstanceState not null, scrolling to position")
+            recyclerView?.post {
                 val pos = savedInstanceState.getInt("recyclerScrollPosition")
                 recyclerView?.scrollToPosition(pos)
-            })
+            }
         }
 
         return view
@@ -114,6 +114,8 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // Set the empty view as visible by default, turn it off once a query is entered
+//        val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
+//        adapter.notifyDataSetChanged()
         if (savedInstanceState != null && resultList!!.size > 0) {
             fragment_search_empty_container.visibility = View.GONE
             fragment_browse_recycler_framelayout.visibility = View.VISIBLE
@@ -133,7 +135,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         if (searchString != null) {
             outState.putString(ARG_SEARCH_STRING, searchString)
         }
-        if (resultList != null) {
+        if (!resultList.isNullOrEmpty()) {
             outState.putParcelableArrayList(ARG_RESULTS, resultList)
         }
 
@@ -143,6 +145,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             scrollPos = adapter.getAdapterPosition()
         }
         outState.putInt("recyclerScrollPosition", scrollPos ?: 0)
+        outState.putInt("currentPage", currentPage)
         outState.putBoolean("noMoreResults", noMoreResults)
     }
 
@@ -206,7 +209,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             Log.d(TAG, ".onContextItemSelected called")
             Log.d(TAG, "menu item: ${item}")
             val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
-            var position = -1
+            var position = -1 // todo: not needed
             try {
                 position = adapter.position
             } catch (e: java.lang.Exception) { // todo: too generalized, catch specific exceptions

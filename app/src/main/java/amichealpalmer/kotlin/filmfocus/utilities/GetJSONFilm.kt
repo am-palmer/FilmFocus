@@ -6,8 +6,10 @@ import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
 
+// Retrieve OMDB JSON Film Data and return it to the calling class.
+
 class GetJSONFilm(private val listener: FilmDetailFragment, private val apikey: String) :
-        GetJSONBase<Film?>() { // Retrieve OMDB JSON Film Data and return it to the calling class.
+        GetJSONBase<Film?>() {
 
     val TAG = "GetJSONFilm"
 
