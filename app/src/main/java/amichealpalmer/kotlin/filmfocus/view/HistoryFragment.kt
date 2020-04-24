@@ -3,15 +3,16 @@ package amichealpalmer.kotlin.filmfocus.view
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapters.HistoryRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
+import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmClearHistoryDialogFragment
+import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmRemoveFilmFromHistoryDialogFragment
+import amichealpalmer.kotlin.filmfocus.view.dialog.EditHistoryItemDialogFragment
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_dialog_generic_confirm.*
 import kotlinx.android.synthetic.main.fragment_history.*
 
 private const val ARG_TIMELINE_LIST = "timelineList"
@@ -214,118 +215,3 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
 
 }
 
-class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClickListener {
-
-    private val TAG = "ConfirmRemoveFilmHisDia"
-
-    private lateinit var callback: OnConfirmRemoveFilmDialogActionListener
-
-    private lateinit var timelineItem: TimelineItem
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        try {
-            timelineItem = arguments!!.getParcelable<TimelineItem>("timelineItem") as TimelineItem
-        } catch (e: NullPointerException) {
-            Log.wtf(TAG, ".onCreate - failed to retrieve timelineItem")
-        }
-
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        isCancelable = true
-        return inflater.inflate(R.layout.fragment_dialog_generic_confirm, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val prompt = "Are you sure you want to remove ${timelineItem.film.title} from your history?"
-        fragment_dialog_generic_cancelButton.setOnClickListener(this)
-        fragment_dialog_generic_takeActionButton.setOnClickListener(this)
-        fragment_dialog_generic_prompt_text.text = prompt
-        fragment_dialog_generic_takeActionButton.setText(R.string.remove)
-
-        dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            fragment_dialog_generic_cancelButton.id -> this.dismiss()
-            fragment_dialog_generic_takeActionButton.id -> { // We remove the item from the history
-                callback.onConfirmRemoveFilmDialogAction(timelineItem)
-                this.dismiss()
-            }
-        }
-    }
-
-    interface OnConfirmRemoveFilmDialogActionListener {
-        fun onConfirmRemoveFilmDialogAction(timelineItem: TimelineItem)
-    }
-
-    fun setOnConfirmRemoveFilmDialogActionListener(callback: OnConfirmRemoveFilmDialogActionListener) {
-        this.callback = callback
-    }
-
-    companion object {
-
-        fun newInstance(timelineItem: TimelineItem): ConfirmRemoveFilmFromHistoryDialogFragment {
-            val fragment = ConfirmRemoveFilmFromHistoryDialogFragment()
-            val bundle = Bundle()
-            bundle.putParcelable("timelineItem", timelineItem)
-            fragment.arguments = bundle
-            return fragment
-        }
-
-    }
-
-}
-
-class ConfirmClearHistoryDialogFragment : DialogFragment(), View.OnClickListener {
-
-    private val TAG = "ConfirmClearHistDiaFrag"
-    private lateinit var callback: onConfirmClearHistoryDialogListener
-
-    interface onConfirmClearHistoryDialogListener {
-        fun onConfirmClearHistoryDialogSubmit()
-    }
-
-    fun setOnConfirmClearHistoryDialogListener(callback: onConfirmClearHistoryDialogListener) {
-        this.callback = callback
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? { // todo: multiple dialog fragments sharing this exact same oncreateview, possibility for inheritance
-        isCancelable = true
-        return inflater.inflate(R.layout.fragment_dialog_generic_confirm, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        fragment_dialog_generic_prompt_text.setText(R.string.dialog_clear_history_prompt)
-        fragment_dialog_generic_takeActionButton.setText(R.string.button_clear)
-
-        fragment_dialog_generic_takeActionButton.setOnClickListener(this)
-        fragment_dialog_generic_cancelButton.setOnClickListener(this)
-    }
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            fragment_dialog_generic_cancelButton.id -> this.dismiss()
-            fragment_dialog_generic_takeActionButton.id -> {
-                callback.onConfirmClearHistoryDialogSubmit()
-                this.dismiss()
-            }
-        }
-    }
-
-    companion object {
-
-        fun newInstance(callback: onConfirmClearHistoryDialogListener): ConfirmClearHistoryDialogFragment {
-            val fragment = ConfirmClearHistoryDialogFragment()
-            fragment.setOnConfirmClearHistoryDialogListener(callback)
-            return fragment
-        }
-
-    }
-
-}

@@ -1,4 +1,4 @@
-package amichealpalmer.kotlin.filmfocus.view
+package amichealpalmer.kotlin.filmfocus.view.dialog
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.*
