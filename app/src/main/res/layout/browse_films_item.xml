@@ -9,7 +9,7 @@
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
     android:layout_margin="5dp"
     cardview:cardCornerRadius="4dp"
-    tools:context=".view.MainActivity"
+    tools:context=".MainActivity"
     android:focusable="true">
 
     <ImageView

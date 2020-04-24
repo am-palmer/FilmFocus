@@ -1,5 +1,6 @@
 package amichealpalmer.kotlin.filmfocus.view
 
+import amichealpalmer.kotlin.filmfocus.MainActivity
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
