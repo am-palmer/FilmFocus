@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
 import org.joda.time.LocalDate
 
-// Template class for retreiving objects from Shared Preferences
+// Template class for retrieving objects from Shared Preferences
 
 abstract class BaseSharedPrefUtil(private val context: Context) {
 

@@ -4,6 +4,8 @@ package amichealpalmer.kotlin.filmfocus
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
 import amichealpalmer.kotlin.filmfocus.utilities.LocalDateSerializer
+import amichealpalmer.kotlin.filmfocus.utilities.sharedprefs.TimelineItemsSharedPrefUtil
+import amichealpalmer.kotlin.filmfocus.utilities.sharedprefs.WatchlistSharedPrefUtil
 import amichealpalmer.kotlin.filmfocus.view.*
 import android.content.Context
 import android.content.res.Configuration
@@ -49,7 +51,10 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
     private lateinit var mDrawer: DrawerLayout
     private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var toolbar: Toolbar
-    private val SHARED_PREFS = "sharedPrefs"
+    //private val SHARED_PREFS = "sharedPrefs"
+
+    private val timelineSharedPrefUtil = TimelineItemsSharedPrefUtil(this)
+    private val watchlistSharedPrefUtil = WatchlistSharedPrefUtil(this)
 
     private var appBarConfiguration: AppBarConfiguration? = null
 
@@ -71,17 +76,19 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         setupActionBarWithNavController(navController, appBarConfiguration!!)
 
         if (savedInstanceState == null) { // First-time load, show a new browseFragment
+            // todo: we may need to remove this if nav graph is handling it
             val fragment = BrowseFragment.newInstance(null)
             browseFragment = fragment
             title = "Browse"
+
             val fragmentManager = supportFragmentManager
             fragmentManager.beginTransaction().replace(R.id.activity_nav_host_fragment, fragment, FRAGMENT_ID.BROWSE.name).commit()
             fragmentID = FRAGMENT_ID.BROWSE
-            loadData()
+            //loadData()
         } else { // Restore data from saved instance state
             try {
-                watchlist = savedInstanceState.getParcelableArrayList("watchlist")!!
-                timelineList = savedInstanceState.getParcelableArrayList("timelineList")!!
+              //  watchlist = savedInstanceState.getParcelableArrayList("watchlist")!!
+              //  timelineList = savedInstanceState.getParcelableArrayList("timelineList")!!
                 //fragmentID = FRAGMENT_ID.valueOf(savedInstanceState.getString("currentFragment")!!) // Use this to figure out which fragment should be selected?
 //
 //                // May not be necessary
@@ -124,8 +131,8 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList("watchlist", watchlist)
-        outState.putParcelableArrayList("timelineList", timelineList)
+        //outState.putParcelableArrayList("watchlist", watchlist)
+        //outState.putParcelableArrayList("timelineList", timelineList)
        // outState.putString("currentFragment", fragmentID!!.name)
 
     }
@@ -208,59 +215,59 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         }
     }
 
-    private fun saveData() {
-        Log.d(TAG, ".saveData called, saving data to Shared Preferences")
-        val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
+//    private fun saveData() {
+//        Log.d(TAG, ".saveData called, saving data to Shared Preferences")
+//        val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+//        val editor = sharedPreferences.edit()
+//
+//        // We use GSON to do custom objects (specifically, an ArrayList of FilmThumbnails, and an ArrayList of TimelineItems)
+//        val builder = GsonBuilder()
+//        builder.registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
+//
+//        // Watchlist
+//        val gson = builder.create()
+//        val watchlistJson = gson.toJson(watchlist)
+//        editor.putString(SHAREDPREFS_KEY_WATCHLIST, watchlistJson)
+//
+//        // Timeline items
+//        val timelineJson = gson.toJson(timelineList)
+//        editor.putString(SHAREDPREFS_KEY_TIMELINE, timelineJson)
+//
+//        editor.apply()
+//    }
 
-        // We use GSON to do custom objects (specifically, an ArrayList of FilmThumbnails, and an ArrayList of TimelineItems)
-        val builder = GsonBuilder()
-        builder.registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-
-        // Watchlist
-        val gson = builder.create()
-        val watchlistJson = gson.toJson(watchlist)
-        editor.putString(SHAREDPREFS_KEY_WATCHLIST, watchlistJson)
-
-        // Timeline items
-        val timelineJson = gson.toJson(timelineList)
-        editor.putString(SHAREDPREFS_KEY_TIMELINE, timelineJson)
-
-        editor.apply()
-    }
-
-    private fun loadData() {
-        Log.d(TAG, ".loadData called, loading data from Shared Preferences")
-        val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-        val builder = GsonBuilder()
-        builder.registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-        // Watchlist
-        val gson = builder.create()
-
-        // Load the watchlist
-        val watchlistJson = sharedPreferences.getString(SHAREDPREFS_KEY_WATCHLIST, null)
-        val watchlistType: Type = object : TypeToken<ArrayList<FilmThumbnail>>() {}.type
-        watchlist = if (watchlistJson == null) { // Build a new watchlist
-            Log.d(TAG, ".loadData: watchlist could not be loaded / doesn't exist yet. Making a new watchlist")
-            ArrayList()
-        } else {
-            val watchlistRetrieved = gson.fromJson(watchlistJson, watchlistType) as ArrayList<FilmThumbnail>?
-            Log.d(TAG, ".loadData: watchlist loaded. it contains ${watchlistRetrieved!!.size} items")
-            watchlistRetrieved
-        }
-
-        // Load the timeline items
-        val timelineJson = sharedPreferences.getString(SHAREDPREFS_KEY_TIMELINE, null)
-        val timelineType: Type = object : TypeToken<ArrayList<TimelineItem>>() {}.type
-        timelineList = if (timelineJson == null) {
-            Log.d(TAG, ".loadData: timeline could not be loaded / does not exist yet. Making a new watchlist")
-            ArrayList()
-        } else {
-            val timelineRetrieved = gson.fromJson(timelineJson, timelineType) as ArrayList<TimelineItem>
-            Log.d(TAG, ".loadData: timeline retrieved")
-            timelineRetrieved
-        }
-    }
+//    private fun loadData() {
+//        Log.d(TAG, ".loadData called, loading data from Shared Preferences")
+//        val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
+//        val builder = GsonBuilder()
+//        builder.registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
+//        // Watchlist
+//        val gson = builder.create()
+//
+//        // Load the watchlist
+//        val watchlistJson = sharedPreferences.getString(SHAREDPREFS_KEY_WATCHLIST, null)
+//        val watchlistType: Type = object : TypeToken<ArrayList<FilmThumbnail>>() {}.type
+//        watchlist = if (watchlistJson == null) { // Build a new watchlist
+//            Log.d(TAG, ".loadData: watchlist could not be loaded / doesn't exist yet. Making a new watchlist")
+//            ArrayList()
+//        } else {
+//            val watchlistRetrieved = gson.fromJson(watchlistJson, watchlistType) as ArrayList<FilmThumbnail>?
+//            Log.d(TAG, ".loadData: watchlist loaded. it contains ${watchlistRetrieved!!.size} items")
+//            watchlistRetrieved
+//        }
+//
+//        // Load the timeline items
+//        val timelineJson = sharedPreferences.getString(SHAREDPREFS_KEY_TIMELINE, null)
+//        val timelineType: Type = object : TypeToken<ArrayList<TimelineItem>>() {}.type
+//        timelineList = if (timelineJson == null) {
+//            Log.d(TAG, ".loadData: timeline could not be loaded / does not exist yet. Making a new watchlist")
+//            ArrayList()
+//        } else {
+//            val timelineRetrieved = gson.fromJson(timelineJson, timelineType) as ArrayList<TimelineItem>
+//            Log.d(TAG, ".loadData: timeline retrieved")
+//            timelineRetrieved
+//        }
+//    }
 
     fun closeKeyboard() {
         val view = this.currentFocus
@@ -287,12 +294,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         Log.d(TAG, ".onFilmSelected is called with TYPE: ${typeWATCHLIST.name}")
         if (typeWATCHLIST == WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE) {
             val film = bundle.getParcelable<FilmThumbnail>("film")
-            if (film == null) {
-                Log.e(TAG, ".onFilmSelected: film null in bundle")
-            } else {
-                watchlist.remove(film)
-                saveData()
-            }
+            watchlistSharedPrefUtil.saveWatchlist()
         } else if (typeWATCHLIST == WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_MARK_WATCHED) {
             val timelineItem = bundle.getParcelable<TimelineItem>("timelineItem")
             if (timelineItem == null) {

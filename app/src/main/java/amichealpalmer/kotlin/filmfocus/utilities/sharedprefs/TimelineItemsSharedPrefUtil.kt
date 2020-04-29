@@ -11,7 +11,6 @@ import java.lang.reflect.Type
 
 class TimelineItemsSharedPrefUtil(context: Context) : BaseSharedPrefUtil(context) {
 
-
     private val TAG = "TimelineSharedPrefUt"
     private val SHAREDPREFS_KEY_TIMELINEITEMS = "timelineItems"
 
