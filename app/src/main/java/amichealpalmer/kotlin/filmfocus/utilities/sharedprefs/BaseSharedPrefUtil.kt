@@ -8,7 +8,7 @@ import org.joda.time.LocalDate
 
 // Template class for retrieving objects from Shared Preferences
 
-abstract class BaseSharedPrefUtil(private val context: Context) {
+abstract class BaseSharedPrefUtil(context: Context) {
 
     private val SHARED_PREFS = "sharedPrefs"
     protected val sharedPreferences: SharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)

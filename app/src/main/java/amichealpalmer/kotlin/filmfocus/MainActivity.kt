@@ -10,13 +10,10 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -26,32 +23,20 @@ import androidx.navigation.ui.setupWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 
-enum class FRAGMENT_ID {
-    BROWSE, WATCHLIST, HISTORY
-}
+//enum class FRAGMENT_ID {
+//    BROWSE, WATCHLIST, HISTORY
+//}
 
 class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener {
 
-    //private val SHAREDPREFS_KEY_WATCHLIST = "watchlist"
-    //private val SHAREDPREFS_KEY_TIMELINE = "timelineList"
-
     private val TAG = "MainActivity"
 
-    //private lateinit var watchlist: ArrayList<FilmThumbnail> // The user's Watchlist, stored in SharedPrefs
-    //private lateinit var timelineList: ArrayList<TimelineItem> // List of items in the user's history
-
-    private var fragmentID: FRAGMENT_ID? = null
-    private lateinit var mDrawer: DrawerLayout
-    private lateinit var drawerToggle: ActionBarDrawerToggle
     private lateinit var toolbar: Toolbar
-    //private val SHARED_PREFS = "sharedPrefs"
 
-    private val timelineSharedPrefUtil = TimelineItemsSharedPrefUtil(this)
-    private val watchlistSharedPrefUtil = WatchlistSharedPrefUtil(this)
+    private lateinit var timelineSharedPrefUtil: TimelineItemsSharedPrefUtil
+    private lateinit var watchlistSharedPrefUtil: WatchlistSharedPrefUtil
 
     private var appBarConfiguration: AppBarConfiguration? = null
-
-    private var browseFragment: Fragment? = null
 
     // todo: implement nav component for nav drawer
 
@@ -59,7 +44,8 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(drawer_layout.toolbar)
-
+        timelineSharedPrefUtil = TimelineItemsSharedPrefUtil(this)
+        watchlistSharedPrefUtil = WatchlistSharedPrefUtil(this)
         var navController = findNavController(R.id.activity_nav_host_fragment)
         appBarConfiguration = AppBarConfiguration(setOf(
                 R.id.nav_browse_fragment, R.id.nav_watchlist_fragment, R.id.nav_history_fragment
@@ -68,35 +54,34 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         nav_view.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration!!)
 
-        if (savedInstanceState == null) { // First-time load, show a new browseFragment
-            // todo: we may need to remove this if nav graph is handling it
-            val fragment = BrowseFragment.newInstance(null)
-            browseFragment = fragment
-            title = "Browse"
-
-            val fragmentManager = supportFragmentManager
-            fragmentManager.beginTransaction().replace(R.id.activity_nav_host_fragment, fragment, FRAGMENT_ID.BROWSE.name).commit()
-            fragmentID = FRAGMENT_ID.BROWSE
-            //loadData()
-        } else { // Restore data from saved instance state
-            try {
-                //  watchlist = savedInstanceState.getParcelableArrayList("watchlist")!!
-                //  timelineList = savedInstanceState.getParcelableArrayList("timelineList")!!
-                //fragmentID = FRAGMENT_ID.valueOf(savedInstanceState.getString("currentFragment")!!) // Use this to figure out which fragment should be selected?
+//        if (savedInstanceState == null) { // First-time load, show a new browseFragment
+//            // todo: we may need to remove this if nav graph is handling it
+//            val fragment = BrowseFragment.newInstance(null)
+//            browseFragment = fragment
+//            title = "Browse"
 //
-//                // May not be necessary
-//                when (fragmentID) {
-//                    FRAGMENT_ID.BROWSE -> title = "Browse"
-//                    FRAGMENT_ID.HISTORY -> title = "History"
-//                    FRAGMENT_ID.WATCHLIST -> title = "Watchlist"
-//                }
-
-            } catch (e: NullPointerException) {
-                Log.wtf(TAG, ".onCreate: failed to load member variables from saved instance state")
-                Log.wtf(TAG, e.stackTrace.toString())
-            }
-
-        }
+//            val fragmentManager = supportFragmentManager
+//            fragmentManager.beginTransaction().replace(R.id.activity_nav_host_fragment, fragment, FRAGMENT_ID.BROWSE.name).commit()
+//            fragmentID = FRAGMENT_ID.BROWSE
+//        } else { // Restore data from saved instance state
+//            try {
+//                //  watchlist = savedInstanceState.getParcelableArrayList("watchlist")!!
+//                //  timelineList = savedInstanceState.getParcelableArrayList("timelineList")!!
+//                //fragmentID = FRAGMENT_ID.valueOf(savedInstanceState.getString("currentFragment")!!) // Use this to figure out which fragment should be selected?
+////
+////                // May not be necessary
+////                when (fragmentID) {
+////                    FRAGMENT_ID.BROWSE -> title = "Browse"
+////                    FRAGMENT_ID.HISTORY -> title = "History"
+////                    FRAGMENT_ID.WATCHLIST -> title = "Watchlist"
+////                }
+//
+//            } catch (e: NullPointerException) {
+//                Log.wtf(TAG, ".onCreate: failed to load member variables from saved instance state")
+//                Log.wtf(TAG, e.stackTrace.toString())
+//            }
+//
+//        }
         toolbar = findViewById(R.id.toolbar)
         //supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         //supportActionBar!!.setDisplayShowTitleEnabled(false)
@@ -112,23 +97,12 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
     }
 
+
+
     override fun onSupportNavigateUp(): Boolean {
         return findNavController(R.id.activity_nav_host_fragment).navigateUp(appBarConfiguration!!) || super.onSupportNavigateUp()
     }
 
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        // drawerToggle.syncState()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        //outState.putParcelableArrayList("watchlist", watchlist)
-        //outState.putParcelableArrayList("timelineList", timelineList)
-        // outState.putString("currentFragment", fragmentID!!.name)
-
-    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.d(TAG, ".onConfiguration changed: starts")
@@ -136,131 +110,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         // Pass any configuration change to the drawer toggles
         // drawerToggle.onConfigurationChanged(newConfig)
     }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        // supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-//    private fun setupDrawerContent(navigationView: NavigationView) {
-//        Log.d(TAG, ".setupDrawerContent: setting nav view itemselectedlistener")
-//        navigationView.setNavigationItemSelectedListener { menuItem ->
-//            selectDrawerItem(menuItem)
-//            closeKeyboard()
-//            true
-//        }
-//    }
-
-//    private fun selectDrawerItem(menuItem: MenuItem) {
-//        var fragment: Fragment? = null
-//        val fragmentIDClass: FRAGMENT_ID?
-//        val fragmentManager = supportFragmentManager
-//        Log.d("TAG", "menuItem itemId is: ${menuItem.itemId}")
-//        fragmentIDClass = when (menuItem.itemId) {
-//            R.id.nav_browse_fragment -> FRAGMENT_ID.BROWSE
-//            R.id.nav_watchlist_fragment -> FRAGMENT_ID.WATCHLIST
-//            R.id.nav_history_fragment -> FRAGMENT_ID.HISTORY
-//            else -> FRAGMENT_ID.BROWSE
-//        }
-//        Log.d(TAG, "fragmentIDClass is: ${fragmentIDClass.name} ")
-//        Log.d(TAG, "fragmentID is: ${fragmentID!!.name}")
-//        if (fragmentIDClass == fragmentID) {
-//            Log.d(TAG, "user clicked fragment we're already in (fragmentIDClass == fragmentID)")
-//            // Do nothing
-//        } else {
-//            when (fragmentIDClass) {
-//                FRAGMENT_ID.BROWSE -> {
-//                    fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_ID.BROWSE.name)
-//                            ?: BrowseFragment.newInstance(null)
-//                    title = "Browse"
-//                    fragmentID = FRAGMENT_ID.BROWSE
-//                }
-//                FRAGMENT_ID.WATCHLIST -> {
-//                    fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_ID.WATCHLIST.name)
-//                            ?: WatchlistFragment.newInstance(watchlist)
-//                    title = "Watchlist"
-//                    fragmentID = FRAGMENT_ID.WATCHLIST
-//                }
-//                FRAGMENT_ID.HISTORY -> {
-//                    fragment = supportFragmentManager.findFragmentByTag(FRAGMENT_ID.HISTORY.name)
-//                            ?: HistoryFragment.newInstance(timelineList)
-//                    val historyFragment = fragment as HistoryFragment
-//                    historyFragment.forceTimelineRefresh(timelineList) // Ensuring the view is updated correctly
-//                    title = "History"
-//                    fragmentID = FRAGMENT_ID.HISTORY
-//                }
-//            }
-//
-//            // Insert the fragment by replacing any existing fragment
-//            val transaction = fragmentManager.beginTransaction()
-//            transaction.replace(R.id.activity_nav_host_fragment, fragment, fragmentID!!.name)
-//            transaction.addToBackStack(null)
-//            transaction.commit()
-//            fragmentManager.executePendingTransactions()
-//            menuItem.isChecked = true
-//            title = menuItem.title
-//        }
-//        mDrawer.closeDrawers()
-//    }
-
-    private fun setupDrawerToggle(): ActionBarDrawerToggle {
-        return object : ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close) {
-        }
-    }
-
-//    private fun saveData() {
-//        Log.d(TAG, ".saveData called, saving data to Shared Preferences")
-//        val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-//        val editor = sharedPreferences.edit()
-//
-//        // We use GSON to do custom objects (specifically, an ArrayList of FilmThumbnails, and an ArrayList of TimelineItems)
-//        val builder = GsonBuilder()
-//        builder.registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-//
-//        // Watchlist
-//        val gson = builder.create()
-//        val watchlistJson = gson.toJson(watchlist)
-//        editor.putString(SHAREDPREFS_KEY_WATCHLIST, watchlistJson)
-//
-//        // Timeline items
-//        val timelineJson = gson.toJson(timelineList)
-//        editor.putString(SHAREDPREFS_KEY_TIMELINE, timelineJson)
-//
-//        editor.apply()
-//    }
-
-//    private fun loadData() {
-//        Log.d(TAG, ".loadData called, loading data from Shared Preferences")
-//        val sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-//        val builder = GsonBuilder()
-//        builder.registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
-//        // Watchlist
-//        val gson = builder.create()
-//
-//        // Load the watchlist
-//        val watchlistJson = sharedPreferences.getString(SHAREDPREFS_KEY_WATCHLIST, null)
-//        val watchlistType: Type = object : TypeToken<ArrayList<FilmThumbnail>>() {}.type
-//        watchlist = if (watchlistJson == null) { // Build a new watchlist
-//            Log.d(TAG, ".loadData: watchlist could not be loaded / doesn't exist yet. Making a new watchlist")
-//            ArrayList()
-//        } else {
-//            val watchlistRetrieved = gson.fromJson(watchlistJson, watchlistType) as ArrayList<FilmThumbnail>?
-//            Log.d(TAG, ".loadData: watchlist loaded. it contains ${watchlistRetrieved!!.size} items")
-//            watchlistRetrieved
-//        }
-//
-//        // Load the timeline items
-//        val timelineJson = sharedPreferences.getString(SHAREDPREFS_KEY_TIMELINE, null)
-//        val timelineType: Type = object : TypeToken<ArrayList<TimelineItem>>() {}.type
-//        timelineList = if (timelineJson == null) {
-//            Log.d(TAG, ".loadData: timeline could not be loaded / does not exist yet. Making a new watchlist")
-//            ArrayList()
-//        } else {
-//            val timelineRetrieved = gson.fromJson(timelineJson, timelineType) as ArrayList<TimelineItem>
-//            Log.d(TAG, ".loadData: timeline retrieved")
-//            timelineRetrieved
-//        }
-//    }
 
     fun closeKeyboard() {
         val view = this.currentFocus
@@ -305,23 +154,13 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         }
     }
 
-    override fun onWatchlistMenuItemSelected(bundle: Bundle, actionType: WATCHLIST_MENU_ITEM_ACTION_TYPE) { // Todo: all these passes of the data can probably be removed
+    override fun onWatchlistMenuItemSelected(bundle: Bundle, actionType: WATCHLIST_MENU_ITEM_ACTION_TYPE) { // Todo: all these passes of the data in bundles can probably be removed
         when (actionType) {
             WATCHLIST_MENU_ITEM_ACTION_TYPE.REMOVE_ALL -> {
-                try {
-                    val currentWatchlist = bundle.getParcelableArrayList<FilmThumbnail>("watchlist")
-                    Log.d(TAG, ".onWatchlistMenuItemSelected: watchlist has ${currentWatchlist!!.size} items")
-                    if (currentWatchlist.isEmpty()) {
-                        Toast.makeText(this, "The Watchlist is already empty", Toast.LENGTH_SHORT).show()
-                    } else {
-                        //watchlist.clear()
-                        watchlistSharedPrefUtil.clearWatchlist()
-                        Toast.makeText(this, "Cleared Watchlist", Toast.LENGTH_SHORT).show()
-                        //saveData()
-                    }
-                } catch (e: NullPointerException) {
-                    Log.wtf(TAG, ".onWatchlistMenuItemSelected")
-                    Log.wtf(TAG, e.stackTrace.toString())
+                val result = watchlistSharedPrefUtil.clearWatchlist()
+                when (result){
+                    true -> Toast.makeText(this, "Cleared Watchlist", Toast.LENGTH_SHORT).show()
+                    false -> Toast.makeText(this, "The Watchlist is already empty", Toast.LENGTH_SHORT).show()
                 }
             }
         }
