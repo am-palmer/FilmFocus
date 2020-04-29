@@ -48,7 +48,7 @@
         android:layout_gravity="start"
         android:background="@android:color/white"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_view" />
+        app:menu="@menu/activity_nav_drawer" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

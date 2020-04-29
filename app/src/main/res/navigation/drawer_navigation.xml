@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_navigation"
+    app:startDestination="@id/browseFragment">
+
+    <fragment
+        android:id="@+id/browseFragment"
+        android:name="amichealpalmer.kotlin.filmfocus.view.BrowseFragment"
+        android:label="BrowseFragment" />
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="amichealpalmer.kotlin.filmfocus.view.HistoryFragment"
+        android:label="HistoryFragment" />
+    <fragment
+        android:id="@+id/watchlistFragment"
+        android:name="amichealpalmer.kotlin.filmfocus.view.WatchlistFragment"
+        android:label="fragment_watchlist"
+        tools:layout="@layout/fragment_watchlist" />
+</navigation>

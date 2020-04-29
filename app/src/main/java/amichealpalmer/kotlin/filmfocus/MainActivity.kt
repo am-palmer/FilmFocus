@@ -48,6 +48,8 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
     private var browseFragment: Fragment? = null
 
+    // todo: implement nav component for nav drawer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -136,9 +138,9 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         val fragmentManager = supportFragmentManager
         Log.d("TAG", "menuItem itemId is: ${menuItem.itemId}")
         fragmentIDClass = when (menuItem.itemId) {
-            R.id.nav_first_fragment -> FRAGMENT_ID.BROWSE
-            R.id.nav_second_fragment -> FRAGMENT_ID.WATCHLIST
-            R.id.nav_third_fragment -> FRAGMENT_ID.HISTORY
+            R.id.nav_browse_fragment -> FRAGMENT_ID.BROWSE
+            R.id.nav_watchlist_fragment -> FRAGMENT_ID.WATCHLIST
+            R.id.nav_history_fragment -> FRAGMENT_ID.HISTORY
             else -> FRAGMENT_ID.BROWSE
         }
         Log.d(TAG, "fragmentIDClass is: ${fragmentIDClass.name} ")
