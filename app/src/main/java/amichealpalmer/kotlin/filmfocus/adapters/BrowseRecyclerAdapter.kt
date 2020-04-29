@@ -90,7 +90,7 @@ class BrowseRecyclerAdapter(
                 val manager = (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                 manager.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 manager.addToBackStack(null)
-                manager.replace(R.id.main_frame_layout_fragment_holder, FilmDetailFragment.newInstance(resultList[adapterPosition].imdbID)).commit()
+                manager.replace(R.id.activity_nav_host_fragment, FilmDetailFragment.newInstance(resultList[adapterPosition].imdbID)).commit()
             }
 
             cardView.setOnCreateContextMenuListener(this)

@@ -48,7 +48,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".onCreate starts")
         if (arguments != null) {
-            watchlist = arguments!!.getParcelableArrayList<FilmThumbnail>(ARG_LIST) as ArrayList<FilmThumbnail>
+            watchlist = requireArguments().getParcelableArrayList<FilmThumbnail>(ARG_LIST) as ArrayList<FilmThumbnail>
         } else {
             Log.d(TAG, ".onCreateView: arguments null")
         }
@@ -68,7 +68,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
             Configuration.ORIENTATION_PORTRAIT -> recyclerView.layoutManager = GridLayoutManager(activity, 3)
             Configuration.ORIENTATION_LANDSCAPE -> recyclerView.layoutManager = GridLayoutManager(activity, 5)
         }
-        recyclerView.adapter = WatchlistRecyclerAdapter(activity!!, watchlist)
+        recyclerView.adapter = WatchlistRecyclerAdapter(requireActivity(), watchlist)
         return view
     }
 
@@ -137,7 +137,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         when (item.itemId) {
             R.id.watchlist_fragment_more_menu_removeAll -> {
                 val fragment = WatchlistConfirmDeleteDialogFragment.newInstance(this)
-                fragment.show(fragmentManager!!, "fragment_confirm_clear_watchlist_dialog")
+                fragment.show(requireFragmentManager(), "fragment_confirm_clear_watchlist_dialog")
                 return true
             }
             //else -> return true
@@ -160,7 +160,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
                 val film = adapter.getItem(position)
                 val dialogFragment = WatchedDialogFragment.newInstance(film)
                 dialogFragment.setOnWatchedDialogSubmissionListener(this)
-                dialogFragment.show(fragmentManager!!, "fragment_watched_dialog")
+                dialogFragment.show(requireFragmentManager(), "fragment_watched_dialog")
             }
             R.id.film_thumbnail_context_menu_remove -> {
                 val film = adapter.getItem(position)

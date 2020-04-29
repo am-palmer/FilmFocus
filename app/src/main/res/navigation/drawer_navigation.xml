@@ -3,19 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_navigation"
-    app:startDestination="@id/browseFragment">
+    app:startDestination="@id/nav_browse_fragment">
 
     <fragment
-        android:id="@+id/browseFragment"
+        android:id="@id/nav_browse_fragment"
         android:name="amichealpalmer.kotlin.filmfocus.view.BrowseFragment"
-        android:label="BrowseFragment" />
+        android:label="@string/fragment_browse_title"
+        tools:layout="@layout/fragment_browse"/>
     <fragment
-        android:id="@+id/historyFragment"
-        android:name="amichealpalmer.kotlin.filmfocus.view.HistoryFragment"
-        android:label="HistoryFragment" />
-    <fragment
-        android:id="@+id/watchlistFragment"
+        android:id="@id/nav_watchlist_fragment"
         android:name="amichealpalmer.kotlin.filmfocus.view.WatchlistFragment"
-        android:label="fragment_watchlist"
+        android:label="@string/fragment_watchlist_title"
         tools:layout="@layout/fragment_watchlist" />
+    <fragment
+        android:id="@id/nav_history_fragment"
+        android:name="amichealpalmer.kotlin.filmfocus.view.HistoryFragment"
+        android:label="@string/fragment_history_title"
+        tools:layout="@layout/fragment_history"/>
 </navigation>

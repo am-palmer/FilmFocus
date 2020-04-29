@@ -32,17 +32,20 @@
                 android:layout_height="wrap_content" />
 
             <!-- The main content view where fragments are loaded -->
-            <FrameLayout
+            <fragment
+                android:id="@+id/activity_nav_host_fragment"
+                android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/main_frame_layout_fragment_holder"/>
+                app:defaultNavHost="true"
+                app:navGraph="@navigation/drawer_navigation" />
         </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <!-- The navigation drawer, opens from left-hand side of screen. headerLayout points to the xml layout which is the header of the nav view -->
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nvView"
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"

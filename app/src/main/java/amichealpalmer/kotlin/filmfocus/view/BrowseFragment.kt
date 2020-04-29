@@ -5,7 +5,7 @@ import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
-import amichealpalmer.kotlin.filmfocus.utilities.GetJSONSearch
+import amichealpalmer.kotlin.filmfocus.utilities.json.GetJSONSearch
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import android.content.Context
 import android.content.res.Configuration

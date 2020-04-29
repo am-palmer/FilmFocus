@@ -1,6 +1,7 @@
-package amichealpalmer.kotlin.filmfocus.utilities
+package amichealpalmer.kotlin.filmfocus.utilities.json
 
 import amichealpalmer.kotlin.filmfocus.model.Film
+import amichealpalmer.kotlin.filmfocus.utilities.json.GetJSONBase
 import amichealpalmer.kotlin.filmfocus.view.FilmDetailFragment
 import android.util.Log
 import org.json.JSONException
