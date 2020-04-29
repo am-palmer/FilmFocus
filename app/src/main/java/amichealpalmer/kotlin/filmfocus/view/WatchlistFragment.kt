@@ -30,6 +30,8 @@ enum class WATCHLIST_MENU_ITEM_ACTION_TYPE {
 
 class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener, WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
 
+    // todo: if the watchlist is very large (hundreds or thousands of items), retreiving it from sharedprefs will be costly, and navigating it will be annoying. need to address these issues
+
     private val TAG = "WatchlistFragment"
     internal var callback: OnWatchlistActionListener? = null
     private lateinit var watchlist: ArrayList<FilmThumbnail>

@@ -32,11 +32,26 @@ class TimelineItemsSharedPrefUtil(context: Context) : BaseSharedPrefUtil(context
         val timelineList: ArrayList<TimelineItem>? = loadTimelineItems()
         if (timelineList != null) {
             timelineList.add(item)
+            saveTimelineItems(timelineList)
             return true
         } else {
             Log.e(TAG, "call made to addItemToTimeline when the object hasn't been initialized in sharedprefs")
         }
         return false
+    }
+
+    // Called when user edits an item in the timeline
+    fun updateTimelineItem(item: TimelineItem){
+        val timelineList = loadTimelineItems()
+        if (timelineList != null){
+            for (i in timelineList){
+                if (i.date == item.date && i.film.imdbID == item.film.imdbID){
+                    val position = timelineList.indexOf(i)
+                    timelineList[position] = item
+                    saveTimelineItems(timelineList)
+                }
+            }
+        }
     }
 
     // Return false if it doesn't exist - however should be impossible
