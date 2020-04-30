@@ -3,15 +3,15 @@ package amichealpalmer.kotlin.filmfocus.adapters
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.view.FilmDetailFragment
+import amichealpalmer.kotlin.filmfocus.view.WatchlistFragmentDirections
 import android.content.Context
 import android.util.Log
 import android.view.*
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import java.util.*
@@ -20,7 +20,8 @@ import kotlin.collections.ArrayList
 // todo: Could inherit / reduce code using browserecycleradapter
 class WatchlistRecyclerAdapter(
         private val context: Context,
-        private var resultList: ArrayList<FilmThumbnail> // The list of films currently being displayed in the browser
+        private var resultList: ArrayList<FilmThumbnail>, // The list of films currently being displayed in the browser
+        private val navController: NavController
 ) : RecyclerView.Adapter<WatchlistRecyclerAdapter.HelperViewHolder>(), Filterable {
 
     private val TAG = "WatchlistRecyclerAdapt"
@@ -118,10 +119,9 @@ class WatchlistRecyclerAdapter(
         init {
             cardView.setOnClickListener {
                 // Display FilmDetailsFragment
-                val manager = (context as AppCompatActivity).supportFragmentManager.beginTransaction()
-                manager.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                manager.addToBackStack(null)
-                manager.replace(R.id.activity_nav_host_fragment, FilmDetailFragment.newInstance(resultList[adapterPosition].imdbID)).commit()
+                val direction = WatchlistFragmentDirections.actionNavWatchlistFragmentToFilmDetailFragment(resultList[adapterPosition].imdbID)
+                navController.navigate(direction)
+                // todo: this currently destroys the watchlist fragment!
             }
 
             cardView.setOnCreateContextMenuListener(this)

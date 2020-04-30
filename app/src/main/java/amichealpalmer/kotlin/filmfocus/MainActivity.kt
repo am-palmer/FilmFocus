@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
         }
     }
 
-
+    // todo: move ALL of these to a helper object where the sharedPrefutil objects are safely checked - if the screen is rotated, this activity is destroyed meaning the util objects are too. helper object should implement all of the interfaces
     override fun retrieveWatchlist(): ArrayList<FilmThumbnail> {
         return watchlistSharedPrefUtil.loadWatchlist()
     }

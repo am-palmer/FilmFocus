@@ -9,7 +9,7 @@ import org.json.JSONException
 
 // Retrieve OMDB JSON Search Data and return it to the calling class.
 
-class GetJSONSearch(private val listener: BrowseFragment.searchHelper, private val apikey: String) :
+class GetJSONSearch(private val listener: BrowseFragment.SearchHelper, private val apikey: String) :
         GetJSONBase<ArrayList<FilmThumbnail?>>() { // Example input query is "?s=ghost". We then append the website and API key to form a valid URL (in the super class helper method)
 
     private val TAG = "GetJSONSearch"

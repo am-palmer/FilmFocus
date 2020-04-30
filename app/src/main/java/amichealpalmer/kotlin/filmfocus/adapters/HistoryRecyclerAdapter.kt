@@ -1,24 +1,20 @@
 package amichealpalmer.kotlin.filmfocus.adapters
 
 
-//import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
-//import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
-//import android.support.v7.widget.CardView
-//import android.support.v7.widget.RecyclerView
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FILM_RATING_VALUE
 import amichealpalmer.kotlin.filmfocus.model.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
-import amichealpalmer.kotlin.filmfocus.view.FilmDetailFragment
+import amichealpalmer.kotlin.filmfocus.view.HistoryFragmentDirections
 import android.content.Context
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import org.joda.time.LocalDate
@@ -26,7 +22,8 @@ import org.joda.time.LocalDate
 
 class HistoryRecyclerAdapter(
         private val context: Context,
-        private var timelineList: ArrayList<TimelineItem> // List of items on the timeline
+        private var timelineList: ArrayList<TimelineItem>, // List of items on the timeline
+        private val navController: NavController
 ) : RecyclerView.Adapter<HistoryRecyclerAdapter.HelperViewHolder>() {
 
     private val TAG = "HistoryRecyclerAdapter"
@@ -186,10 +183,13 @@ class HistoryRecyclerAdapter(
         init {
             poster.setOnClickListener {
                 // Display FilmDetailsFragment
-                val manager = (context as AppCompatActivity).supportFragmentManager.beginTransaction()
-                manager.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                manager.addToBackStack(null)
-                manager.replace(R.id.activity_nav_host_fragment, FilmDetailFragment.newInstance(timelineList[adapterPosition].film.imdbID)).commit()
+//                val manager = (context as AppCompatActivity).supportFragmentManager.beginTransaction()
+//                manager.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+//                manager.addToBackStack(null)
+//                manager.replace(R.id.activity_nav_host_fragment, FilmDetailFragment.newInstance(timelineList[adapterPosition].film.imdbID)).commit()
+                val direction = HistoryFragmentDirections.actionNavHistoryFragmentToFilmDetailFragment(timelineList[adapterPosition].film.imdbID)
+                navController.navigate(direction)
+                // todo: this is destroying the history fragment. could crash, or otherwise it is just unwanted and resource heavy.
             }
             poster.setOnCreateContextMenuListener(this)
         }

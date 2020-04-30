@@ -94,7 +94,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                     // Could perhaps rewrite this so it loads new entries before the bottom is reached, right now it is jarring. Good functionality: load the first TWO pages at once, then load subsequent page based on scroll position rather than canScrollVertically
                     if (!recyclerView.canScrollVertically(1)) { // todo: UI and backend logic are completely wrapped up together using this method
                         if (!noMoreResults && searchString != null) {
-                            searchHelper().searchByTitleKeyword(searchString!!)
+                            SearchHelper().searchByTitleKeyword(searchString!!)
                         }
                     }
                 }
@@ -190,7 +190,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                 val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
                 adapter.clearList()
 
-                searchHelper().searchByTitleKeyword(searchString!!)
+                SearchHelper().searchByTitleKeyword(searchString!!)
                 return true
             }
 
@@ -242,7 +242,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         return false
     }
 
-    inner class searchHelper {
+    inner class SearchHelper {
         private val activity = callback as MainActivity
 
         fun searchByTitleKeyword(titleContains: String) { // This method is called multiple times to load each subsequent page

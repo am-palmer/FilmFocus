@@ -4,7 +4,6 @@ import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapters.HistoryRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
-import amichealpalmer.kotlin.filmfocus.utilities.sharedprefs.TimelineItemsSharedPrefUtil
 import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmClearHistoryDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmRemoveFilmFromHistoryDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.EditHistoryItemDialogFragment
@@ -14,21 +13,14 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_history.*
 
 private const val ARG_TIMELINE_LIST = "timelineList"
 
-//enum class TIMELINE_ITEM_CONTEXT_ACTION_TYPE {
-//    TIMELINE_ITEM_REMOVE, TIMELINE_ADD_TO_WATCHLIST, TIMELINE_ITEM_UPDATE
-//}
-//
-//enum class HISTORY_MENU_ITEM_ACTION_TYPE {
-//    REMOVE_ALL
-//}
-
-// todo: change listener calls to new types
+// todo: currently items are displayed in wrong order (should be latest on top, reversed)
 
 class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener, ConfirmClearHistoryDialogFragment.onConfirmClearHistoryDialogListener { // note code duplication with other fragments
 
@@ -37,7 +29,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     private var callback: OnTimelineItemSelectedListener? = null
     private lateinit var timelineList: ArrayList<TimelineItem>
     private var recyclerView: RecyclerView? = null
-    private var timelineItemsSharedPrefUtil: TimelineItemsSharedPrefUtil? = null
+    //private var timelineItemsSharedPrefUtil: TimelineItemsSharedPrefUtil? = null
 
     fun setOnTimelineItemSelectedListener(callback: OnTimelineItemSelectedListener) {
         this.callback = callback
@@ -54,7 +46,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".onCreate begins")
         // Get list from SharedPrefs
-        timelineList = callback!!.retrieveHistory() // todo: breaks upon rotation
+        timelineList = callback!!.retrieveHistory()
 
         setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
@@ -68,7 +60,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         val view = inflater.inflate(R.layout.fragment_history, container, false)
         recyclerView = view.findViewById(R.id.fragment_history_timeline_rv)
         recyclerView?.layoutManager = LinearLayoutManager(activity)
-        recyclerView?.adapter = HistoryRecyclerAdapter(requireActivity(), timelineList)
+        recyclerView?.adapter = HistoryRecyclerAdapter(requireActivity(), timelineList, findNavController())
         return view
     }
 
