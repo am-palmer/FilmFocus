@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 //    BROWSE, WATCHLIST, HISTORY
 //}
 
-class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener {
+class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDataListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener {
 
     private val TAG = "MainActivity"
 
@@ -122,7 +122,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
 
     override fun onAttachFragment(fragment: Fragment) {
         if (fragment is WatchlistFragment) {
-            fragment.setOnFilmSelectedListener(this)
+            fragment.setWatchlistFragmentDataListener(this)
         }
         if (fragment is BrowseFragment) {
             fragment.setOnResultActionListener(this)
@@ -132,38 +132,22 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.OnWatchlistActionLis
         }
     }
 
-    override fun onFilmSelected(bundle: Bundle, typeWATCHLIST: WATCHLIST_FILM_CONTEXT_ACTION_TYPE) {
-        Log.d(TAG, ".onFilmSelected is called with TYPE: ${typeWATCHLIST.name}")
-        if (typeWATCHLIST == WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_REMOVE) {
-            val film = bundle.getParcelable<FilmThumbnail>("film")
-            if (film != null) {
-                watchlistSharedPrefUtil.removeFilmFromWatchlist(film)
-            } else Log.e(TAG, ".onFilmSelected: bundle is barren")
-        } else if (typeWATCHLIST == WATCHLIST_FILM_CONTEXT_ACTION_TYPE.WATCHLIST_MARK_WATCHED) {
-            val timelineItem = bundle.getParcelable<TimelineItem>("timelineItem")
-            if (timelineItem == null) {
-                Log.e(TAG, ".onFilmSelected: timelineItem null in bundle")
-            } else {
-                timelineSharedPrefUtil.addItemToTimeline(timelineItem)
-                watchlistSharedPrefUtil.removeFilmFromWatchlist(timelineItem.film)
-                //timelineList.add(timelineItem)
-                //watchlist.remove(timelineItem.film)
-                Toast.makeText(this, "Marked ${timelineItem.film.title} as watched", Toast.LENGTH_SHORT).show()
-                //saveData()
-            }
-        }
+
+    override fun retrieveWatchlist(): ArrayList<FilmThumbnail> {
+        return watchlistSharedPrefUtil.loadWatchlist() as ArrayList<FilmThumbnail>
     }
 
-    override fun onWatchlistMenuItemSelected(bundle: Bundle, actionType: WATCHLIST_MENU_ITEM_ACTION_TYPE) { // Todo: all these passes of the data in bundles can probably be removed
-        when (actionType) {
-            WATCHLIST_MENU_ITEM_ACTION_TYPE.REMOVE_ALL -> {
-                val result = watchlistSharedPrefUtil.clearWatchlist()
-                when (result){
-                    true -> Toast.makeText(this, "Cleared Watchlist", Toast.LENGTH_SHORT).show()
-                    false -> Toast.makeText(this, "The Watchlist is already empty", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
+    override fun clearWatchlist() {
+        watchlistSharedPrefUtil.clearWatchlist()
+    }
+
+    override fun removeFilmFromWatchlist(film: FilmThumbnail) {
+        watchlistSharedPrefUtil.removeFilmFromWatchlist(film)
+    }
+
+    override fun addItemToTimeline(timelineItem: TimelineItem) {
+        watchlistSharedPrefUtil.removeFilmFromWatchlist(timelineItem.film)
+        timelineSharedPrefUtil.addItemToTimeline(timelineItem)
     }
 
     override fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE) {

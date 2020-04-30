@@ -3,6 +3,7 @@ package amichealpalmer.kotlin.filmfocus.view
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapters.HistoryRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
+import amichealpalmer.kotlin.filmfocus.utilities.sharedprefs.TimelineItemsSharedPrefUtil
 import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmClearHistoryDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmRemoveFilmFromHistoryDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.EditHistoryItemDialogFragment
@@ -25,6 +26,8 @@ enum class HISTORY_MENU_ITEM_ACTION_TYPE {
     REMOVE_ALL
 }
 
+// todo: change listener calls to new types
+
 class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener, ConfirmClearHistoryDialogFragment.onConfirmClearHistoryDialogListener { // note code duplication with other fragments
 
     private val TAG = "HistoryFragment"
@@ -32,6 +35,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     private var callback: OnTimelineItemSelectedListener? = null
     private lateinit var timelineList: ArrayList<TimelineItem>
     private var recyclerView: RecyclerView? = null
+    private var timelineItemsSharedPrefUtil: TimelineItemsSharedPrefUtil? = null
 
     fun setOnTimelineItemSelectedListener(callback: OnTimelineItemSelectedListener) {
         this.callback = callback
@@ -44,19 +48,8 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".onCreate begins")
-        try {
-            val bundleList = arguments!!.getParcelableArrayList<TimelineItem>(ARG_TIMELINE_LIST) as ArrayList<TimelineItem>
-            if (!bundleList.isNullOrEmpty()) {
-                timelineList = ArrayList<TimelineItem>()
-                timelineList.addAll(bundleList)
-                timelineList.reverse()
-            } else { // Presumably no items in timeline yet
-                timelineList = ArrayList<TimelineItem>()
-            }
-        } catch (e: NullPointerException) {
-            Log.e(TAG, ".onCreate: timelineList null in arguments")
-        }
-//        Log.d(TAG, ".onCreate: timelineList created. list has ${timelineList.size} items")
+        // Get list from SharedPrefs
+        timelineList = getTimelineItemsUtil().loadTimelineItems()
         setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
     }
@@ -69,7 +62,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         val view = inflater.inflate(R.layout.fragment_history, container, false)
         recyclerView = view.findViewById<RecyclerView>(R.id.fragment_history_timeline_rv)
         recyclerView?.layoutManager = LinearLayoutManager(activity)
-        recyclerView?.adapter = HistoryRecyclerAdapter(activity!!, timelineList)
+        recyclerView?.adapter = HistoryRecyclerAdapter(requireActivity(), timelineList)
         return view
     }
 
@@ -87,7 +80,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         when (item.itemId) {
             R.id.history_fragment_moreMenu_clearHistory -> {
                 val fragment = ConfirmClearHistoryDialogFragment.newInstance(this)
-                fragment.show(fragmentManager!!, "fragment_confirm_clear_history_dialog")
+                fragment.show(requireFragmentManager(), "fragment_confirm_clear_history_dialog")
                 return true
             }
         }
@@ -127,7 +120,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
                 val timelineItem = adapter.getItem(position)
                 val dialogFragment = ConfirmRemoveFilmFromHistoryDialogFragment.newInstance(timelineItem)
                 dialogFragment.setOnConfirmRemoveFilmDialogActionListener(this)
-                dialogFragment.show(fragmentManager!!, "fragment_confirm_remove_dialog")
+                dialogFragment.show(requireFragmentManager(), "fragment_confirm_remove_dialog")
             }
             R.id.history_timeline_item_context_menu_addToWatchlist -> {
                 val timelineItem = adapter.getItem(position)
@@ -137,7 +130,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
                 val timelineItem = adapter.getItem(position)
                 val editFragment = EditHistoryItemDialogFragment.newInstance(timelineItem, position)
                 editFragment.setHistoryEditDialogSubmissionListener(this)
-                editFragment.show(fragmentManager!!, "fragment_edit_history_item_dialog")
+                editFragment.show(requireFragmentManager(), "fragment_edit_history_item_dialog")
             }
             else -> true
         }
@@ -187,18 +180,28 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         }
     }
 
-    // Called when we switch to this fragment because it is stubborn
-    fun forceTimelineRefresh(timelineList: ArrayList<TimelineItem>) {
-        Log.d(TAG, ".forceTimelineRefresh is called")
-        if (recyclerView != null) {
-            this.timelineList.clear()
-            this.timelineList.addAll(timelineList)
+//    // Called when we switch to this fragment because it is stubborn
+//    //  we shouldn't need this now todo: may need the functionality somewhere
+//    fun forceTimelineRefresh(timelineList: ArrayList<TimelineItem>) {
+//        Log.d(TAG, ".forceTimelineRefresh is called")
+//        if (recyclerView != null) {
+//            this.timelineList.clear()
+//            this.timelineList.addAll(timelineList)
+//
+//            //this.timelineList = timelineList
+//            this.timelineList.reverse()
+//            val historyRecyclerViewAdapter = recyclerView?.adapter as HistoryRecyclerAdapter
+//            historyRecyclerViewAdapter.replaceList(timelineList)
+//        }
+//    }
 
-            //this.timelineList = timelineList
-            this.timelineList.reverse()
-            val historyRecyclerViewAdapter = recyclerView?.adapter as HistoryRecyclerAdapter
-            historyRecyclerViewAdapter.replaceList(timelineList)
+    // Get copy of the utility object for sharedPrefs
+    // todo: not great
+    private fun getTimelineItemsUtil(): TimelineItemsSharedPrefUtil {
+        if (timelineItemsSharedPrefUtil == null) {
+            timelineItemsSharedPrefUtil = TimelineItemsSharedPrefUtil(requireContext())
         }
+        return timelineItemsSharedPrefUtil!!
     }
 
     companion object {

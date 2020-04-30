@@ -27,6 +27,7 @@ class WatchlistSharedPrefUtil(context: Context) : BaseSharedPrefUtil(context) {
         }
     }
 
+
     // Returns false if film is not in watchlist
     fun removeFilmFromWatchlist(film: FilmThumbnail): Boolean {
         val watchlist: ArrayList<FilmThumbnail>? = loadWatchlist()
