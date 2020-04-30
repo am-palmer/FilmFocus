@@ -1,26 +1,23 @@
 package amichealpalmer.kotlin.filmfocus.adapters
 
 
-//import amichealpalmer.kotlin.filmfocus.activities.BrowseActivity
-//import amichealpalmer.kotlin.filmfocus.activities.WatchlistActivity
-//import android.support.v7.widget.CardView
-//import android.support.v7.widget.RecyclerView
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.view.FilmDetailFragment
+import amichealpalmer.kotlin.filmfocus.view.BrowseFragmentDirections
 import android.content.Context
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
 
 class BrowseRecyclerAdapter(
         private val context: Context,
-        private var resultList: ArrayList<FilmThumbnail> // The list of films currently being displayed in the browser
+        private var resultList: ArrayList<FilmThumbnail>, // The list of films currently being displayed in the browser
+        private val navController: NavController
 ) : RecyclerView.Adapter<BrowseRecyclerAdapter.HelperViewHolder>() {
 
     private val TAG = "BrowseRecyclerAdapter"
@@ -87,10 +84,9 @@ class BrowseRecyclerAdapter(
         init {
             cardView.setOnClickListener {
                 // Display FilmDetailsFragment
-                val manager = (context as AppCompatActivity).supportFragmentManager.beginTransaction()
-                manager.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                manager.addToBackStack(null)
-                manager.replace(R.id.activity_nav_host_fragment, FilmDetailFragment.newInstance(resultList[adapterPosition].imdbID)).commit()
+                val direction = BrowseFragmentDirections.actionNavBrowseFragmentToFilmDetailFragment(resultList[adapterPosition].imdbID) // Specify what navigation is taking place
+                navController.navigate(direction)
+                // todo: we lose search results when this happens. browse fragment is being destroyed!
             }
 
             cardView.setOnCreateContextMenuListener(this)

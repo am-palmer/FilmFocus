@@ -5,7 +5,6 @@ import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
 import amichealpalmer.kotlin.filmfocus.utilities.sharedprefs.TimelineItemsSharedPrefUtil
 import amichealpalmer.kotlin.filmfocus.utilities.sharedprefs.WatchlistSharedPrefUtil
-import amichealpalmer.kotlin.filmfocus.view.BROWSE_FILM_CONTEXT_ACTION_TYPE
 import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
 import amichealpalmer.kotlin.filmfocus.view.HistoryFragment
 import amichealpalmer.kotlin.filmfocus.view.WatchlistFragment
@@ -14,7 +13,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -168,74 +166,47 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
         return timelineSharedPrefUtil.loadTimelineItems()
     }
 
-    // todo: move these into the fragment
-
-    override fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE) {
-        when (type) {
-            BROWSE_FILM_CONTEXT_ACTION_TYPE.MARK_WATCHED -> {
-                try {
-                    val timelineItem = bundle.getParcelable<TimelineItem>("timelineItem")
-                    //timelineList.add(timelineItem!!)
-                    //watchlist.remove(timelineItem.film)
-                    timelineSharedPrefUtil.addItemToTimeline(timelineItem!!)
-                    watchlistSharedPrefUtil.removeFilmFromWatchlist(timelineItem.film)
-                    Toast.makeText(this, "Marked ${timelineItem.film.title} as watched", Toast.LENGTH_SHORT).show()
-                    //saveData()
-                } catch (e: NullPointerException) {
-                    Log.wtf(TAG, ".onFilmSelected: timelineItem null in bundle")
-                }
-            }
-            BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST -> {
-                try {
-                    val film = bundle.getParcelable<FilmThumbnail>("film")
-                    //helperAddToWatchlist(film!!)
-                    val result = watchlistSharedPrefUtil.addFilmToWatchlist(film!!)
-                    when (result) {
-                        true -> Toast.makeText(this, "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
-                        false -> Toast.makeText(this, "${film.title} is already on Watchlist", Toast.LENGTH_SHORT).show()
-                    }
-                    Log.e(TAG, "onSearchResultAction: film from bundle is null.")
-                } catch (e: NullPointerException) {
-                    Log.wtf(TAG, ".onSearchResultAction: film in bundle is null.")
-                }
-            }
-        }
+    // Returns false back to BrowseFragment if already present in Watchlist
+    override fun addFilmToWatchlistFromBrowse(filmThumbnail: FilmThumbnail): Boolean {
+        return watchlistSharedPrefUtil.addFilmToWatchlist(filmThumbnail)
     }
-//
-//    override fun onTimelineItemSelected(item: TimelineItem, type: TIMELINE_ITEM_CONTEXT_ACTION_TYPE) {
-//        when (type) {
-//            TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_REMOVE -> {
-//                //timelineList.remove(item)
-//                timelineSharedPrefUtil.removeItemFromTimeline(item)
-//                Toast.makeText(this, "Removed ${item.film.title} from History", Toast.LENGTH_SHORT).show()
-//                //saveData()
-//            }
-//            TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ADD_TO_WATCHLIST -> {
-//                //helperAddToWatchlist(item.film)
-//                watchlistSharedPrefUtil.addFilmToWatchlist(item.film)
-//            }
-//            TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_UPDATE -> {
-//                timelineSharedPrefUtil.updateTimelineItem(item)
-//            }
-//        }
-//    }
 
-//    override fun onHistoryMenuItemSelected(bundle: Bundle, actionType: HISTORY_MENU_ITEM_ACTION_TYPE) {
-//        when (actionType) {
-//            HISTORY_MENU_ITEM_ACTION_TYPE.REMOVE_ALL -> {
+    override fun markFilmAsWatchedFromBrowse(timelineItem: TimelineItem) {
+        timelineSharedPrefUtil.addItemToTimeline(timelineItem)
+    }
+
+//    override fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE) {
+//        when (type) {
+//            BROWSE_FILM_CONTEXT_ACTION_TYPE.MARK_WATCHED -> {
 //                try {
-//                    //val currentTimelineList = bundle.getParcelableArrayList<TimelineItem>("timelineList") // todo: we shouldn't need to do this now
-//                    when (timelineSharedPrefUtil.clearTimeline()) {
-//                        true -> Toast.makeText(this, "Cleared History", Toast.LENGTH_SHORT).show()
-//                        false -> Toast.makeText(this, "The History is already empty", Toast.LENGTH_SHORT).show()
-//                    }
+//                    val timelineItem = bundle.getParcelable<TimelineItem>("timelineItem")
+//                    //timelineList.add(timelineItem!!)
+//                    //watchlist.remove(timelineItem.film)
+//                    timelineSharedPrefUtil.addItemToTimeline(timelineItem!!)
+//                    watchlistSharedPrefUtil.removeFilmFromWatchlist(timelineItem.film)
+//                    Toast.makeText(this, "Marked ${timelineItem.film.title} as watched", Toast.LENGTH_SHORT).show()
+//                    //saveData()
 //                } catch (e: NullPointerException) {
-//                    Log.wtf(TAG, ".onWatchlistMenuItemSelected")
-//                    Log.wtf(TAG, e.stackTrace.toString())
+//                    Log.wtf(TAG, ".onFilmSelected: timelineItem null in bundle")
+//                }
+//            }
+//            BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST -> {
+//                try {
+//                    val film = bundle.getParcelable<FilmThumbnail>("film")
+//                    //helperAddToWatchlist(film!!)
+//                    val result = watchlistSharedPrefUtil.addFilmToWatchlist(film!!)
+//                    when (result) {
+//                        true -> Toast.makeText(this, "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
+//                        false -> Toast.makeText(this, "${film.title} is already on Watchlist", Toast.LENGTH_SHORT).show()
+//                    }
+//                    Log.e(TAG, "onSearchResultAction: film from bundle is null.")
+//                } catch (e: NullPointerException) {
+//                    Log.wtf(TAG, ".onSearchResultAction: film in bundle is null.")
 //                }
 //            }
 //        }
-//    }
+//}
+
 }
 
 

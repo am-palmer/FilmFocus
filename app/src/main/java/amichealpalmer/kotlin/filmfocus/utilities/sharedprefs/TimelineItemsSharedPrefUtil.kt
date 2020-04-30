@@ -36,7 +36,6 @@ class TimelineItemsSharedPrefUtil(context: Context) : BaseSharedPrefUtil(context
 
     // Could return false in some unwanted case, but we allow multiple instances of the same film in the timeline, as a user might rewatch a film
     fun addItemToTimeline(item: TimelineItem): Boolean {
-        //gsonBuilder.registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
         val timelineList: ArrayList<TimelineItem>? = loadTimelineItems()
         if (timelineList != null) {
             timelineList.add(item)
@@ -50,7 +49,6 @@ class TimelineItemsSharedPrefUtil(context: Context) : BaseSharedPrefUtil(context
 
     // Called when user edits an item in the timeline
     fun updateTimelineItem(item: TimelineItem) {
-        //gsonBuilder.registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
         val timelineList = loadTimelineItems()
         if (timelineList != null) {
             for (i in timelineList) {
@@ -65,7 +63,6 @@ class TimelineItemsSharedPrefUtil(context: Context) : BaseSharedPrefUtil(context
 
     // Return false if it doesn't exist - however should be impossible
     fun removeItemFromTimeline(item: TimelineItem): Boolean {
-        //gsonBuilder.registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
         val timelineList: ArrayList<TimelineItem>? = loadTimelineItems()
         if (timelineList != null) {
             for (i in timelineList) {
@@ -83,7 +80,6 @@ class TimelineItemsSharedPrefUtil(context: Context) : BaseSharedPrefUtil(context
 
     // Returns false if the timeline is already empty
     fun clearTimeline(): Boolean {
-        //gsonBuilder.registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
         val timeline = loadTimelineItems()
         if (timeline != null) {
             return if (timeline.size > 0) {
@@ -98,7 +94,6 @@ class TimelineItemsSharedPrefUtil(context: Context) : BaseSharedPrefUtil(context
     }
 
     private fun saveTimelineItems(timelineList: ArrayList<TimelineItem>) {
-        //gsonBuilder.registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
         Log.d(TAG, ".saveTimelineItems begins")
         val editor = sharedPreferences.edit()
         val timelineJson = gson.toJson(timelineList)

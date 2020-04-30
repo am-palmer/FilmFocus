@@ -4,6 +4,7 @@ import amichealpalmer.kotlin.filmfocus.MainActivity
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapters.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
+import amichealpalmer.kotlin.filmfocus.model.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
 import amichealpalmer.kotlin.filmfocus.utilities.json.GetJSONSearch
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
@@ -13,7 +14,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
@@ -24,11 +27,8 @@ import kotlin.collections.ArrayList
 private const val ARG_RESULTS = "resultList"
 private const val ARG_SEARCH_STRING = "searchString"
 
-enum class BROWSE_FILM_CONTEXT_ACTION_TYPE {
-    ADD_TO_WATCHLIST, MARK_WATCHED
-}
 
-// todo: update to use new listener scheme
+// todo: no longer retains content upon switching fragment in menu
 
 class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
@@ -43,7 +43,8 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
     //private var recyclerScollPosition = 0
 
     interface onResultActionListener {
-        fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE)
+        fun addFilmToWatchlistFromBrowse(filmThumbnail: FilmThumbnail): Boolean //todo: would be nice if this method could be merged with method in history callback interface
+        fun markFilmAsWatchedFromBrowse(timelineItem: TimelineItem) // todo: would be nice if this used the same method as in the watchlist
     }
 
     fun setOnResultActionListener(callback: onResultActionListener) {
@@ -81,17 +82,16 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         Log.d(TAG, "is resultList null? ${resultList?.size}")
-        resultList = savedInstanceState?.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)
-                ?: ArrayList() // todo: we somehow have 2 copies showing up after this
-        //Log.d(TAG, ".oncreateview: resultlist size is ${resultList?.size}")
+        resultList = savedInstanceState?.getParcelableArrayList(ARG_RESULTS)
+                ?: ArrayList()
         try {
             Log.d(TAG, "onCreateView: trying")
-            recyclerView?.adapter = BrowseRecyclerAdapter(activity!!, resultList!!)
+            recyclerView?.adapter = BrowseRecyclerAdapter(requireActivity(), resultList!!, findNavController()) // We pass in the nav controller so we can assign onClick navigation for each search result
             Log.d(TAG, "onCreateView: adapter is initiated")
             recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
-                    // could perhaps rewrite this so it loads new entries before the bottom is reached, right now it is jarring
+                    // Could perhaps rewrite this so it loads new entries before the bottom is reached, right now it is jarring. Good functionality: load the first TWO pages at once, then load subsequent page based on scroll position rather than canScrollVertically
                     if (!recyclerView.canScrollVertically(1)) { // todo: UI and backend logic are completely wrapped up together using this method
                         if (!noMoreResults && searchString != null) {
                             searchHelper().searchByTitleKeyword(searchString!!)
@@ -116,8 +116,6 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // Set the empty view as visible by default, turn it off once a query is entered
-//        val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
-//        adapter.notifyDataSetChanged()
         if (savedInstanceState != null && resultList!!.size > 0) {
             fragment_search_empty_container.visibility = View.GONE
             fragment_browse_recycler_framelayout.visibility = View.VISIBLE
@@ -211,30 +209,31 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             Log.d(TAG, ".onContextItemSelected called")
             Log.d(TAG, "menu item: ${item}")
             val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
-            var position = -1 // todo: not needed
+            var position: Int
             try {
                 position = adapter.position
-            } catch (e: java.lang.Exception) { // todo: too generalized, catch specific exceptions
+            } catch (e: NullPointerException) {
                 Log.d(TAG, e.localizedMessage, e)
                 return super.onContextItemSelected(item)
             }
+
             when (item.itemId) {
                 R.id.browse_film_context_menu_add -> {
                     val film = adapter.getItem(position)
-                    val bundle = Bundle()
-                    bundle.putParcelable("film", film)
-                    callback!!.onSearchResultAction(bundle, BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST)
+                    when (addFilmToWatchlist(film)) { // Note secondary effect
+                        true -> Toast.makeText(requireContext(), "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
+                        false -> Toast.makeText(requireContext(), "${film.title} is already in Watchlist", Toast.LENGTH_SHORT).show()
+                    }
                 }
                 R.id.browse_film_context_menu_mark_watched -> {
-                    // todo: code duplication with watchlist fragment
                     val film = adapter.getItem(position)
-                    // todo: prompt user for review and rating properly
                     val dialogFragment = WatchedDialogFragment.newInstance(film)
                     dialogFragment.setOnWatchedDialogSubmissionListener(this)
-                    dialogFragment.show(fragmentManager!!, "fragment_watched_dialog")
+                    dialogFragment.show(requireFragmentManager(), "fragment_watched_dialog")
                 }
                 else -> true
             }
+
             return super.onContextItemSelected(item)
 
         } catch (e: NullPointerException) {
@@ -253,7 +252,6 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             browse_fragment_progressBar?.visibility = View.VISIBLE
             GetJSONSearch(this, (activity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries
         }
-
 
         fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {
             browse_fragment_progressBar?.visibility = View.GONE
@@ -280,13 +278,21 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     }
 
-    override fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem) { // todo: code duplication with watchlist fragment
-        // Put values in bundle
-        val bundle = Bundle()
-        bundle.putParcelable("timelineItem", timelineItem)
+    override fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem) {
+        var status = when (timelineItem.status) {
+            TIMELINE_ITEM_STATUS.DROPPED -> "Dropped"
+            TIMELINE_ITEM_STATUS.WATCHED -> "Watched"
+        }
+        Toast.makeText(requireContext(), "Marked ${timelineItem.film.title} as $status", Toast.LENGTH_SHORT).show()
+        markFilmAsWatched(timelineItem)
+    }
 
-        // Call listener
-        callback!!.onSearchResultAction(bundle, BROWSE_FILM_CONTEXT_ACTION_TYPE.MARK_WATCHED)
+    private fun addFilmToWatchlist(film: FilmThumbnail): Boolean {
+        return callback!!.addFilmToWatchlistFromBrowse(film)
+    }
+
+    private fun markFilmAsWatched(timelineItem: TimelineItem) {
+        callback!!.markFilmAsWatchedFromBrowse(timelineItem)
     }
 
     companion object {
@@ -295,12 +301,8 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             val fragment = BrowseFragment()
             val args = Bundle()
             if (searchString != null) {
-                //args.putParcelableArrayList(ARG_RESULTS, resultList)
                 args.putString(ARG_SEARCH_STRING, searchString)
             }
-//            if (resultList != null) {
-//                args.putParcelableArrayList("resultList", resultList)
-//            }
             fragment.arguments = args
             return fragment
         }

@@ -202,7 +202,6 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         adapter.removeFilmFromWatchlist(film)
         onWatchlistStateChange()
         // Update SharedPrefs
-        //callback!!.saveWatchlistData(watchlist)
         callback!!.removeFilmFromWatchlist(film)
     }
 

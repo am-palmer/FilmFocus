@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_navigation"
+    app:startDestination="@id/nav_browse_fragment">
+
+    <fragment
+        android:id="@id/nav_browse_fragment"
+        android:name="amichealpalmer.kotlin.filmfocus.view.BrowseFragment"
+        android:label="@string/fragment_browse_title"
+        tools:layout="@layout/fragment_browse">
+        <action
+            android:id="@+id/action_nav_browse_fragment_to_filmDetailFragment"
+            app:destination="@id/filmDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@id/nav_watchlist_fragment"
+        android:name="amichealpalmer.kotlin.filmfocus.view.WatchlistFragment"
+        android:label="@string/fragment_watchlist_title"
+        tools:layout="@layout/fragment_watchlist" >
+        <action
+            android:id="@+id/action_nav_watchlist_fragment_to_filmDetailFragment"
+            app:destination="@id/filmDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@id/nav_history_fragment"
+        android:name="amichealpalmer.kotlin.filmfocus.view.HistoryFragment"
+        android:label="@string/fragment_history_title"
+        tools:layout="@layout/fragment_history">
+        <action
+            android:id="@+id/action_nav_history_fragment_to_filmDetailFragment"
+            app:destination="@id/filmDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/filmDetailFragment"
+        android:name="amichealpalmer.kotlin.filmfocus.view.FilmDetailFragment"
+        android:label="fragment_film_details"
+        tools:layout="@layout/fragment_film_details" >
+        <action
+            android:id="@+id/action_filmDetailFragment_to_nav_browse_fragment"
+            app:destination="@id/nav_browse_fragment" />
+        <action
+            android:id="@+id/action_filmDetailFragment_to_nav_history_fragment"
+            app:destination="@id/nav_history_fragment" />
+        <action
+            android:id="@+id/action_filmDetailFragment_to_nav_watchlist_fragment"
+            app:destination="@id/nav_watchlist_fragment" />
+        <argument
+            android:name="imdbID"
+            app:argType="string" />
+    </fragment>
+</navigation>
