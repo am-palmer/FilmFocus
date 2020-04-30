@@ -14,7 +14,7 @@ class WatchlistSharedPrefUtil(context: Context) : BaseSharedPrefUtil(context) {
     private val SHAREDPREFS_KEY_WATCHLIST = "watchlist"
 
     // Returns either the saved watchlist from SharedPrefs or creates one if it does not exist
-    fun loadWatchlist(): ArrayList<FilmThumbnail>? {
+    fun loadWatchlist(): ArrayList<FilmThumbnail> {
         Log.d(TAG, ".loadWatchlist begins")
         val watchlistJson = sharedPreferences.getString(SHAREDPREFS_KEY_WATCHLIST, null)
         return if (watchlistJson == null) {

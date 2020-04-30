@@ -55,7 +55,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         Log.d(TAG, ".onCreate starts")
 
         // Get the watchlist from SharedPrefs
-        watchlist = callback!!.retrieveWatchlist() // todo: probably will throw exception, callback not set - use safe args for nav?
+        watchlist = callback!!.retrieveWatchlist() // todo: probably will throw exception at some point, callback not instantiated? is it possible? -> throws exception as soon as we change orientation. fix
 
         setHasOptionsMenu(true) // Indicates we want onCreateOptionsMenu to be called
         super.onCreate(savedInstanceState)
@@ -103,7 +103,6 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        //Log.d(TAG, ".onCreateOptionsMenu called")
         inflater.inflate(R.menu.watchlist_fragment_menu, menu)
 
         val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext
@@ -117,7 +116,6 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             val activity = callback as MainActivity
-
 
             override fun onQueryTextSubmit(query: String): Boolean {
                 activity.closeKeyboard() // Todo: obscene solution
@@ -216,7 +214,6 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         onWatchlistStateChange()
         // Update SharedPrefs
         callback!!.clearWatchlist()
-        //callback!!.saveWatchlistData(watchlist)
     }
 
     private fun addFilmToHistory(timelineItem: TimelineItem) {
@@ -224,7 +221,6 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         // Update SharedPrefs
         callback!!.addItemToTimeline(timelineItem)
     }
-
 
     // Called when any action which might result in an empty watchlist is taken, so we can show the empty view if need be
     private fun onWatchlistStateChange() {

@@ -28,6 +28,8 @@ enum class BROWSE_FILM_CONTEXT_ACTION_TYPE {
     ADD_TO_WATCHLIST, MARK_WATCHED
 }
 
+// todo: update to use new listener scheme
+
 class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
     internal var callback: onResultActionListener? = null

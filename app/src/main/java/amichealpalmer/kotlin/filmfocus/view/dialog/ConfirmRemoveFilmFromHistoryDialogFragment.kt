@@ -49,14 +49,14 @@ class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClic
         when (v?.id) {
             fragment_dialog_generic_cancelButton.id -> this.dismiss()
             fragment_dialog_generic_takeActionButton.id -> { // We remove the item from the history
-                callback.onConfirmRemoveFilmDialogAction(timelineItem)
+                callback.onConfirmRemoveItemDialogAction(timelineItem)
                 this.dismiss()
             }
         }
     }
 
     interface OnConfirmRemoveFilmDialogActionListener {
-        fun onConfirmRemoveFilmDialogAction(timelineItem: TimelineItem)
+        fun onConfirmRemoveItemDialogAction(timelineItem: TimelineItem)
     }
 
     fun setOnConfirmRemoveFilmDialogActionListener(callback: OnConfirmRemoveFilmDialogActionListener) {

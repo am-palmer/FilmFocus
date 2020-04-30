@@ -5,7 +5,10 @@ import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
 import amichealpalmer.kotlin.filmfocus.utilities.sharedprefs.TimelineItemsSharedPrefUtil
 import amichealpalmer.kotlin.filmfocus.utilities.sharedprefs.WatchlistSharedPrefUtil
-import amichealpalmer.kotlin.filmfocus.view.*
+import amichealpalmer.kotlin.filmfocus.view.BROWSE_FILM_CONTEXT_ACTION_TYPE
+import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
+import amichealpalmer.kotlin.filmfocus.view.HistoryFragment
+import amichealpalmer.kotlin.filmfocus.view.WatchlistFragment
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
@@ -22,10 +25,6 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.view.*
-
-//enum class FRAGMENT_ID {
-//    BROWSE, WATCHLIST, HISTORY
-//}
 
 class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDataListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener {
 
@@ -98,7 +97,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
     }
 
 
-
     override fun onSupportNavigateUp(): Boolean {
         return findNavController(R.id.activity_nav_host_fragment).navigateUp(appBarConfiguration!!) || super.onSupportNavigateUp()
     }
@@ -134,7 +132,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
 
 
     override fun retrieveWatchlist(): ArrayList<FilmThumbnail> {
-        return watchlistSharedPrefUtil.loadWatchlist() as ArrayList<FilmThumbnail>
+        return watchlistSharedPrefUtil.loadWatchlist()
     }
 
     override fun clearWatchlist() {
@@ -149,6 +147,28 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
         watchlistSharedPrefUtil.removeFilmFromWatchlist(timelineItem.film)
         timelineSharedPrefUtil.addItemToTimeline(timelineItem)
     }
+
+    override fun addFilmToWatchlistFromHistory(film: FilmThumbnail): Boolean {
+        return watchlistSharedPrefUtil.addFilmToWatchlist(film) // Return boolean back to fragment so we can display correct toast message
+    }
+
+    override fun clearHistory(): Boolean {
+        return timelineSharedPrefUtil.clearTimeline()
+    }
+
+    override fun removeItemFromHistory(timelineItem: TimelineItem) {
+        timelineSharedPrefUtil.removeItemFromTimeline(timelineItem)
+    }
+
+    override fun updateHistoryItem(timelineItem: TimelineItem) {
+        timelineSharedPrefUtil.updateTimelineItem(timelineItem)
+    }
+
+    override fun retrieveHistory(): ArrayList<TimelineItem> {
+        return timelineSharedPrefUtil.loadTimelineItems()
+    }
+
+    // todo: move these into the fragment
 
     override fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE) {
         when (type) {
@@ -181,41 +201,41 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
             }
         }
     }
+//
+//    override fun onTimelineItemSelected(item: TimelineItem, type: TIMELINE_ITEM_CONTEXT_ACTION_TYPE) {
+//        when (type) {
+//            TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_REMOVE -> {
+//                //timelineList.remove(item)
+//                timelineSharedPrefUtil.removeItemFromTimeline(item)
+//                Toast.makeText(this, "Removed ${item.film.title} from History", Toast.LENGTH_SHORT).show()
+//                //saveData()
+//            }
+//            TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ADD_TO_WATCHLIST -> {
+//                //helperAddToWatchlist(item.film)
+//                watchlistSharedPrefUtil.addFilmToWatchlist(item.film)
+//            }
+//            TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_UPDATE -> {
+//                timelineSharedPrefUtil.updateTimelineItem(item)
+//            }
+//        }
+//    }
 
-    override fun onTimelineItemSelected(item: TimelineItem, type: TIMELINE_ITEM_CONTEXT_ACTION_TYPE) {
-        when (type) {
-            TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_REMOVE -> {
-                //timelineList.remove(item)
-                timelineSharedPrefUtil.removeItemFromTimeline(item)
-                Toast.makeText(this, "Removed ${item.film.title} from History", Toast.LENGTH_SHORT).show()
-                //saveData()
-            }
-            TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ADD_TO_WATCHLIST -> {
-                //helperAddToWatchlist(item.film)
-                watchlistSharedPrefUtil.addFilmToWatchlist(item.film)
-            }
-            TIMELINE_ITEM_CONTEXT_ACTION_TYPE.TIMELINE_ITEM_UPDATE -> {
-                timelineSharedPrefUtil.updateTimelineItem(item)
-            }
-        }
-    }
-
-    override fun onHistoryMenuItemSelected(bundle: Bundle, actionType: HISTORY_MENU_ITEM_ACTION_TYPE) {
-        when (actionType) {
-            HISTORY_MENU_ITEM_ACTION_TYPE.REMOVE_ALL -> {
-                try {
-                    //val currentTimelineList = bundle.getParcelableArrayList<TimelineItem>("timelineList") // todo: we shouldn't need to do this now
-                    when (timelineSharedPrefUtil.clearTimeline()) {
-                        true -> Toast.makeText(this, "Cleared History", Toast.LENGTH_SHORT).show()
-                        false -> Toast.makeText(this, "The History is already empty", Toast.LENGTH_SHORT).show()
-                    }
-                } catch (e: NullPointerException) {
-                    Log.wtf(TAG, ".onWatchlistMenuItemSelected")
-                    Log.wtf(TAG, e.stackTrace.toString())
-                }
-            }
-        }
-    }
+//    override fun onHistoryMenuItemSelected(bundle: Bundle, actionType: HISTORY_MENU_ITEM_ACTION_TYPE) {
+//        when (actionType) {
+//            HISTORY_MENU_ITEM_ACTION_TYPE.REMOVE_ALL -> {
+//                try {
+//                    //val currentTimelineList = bundle.getParcelableArrayList<TimelineItem>("timelineList") // todo: we shouldn't need to do this now
+//                    when (timelineSharedPrefUtil.clearTimeline()) {
+//                        true -> Toast.makeText(this, "Cleared History", Toast.LENGTH_SHORT).show()
+//                        false -> Toast.makeText(this, "The History is already empty", Toast.LENGTH_SHORT).show()
+//                    }
+//                } catch (e: NullPointerException) {
+//                    Log.wtf(TAG, ".onWatchlistMenuItemSelected")
+//                    Log.wtf(TAG, e.stackTrace.toString())
+//                }
+//            }
+//        }
+//    }
 }
 
 
