@@ -102,6 +102,23 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         callback = null
     }
 
+    // Reattach listener interfaces to dialog fragments associated with this fragment
+    override fun onResume() {
+        super.onResume()
+        val confirmClearHistoryDialogFragment = parentFragmentManager.findFragmentByTag(ConfirmClearHistoryDialogFragment.TAG)
+        if (confirmClearHistoryDialogFragment is ConfirmClearHistoryDialogFragment) {
+            confirmClearHistoryDialogFragment.setOnConfirmClearHistoryDialogListener(this)
+        }
+        val editHistoryItemDialogFragment = parentFragmentManager.findFragmentByTag(EditHistoryItemDialogFragment.TAG)
+        if (editHistoryItemDialogFragment is EditHistoryItemDialogFragment) {
+            editHistoryItemDialogFragment.setHistoryEditDialogSubmissionListener(this)
+        }
+        val confirmRemoveFilmFromHistoryDialogFragment = parentFragmentManager.findFragmentByTag(ConfirmRemoveFilmFromHistoryDialogFragment.TAG)
+        if (confirmRemoveFilmFromHistoryDialogFragment is ConfirmRemoveFilmFromHistoryDialogFragment) {
+            confirmRemoveFilmFromHistoryDialogFragment.setOnConfirmRemoveFilmDialogActionListener(this)
+        }
+    }
+
     override fun onContextItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, ".onContextItemSelected begins")
         val adapter = recyclerView?.adapter as HistoryRecyclerAdapter

@@ -48,6 +48,8 @@ class ConfirmClearHistoryDialogFragment : DialogFragment(), View.OnClickListener
 
     companion object {
 
+        const val TAG = "ConfirmClearHistDiaFrag"
+
         fun newInstance(callback: onConfirmClearHistoryDialogListener): ConfirmClearHistoryDialogFragment {
             val fragment = ConfirmClearHistoryDialogFragment()
             fragment.setOnConfirmClearHistoryDialogListener(callback)

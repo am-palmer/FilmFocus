@@ -125,6 +125,8 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
 
     companion object {
 
+        const val TAG = "EditHistoryItemDiaFrag"
+
         fun newInstance(timelineItem: TimelineItem, arrayPosition: Int): EditHistoryItemDialogFragment {
             val fragment = EditHistoryItemDialogFragment()
             val bundle = Bundle()

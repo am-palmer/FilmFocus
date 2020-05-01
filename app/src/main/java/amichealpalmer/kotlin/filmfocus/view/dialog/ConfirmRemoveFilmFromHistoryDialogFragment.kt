@@ -65,6 +65,8 @@ class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClic
 
     companion object {
 
+        const val TAG = "ConfirmRemoveFilmHisDia"
+
         fun newInstance(timelineItem: TimelineItem): ConfirmRemoveFilmFromHistoryDialogFragment {
             val fragment = ConfirmRemoveFilmFromHistoryDialogFragment()
             val bundle = Bundle()

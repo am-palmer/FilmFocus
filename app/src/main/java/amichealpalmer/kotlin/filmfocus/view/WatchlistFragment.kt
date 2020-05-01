@@ -92,7 +92,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         super.onSaveInstanceState(outState)
     }
 
-    // Checking if any of the dialogs associated with this fragment are visible and reattaching the listeners. Probably a sub-par solution
+    // Checking if any of the dialogs associated with this fragment exist and reattaching the listeners
     override fun onResume() {
         Log.d(TAG, ".onResume starts")
         super.onResume()

@@ -163,6 +163,15 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         callback = null
     }
 
+    // Reattaching listener interface to dialogs if they exist
+    override fun onResume() {
+        super.onResume()
+        val watchedDialogFragment = parentFragmentManager.findFragmentByTag(WatchedDialogFragment.TAG)
+        if (watchedDialogFragment is WatchedDialogFragment) {
+            watchedDialogFragment.setOnWatchedDialogSubmissionListener(this)
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         Log.d(TAG, ".onCreateOptionsMenu called")
         inflater.inflate(R.menu.browse_fragment_menu, menu)
