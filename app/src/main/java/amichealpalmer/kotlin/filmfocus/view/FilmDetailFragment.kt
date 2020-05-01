@@ -41,6 +41,7 @@ class FilmDetailFragment : Fragment() {
         return view
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         // While the ASyncTask runs, we show a ProgressBar

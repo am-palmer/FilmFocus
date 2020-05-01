@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -27,14 +26,12 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
 
     private val TAG = "MainActivity"
 
-    private lateinit var toolbar: Toolbar
+    //private lateinit var toolbar: Toolbar
 
     private lateinit var timelineSharedPrefUtil: TimelineItemsSharedPrefUtil
     private lateinit var watchlistSharedPrefUtil: WatchlistSharedPrefUtil
 
     private var appBarConfiguration: AppBarConfiguration? = null
-
-    // todo: implement nav component for nav drawer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Must initialize these fields before super call so they are available for fragments
@@ -52,19 +49,8 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
         nav_view.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration!!)
 
-        toolbar = findViewById(R.id.toolbar)
-        //supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        //supportActionBar!!.setDisplayShowTitleEnabled(false)
-        // mDrawer = findViewById(R.id.drawer_layout)
-        //drawerToggle = setupDrawerToggle()
-        //drawerToggle.isDrawerIndicatorEnabled = true
-        // drawerToggle.syncState()
-        // val nvDrawer = findViewById<NavigationView>(R.id.nav_view)
-        //setupDrawerContent(nvDrawer)
-        // supportActionBar!!.setDisplayShowTitleEnabled(true)
-        // Log.d(TAG, "watchlist check: size is ${watchlist.size}")
+        // toolbar = findViewById(R.id.toolbar)
         Log.d(TAG, ".onCreate finished")
-
     }
 
 
@@ -116,8 +102,9 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
         timelineSharedPrefUtil.addItemToTimeline(timelineItem)
     }
 
+    // Return boolean back to fragment so we can display correct toast message
     override fun addFilmToWatchlistFromHistory(film: FilmThumbnail): Boolean {
-        return watchlistSharedPrefUtil.addFilmToWatchlist(film) // Return boolean back to fragment so we can display correct toast message
+        return watchlistSharedPrefUtil.addFilmToWatchlist(film)
     }
 
     override fun clearHistory(): Boolean {
@@ -144,7 +131,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
     override fun markFilmAsWatchedFromBrowse(timelineItem: TimelineItem) {
         timelineSharedPrefUtil.addItemToTimeline(timelineItem)
     }
-
 
 
 }

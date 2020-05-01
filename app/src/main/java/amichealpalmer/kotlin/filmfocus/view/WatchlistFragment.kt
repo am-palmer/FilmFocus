@@ -96,11 +96,11 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
     override fun onResume() {
         Log.d(TAG, ".onResume starts")
         super.onResume()
-        val watchedDialogFragment = parentFragmentManager.findFragmentByTag(WatchedDialogFragment.TAG)
+        val watchedDialogFragment = childFragmentManager.findFragmentByTag(WatchedDialogFragment.TAG)
         if (watchedDialogFragment is WatchedDialogFragment) { // May be null
             watchedDialogFragment.setOnWatchedDialogSubmissionListener(this)
         }
-        val watchlistConfirmDeleteDialogFragment = parentFragmentManager.findFragmentByTag(WatchlistConfirmDeleteDialogFragment.TAG)
+        val watchlistConfirmDeleteDialogFragment = childFragmentManager.findFragmentByTag(WatchlistConfirmDeleteDialogFragment.TAG)
         if (watchlistConfirmDeleteDialogFragment is WatchlistConfirmDeleteDialogFragment){
             watchlistConfirmDeleteDialogFragment.setOnWatchlistConfirmDeleteDialogListener(this)
         }
@@ -144,8 +144,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         when (item.itemId) {
             R.id.watchlist_fragment_more_menu_removeAll -> {
                 val fragment = WatchlistConfirmDeleteDialogFragment.newInstance(this)
-                // todo: replace depreciated calls
-                fragment.show(requireFragmentManager(), WatchlistConfirmDeleteDialogFragment.TAG)
+                fragment.show(childFragmentManager, WatchlistConfirmDeleteDialogFragment.TAG)
                 return true
             }
         }
@@ -167,7 +166,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
                 val film = adapter.getItem(position)
                 val dialogFragment = WatchedDialogFragment.newInstance(film)
                 dialogFragment.setOnWatchedDialogSubmissionListener(this)
-                dialogFragment.show(requireFragmentManager(), WatchedDialogFragment.TAG)
+                dialogFragment.show(childFragmentManager, WatchedDialogFragment.TAG)
             }
             R.id.film_thumbnail_context_menu_remove -> {
                 val film = adapter.getItem(position)

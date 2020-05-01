@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 private const val ARG_RESULTS = "resultList"
@@ -53,22 +52,23 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".onCreate called")
-        if (savedInstanceState != null) {
-
-            Log.d(TAG, "savedInstanceState: retrieving search query")
-            searchString = savedInstanceState.getString(ARG_SEARCH_STRING)
-            //resultList = savedInstanceState.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)
-            //        ?: ArrayList<FilmThumbnail>()
-            noMoreResults = savedInstanceState.getBoolean("noMoreResults")
-            currentPage = savedInstanceState.getInt("currentPage")
-        }
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
+        //Restore instance state
+        if (savedInstanceState != null) {
+            Log.d(TAG, "savedInstanceState: retrieving search query")
+            searchString = savedInstanceState.getString(ARG_SEARCH_STRING)
+            noMoreResults = savedInstanceState.getBoolean("noMoreResults")
+            currentPage = savedInstanceState.getInt("currentPage")
+        } else {
+            Log.d(TAG, ".onCreateView: saved instance state null")
+        }
+        resultList = savedInstanceState?.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)
+                ?: ArrayList<FilmThumbnail>()
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView called")
         val view = inflater.inflate(R.layout.fragment_browse, container, false)
@@ -82,12 +82,11 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         Log.d(TAG, "is resultList null? ${resultList?.size}")
-        resultList = savedInstanceState?.getParcelableArrayList(ARG_RESULTS)
-                ?: ArrayList()
+
         try {
             Log.d(TAG, "onCreateView: trying")
             recyclerView?.adapter = BrowseRecyclerAdapter(requireActivity(), resultList!!, findNavController()) // We pass in the nav controller so we can assign onClick navigation for each search result
-            Log.d(TAG, "onCreateView: adapter is initiated")
+            Log.d(TAG, ".onCreateView: adapter instantiated")
             recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
@@ -166,7 +165,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
     // Reattaching listener interface to dialogs if they exist
     override fun onResume() {
         super.onResume()
-        val watchedDialogFragment = parentFragmentManager.findFragmentByTag(WatchedDialogFragment.TAG)
+        val watchedDialogFragment = childFragmentManager.findFragmentByTag(WatchedDialogFragment.TAG)
         if (watchedDialogFragment is WatchedDialogFragment) {
             watchedDialogFragment.setOnWatchedDialogSubmissionListener(this)
         }
@@ -196,8 +195,10 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                 resultList?.clear()
                 fragment_search_empty_container.visibility = View.GONE
                 fragment_browse_recycler_framelayout.visibility = View.VISIBLE
-                val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
-                adapter.clearList()
+                val adapter = recyclerView?.adapter
+                if (adapter is BrowseRecyclerAdapter) {
+                    adapter.clearList()
+                }
 
                 SearchHelper().searchByTitleKeyword(searchString!!)
                 return true
@@ -238,7 +239,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                     val film = adapter.getItem(position)
                     val dialogFragment = WatchedDialogFragment.newInstance(film)
                     dialogFragment.setOnWatchedDialogSubmissionListener(this)
-                    dialogFragment.show(requireFragmentManager(), WatchedDialogFragment.TAG)
+                    dialogFragment.show(childFragmentManager, WatchedDialogFragment.TAG)
                 }
                 else -> true
             }

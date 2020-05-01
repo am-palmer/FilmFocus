@@ -77,7 +77,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         when (item.itemId) {
             R.id.history_fragment_moreMenu_clearHistory -> {
                 val fragment = ConfirmClearHistoryDialogFragment.newInstance(this)
-                fragment.show(requireFragmentManager(), "fragment_confirm_clear_history_dialog")
+                fragment.show(childFragmentManager, ConfirmClearHistoryDialogFragment.TAG)
                 return true
             }
         }
@@ -102,15 +102,15 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     // Reattach listener interfaces to dialog fragments associated with this fragment
     override fun onResume() {
         super.onResume()
-        val confirmClearHistoryDialogFragment = parentFragmentManager.findFragmentByTag(ConfirmClearHistoryDialogFragment.TAG)
+        val confirmClearHistoryDialogFragment = childFragmentManager.findFragmentByTag(ConfirmClearHistoryDialogFragment.TAG)
         if (confirmClearHistoryDialogFragment is ConfirmClearHistoryDialogFragment) {
             confirmClearHistoryDialogFragment.setOnConfirmClearHistoryDialogListener(this)
         }
-        val editHistoryItemDialogFragment = parentFragmentManager.findFragmentByTag(EditHistoryItemDialogFragment.TAG)
+        val editHistoryItemDialogFragment = childFragmentManager.findFragmentByTag(EditHistoryItemDialogFragment.TAG)
         if (editHistoryItemDialogFragment is EditHistoryItemDialogFragment) {
             editHistoryItemDialogFragment.setHistoryEditDialogSubmissionListener(this)
         }
-        val confirmRemoveFilmFromHistoryDialogFragment = parentFragmentManager.findFragmentByTag(ConfirmRemoveFilmFromHistoryDialogFragment.TAG)
+        val confirmRemoveFilmFromHistoryDialogFragment = childFragmentManager.findFragmentByTag(ConfirmRemoveFilmFromHistoryDialogFragment.TAG)
         if (confirmRemoveFilmFromHistoryDialogFragment is ConfirmRemoveFilmFromHistoryDialogFragment) {
             confirmRemoveFilmFromHistoryDialogFragment.setOnConfirmRemoveFilmDialogActionListener(this)
         }
@@ -132,7 +132,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
                 val timelineItem = adapter.getItem(position)
                 val dialogFragment = ConfirmRemoveFilmFromHistoryDialogFragment.newInstance(timelineItem)
                 dialogFragment.setOnConfirmRemoveFilmDialogActionListener(this)
-                dialogFragment.show(requireFragmentManager(), "fragment_confirm_remove_dialog")
+                dialogFragment.show(childFragmentManager, ConfirmRemoveFilmFromHistoryDialogFragment.TAG)
             }
             R.id.history_timeline_item_context_menu_addToWatchlist -> {
                 val timelineItem = adapter.getItem(position)
@@ -145,7 +145,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
                 val timelineItem = adapter.getItem(position)
                 val editFragment = EditHistoryItemDialogFragment.newInstance(timelineItem, position)
                 editFragment.setHistoryEditDialogSubmissionListener(this)
-                editFragment.show(requireFragmentManager(), "fragment_edit_history_item_dialog")
+                editFragment.show(childFragmentManager, EditHistoryItemDialogFragment.TAG)
             }
             else -> true
         }
