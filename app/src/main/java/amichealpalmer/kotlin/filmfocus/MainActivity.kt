@@ -9,7 +9,6 @@ import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
 import amichealpalmer.kotlin.filmfocus.view.HistoryFragment
 import amichealpalmer.kotlin.filmfocus.view.WatchlistFragment
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
@@ -38,11 +37,13 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
     // todo: implement nav component for nav drawer
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Must initialize these fields before super call so they are available for fragments
+        timelineSharedPrefUtil = TimelineItemsSharedPrefUtil(this)
+        watchlistSharedPrefUtil = WatchlistSharedPrefUtil(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(drawer_layout.toolbar)
-        timelineSharedPrefUtil = TimelineItemsSharedPrefUtil(this)
-        watchlistSharedPrefUtil = WatchlistSharedPrefUtil(this)
         var navController = findNavController(R.id.activity_nav_host_fragment)
         appBarConfiguration = AppBarConfiguration(setOf(
                 R.id.nav_browse_fragment, R.id.nav_watchlist_fragment, R.id.nav_history_fragment
@@ -100,11 +101,23 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
     }
 
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        Log.d(TAG, ".onConfiguration changed: starts")
-        super.onConfigurationChanged(newConfig)
-        // Pass any configuration change to the drawer toggles
-        // drawerToggle.onConfigurationChanged(newConfig)
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        Log.d(TAG, ".onConfiguration changed: starts")
+//        super.onConfigurationChanged(newConfig)
+//        // Recreate the util member variables
+//        timelineSharedPrefUtil = TimelineItemsSharedPrefUtil(this)
+//        watchlistSharedPrefUtil = WatchlistSharedPrefUtil(this)
+//
+//        // todo: potentially not needed (appbarconfig)
+//        appBarConfiguration = AppBarConfiguration(setOf(
+//                R.id.nav_browse_fragment, R.id.nav_watchlist_fragment, R.id.nav_history_fragment
+//        ), drawer_layout)
+//
+//    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        Log.d(TAG, ".onRestoreInstanceState called")
+        super.onRestoreInstanceState(savedInstanceState)
     }
 
     fun closeKeyboard() {
@@ -175,37 +188,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
         timelineSharedPrefUtil.addItemToTimeline(timelineItem)
     }
 
-//    override fun onSearchResultAction(bundle: Bundle, type: BROWSE_FILM_CONTEXT_ACTION_TYPE) {
-//        when (type) {
-//            BROWSE_FILM_CONTEXT_ACTION_TYPE.MARK_WATCHED -> {
-//                try {
-//                    val timelineItem = bundle.getParcelable<TimelineItem>("timelineItem")
-//                    //timelineList.add(timelineItem!!)
-//                    //watchlist.remove(timelineItem.film)
-//                    timelineSharedPrefUtil.addItemToTimeline(timelineItem!!)
-//                    watchlistSharedPrefUtil.removeFilmFromWatchlist(timelineItem.film)
-//                    Toast.makeText(this, "Marked ${timelineItem.film.title} as watched", Toast.LENGTH_SHORT).show()
-//                    //saveData()
-//                } catch (e: NullPointerException) {
-//                    Log.wtf(TAG, ".onFilmSelected: timelineItem null in bundle")
-//                }
-//            }
-//            BROWSE_FILM_CONTEXT_ACTION_TYPE.ADD_TO_WATCHLIST -> {
-//                try {
-//                    val film = bundle.getParcelable<FilmThumbnail>("film")
-//                    //helperAddToWatchlist(film!!)
-//                    val result = watchlistSharedPrefUtil.addFilmToWatchlist(film!!)
-//                    when (result) {
-//                        true -> Toast.makeText(this, "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
-//                        false -> Toast.makeText(this, "${film.title} is already on Watchlist", Toast.LENGTH_SHORT).show()
-//                    }
-//                    Log.e(TAG, "onSearchResultAction: film from bundle is null.")
-//                } catch (e: NullPointerException) {
-//                    Log.wtf(TAG, ".onSearchResultAction: film in bundle is null.")
-//                }
-//            }
-//        }
-//}
+
 
 }
 

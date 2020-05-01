@@ -21,16 +21,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_watchlist.*
 
-//private const val ARG_LIST = "watchlist"
-
-//enum class WATCHLIST_FILM_CONTEXT_ACTION_TYPE {
-//    WATCHLIST_REMOVE, WATCHLIST_MARK_WATCHED
-//}
-//
-//enum class WATCHLIST_MENU_ITEM_ACTION_TYPE {
-//    REMOVE_ALL
-//}
-
 class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener, WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
 
     // todo: if the fragment isn't attached to a view, requirecontext will return null and we will crash with NPE
@@ -55,9 +45,12 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".onCreate starts")
 
-        // Get the watchlist from SharedPrefs
-        watchlist = callback!!.retrieveWatchlist() // todo: probably will throw exception at some point, callback not instantiated? is it possible? -> throws exception as soon as we change orientation. fix
-
+        watchlist = if (savedInstanceState == null) {
+            // Get the watchlist from SharedPrefs
+            callback!!.retrieveWatchlist()
+        } else {
+            savedInstanceState.getParcelableArrayList<FilmThumbnail>("watchlist") ?: throw NullPointerException()
+        }
         setHasOptionsMenu(true) // Indicates we want onCreateOptionsMenu to be called
         super.onCreate(savedInstanceState)
     }
@@ -78,10 +71,10 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         return view
     }
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        Log.d(TAG, ".onViewStateRestored starts")
-        super.onViewStateRestored(savedInstanceState)
-    }
+//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+//        Log.d(TAG, ".onViewStateRestored starts")
+//        super.onViewStateRestored(savedInstanceState)
+//    }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -101,6 +94,11 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
     override fun onDetach() {
         super.onDetach()
         callback = null
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelableArrayList("watchlist", watchlist)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
