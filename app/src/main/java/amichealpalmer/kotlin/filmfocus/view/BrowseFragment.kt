@@ -229,7 +229,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
                     val film = adapter.getItem(position)
                     val dialogFragment = WatchedDialogFragment.newInstance(film)
                     dialogFragment.setOnWatchedDialogSubmissionListener(this)
-                    dialogFragment.show(requireFragmentManager(), "fragment_watched_dialog")
+                    dialogFragment.show(requireFragmentManager(), WatchedDialogFragment.TAG)
                 }
                 else -> true
             }

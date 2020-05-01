@@ -51,6 +51,9 @@ class WatchlistConfirmDeleteDialogFragment : DialogFragment(), View.OnClickListe
     }
 
     companion object {
+
+        const val TAG = "WatchlistConfirmDelDia"
+
         fun newInstance(callback: onWatchlistConfirmDeleteDialogListener): WatchlistConfirmDeleteDialogFragment {
             val fragment = WatchlistConfirmDeleteDialogFragment()
             fragment.setOnWatchlistConfirmDeleteDialogListener(callback)

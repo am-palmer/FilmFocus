@@ -23,8 +23,6 @@ import kotlinx.android.synthetic.main.fragment_watchlist.*
 
 class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener, WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
 
-    // todo: if the fragment isn't attached to a view, requirecontext will return null and we will crash with NPE
-
     private val TAG = "WatchlistFragment"
     internal var callback: WatchlistFragmentDataListener? = null
     private lateinit var watchlist: ArrayList<FilmThumbnail>
@@ -41,7 +39,6 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         fun addItemToTimeline(timelineItem: TimelineItem) // Called when a film is marked watched
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".onCreate starts")
 
@@ -49,12 +46,12 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
             // Get the watchlist from SharedPrefs
             callback!!.retrieveWatchlist()
         } else {
-            savedInstanceState.getParcelableArrayList<FilmThumbnail>("watchlist") ?: throw NullPointerException()
+            savedInstanceState.getParcelableArrayList<FilmThumbnail>("watchlist")
+                    ?: throw NullPointerException()
         }
         setHasOptionsMenu(true) // Indicates we want onCreateOptionsMenu to be called
         super.onCreate(savedInstanceState)
     }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -70,12 +67,6 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         recyclerView.adapter = WatchlistRecyclerAdapter(requireActivity(), watchlist, findNavController())
         return view
     }
-
-//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-//        Log.d(TAG, ".onViewStateRestored starts")
-//        super.onViewStateRestored(savedInstanceState)
-//    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         onWatchlistStateChange()
@@ -99,6 +90,20 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelableArrayList("watchlist", watchlist)
         super.onSaveInstanceState(outState)
+    }
+
+    // Checking if any of the dialogs associated with this fragment are visible and reattaching the listeners. Probably a sub-par solution
+    override fun onResume() {
+        Log.d(TAG, ".onResume starts")
+        super.onResume()
+        val watchedDialogFragment = parentFragmentManager.findFragmentByTag(WatchedDialogFragment.TAG)
+        if (watchedDialogFragment is WatchedDialogFragment) { // May be null
+            watchedDialogFragment.setOnWatchedDialogSubmissionListener(this)
+        }
+        val watchlistConfirmDeleteDialogFragment = parentFragmentManager.findFragmentByTag(WatchlistConfirmDeleteDialogFragment.TAG)
+        if (watchlistConfirmDeleteDialogFragment is WatchlistConfirmDeleteDialogFragment){
+            watchlistConfirmDeleteDialogFragment.setOnWatchlistConfirmDeleteDialogListener(this)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -140,7 +145,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
             R.id.watchlist_fragment_more_menu_removeAll -> {
                 val fragment = WatchlistConfirmDeleteDialogFragment.newInstance(this)
                 // todo: replace depreciated calls
-                fragment.show(requireFragmentManager(), "fragment_confirm_clear_watchlist_dialog")
+                fragment.show(requireFragmentManager(), WatchlistConfirmDeleteDialogFragment.TAG)
                 return true
             }
         }
@@ -162,7 +167,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
                 val film = adapter.getItem(position)
                 val dialogFragment = WatchedDialogFragment.newInstance(film)
                 dialogFragment.setOnWatchedDialogSubmissionListener(this)
-                dialogFragment.show(requireFragmentManager(), "fragment_watched_dialog")
+                dialogFragment.show(requireFragmentManager(), WatchedDialogFragment.TAG)
             }
             R.id.film_thumbnail_context_menu_remove -> {
                 val film = adapter.getItem(position)
@@ -231,18 +236,6 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
             fragment_watchlist_empty_view_container.visibility = View.VISIBLE
         }
     }
-
-//
-//    companion object { // todo: does navigation use this?
-//
-//        fun newInstance(watchlist: ArrayList<FilmThumbnail>): WatchlistFragment {
-//            val fragment = WatchlistFragment()
-//            val args = Bundle()
-//            args.putParcelableArrayList(ARG_LIST, watchlist)
-//            fragment.arguments = args
-//            return fragment
-//        }
-//    }
 
 }
 

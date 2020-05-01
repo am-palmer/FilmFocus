@@ -8,12 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.*
+import android.widget.CompoundButton
+import android.widget.RatingBar
 import androidx.fragment.app.DialogFragment
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_watchlist_watched_dialog.*
 import org.joda.time.LocalDate
-import java.lang.NullPointerException
 
 // Dialog fragment called when a film is marked watched in the context menu
 class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListener, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
@@ -36,10 +36,9 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
-            film = arguments!!.getParcelable<FilmThumbnail>("film") as FilmThumbnail
+            film = requireArguments().getParcelable<FilmThumbnail>("film") as FilmThumbnail
             Log.d(TAG, ".onCreate: film is ${film.title}")
         } catch (e: NullPointerException) {
-            // todo: less general catch
             Log.e(TAG, ".onCreate - failed to retrieve film from bundle")
         }
     }
@@ -105,6 +104,8 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
     }
 
     companion object {
+
+        const val TAG = "WatchedDialogFragment"
 
         fun newInstance(filmThumbnail: FilmThumbnail): WatchedDialogFragment {
             val fragment = WatchedDialogFragment()
