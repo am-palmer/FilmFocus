@@ -52,34 +52,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
         nav_view.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration!!)
 
-//        if (savedInstanceState == null) { // First-time load, show a new browseFragment
-//            // todo: we may need to remove this if nav graph is handling it
-//            val fragment = BrowseFragment.newInstance(null)
-//            browseFragment = fragment
-//            title = "Browse"
-//
-//            val fragmentManager = supportFragmentManager
-//            fragmentManager.beginTransaction().replace(R.id.activity_nav_host_fragment, fragment, FRAGMENT_ID.BROWSE.name).commit()
-//            fragmentID = FRAGMENT_ID.BROWSE
-//        } else { // Restore data from saved instance state
-//            try {
-//                //  watchlist = savedInstanceState.getParcelableArrayList("watchlist")!!
-//                //  timelineList = savedInstanceState.getParcelableArrayList("timelineList")!!
-//                //fragmentID = FRAGMENT_ID.valueOf(savedInstanceState.getString("currentFragment")!!) // Use this to figure out which fragment should be selected?
-////
-////                // May not be necessary
-////                when (fragmentID) {
-////                    FRAGMENT_ID.BROWSE -> title = "Browse"
-////                    FRAGMENT_ID.HISTORY -> title = "History"
-////                    FRAGMENT_ID.WATCHLIST -> title = "Watchlist"
-////                }
-//
-//            } catch (e: NullPointerException) {
-//                Log.wtf(TAG, ".onCreate: failed to load member variables from saved instance state")
-//                Log.wtf(TAG, e.stackTrace.toString())
-//            }
-//
-//        }
         toolbar = findViewById(R.id.toolbar)
         //supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         //supportActionBar!!.setDisplayShowTitleEnabled(false)
@@ -99,21 +71,6 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
     override fun onSupportNavigateUp(): Boolean {
         return findNavController(R.id.activity_nav_host_fragment).navigateUp(appBarConfiguration!!) || super.onSupportNavigateUp()
     }
-
-
-//    override fun onConfigurationChanged(newConfig: Configuration) {
-//        Log.d(TAG, ".onConfiguration changed: starts")
-//        super.onConfigurationChanged(newConfig)
-//        // Recreate the util member variables
-//        timelineSharedPrefUtil = TimelineItemsSharedPrefUtil(this)
-//        watchlistSharedPrefUtil = WatchlistSharedPrefUtil(this)
-//
-//        // todo: potentially not needed (appbarconfig)
-//        appBarConfiguration = AppBarConfiguration(setOf(
-//                R.id.nav_browse_fragment, R.id.nav_watchlist_fragment, R.id.nav_history_fragment
-//        ), drawer_layout)
-//
-//    }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         Log.d(TAG, ".onRestoreInstanceState called")

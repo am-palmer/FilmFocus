@@ -20,16 +20,14 @@ import kotlinx.android.synthetic.main.fragment_history.*
 
 private const val ARG_TIMELINE_LIST = "timelineList"
 
-// todo: currently items are displayed in wrong order (should be latest on top, reversed)
+// todo: sometimes the literal time 'line' breaks when a film is removed.
 
 class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener, ConfirmClearHistoryDialogFragment.onConfirmClearHistoryDialogListener { // note code duplication with other fragments
 
     private val TAG = "HistoryFragment"
-
     private var callback: OnTimelineItemSelectedListener? = null
     private lateinit var timelineList: ArrayList<TimelineItem>
     private var recyclerView: RecyclerView? = null
-    //private var timelineItemsSharedPrefUtil: TimelineItemsSharedPrefUtil? = null
 
     fun setOnTimelineItemSelectedListener(callback: OnTimelineItemSelectedListener) {
         this.callback = callback
@@ -47,7 +45,8 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         Log.d(TAG, ".onCreate begins")
         // Get list from SharedPrefs
         timelineList = callback!!.retrieveHistory()
-
+        // Reverse the list so it's shown from newest to oldest
+        timelineList.reverse()
         setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
     }
@@ -87,7 +86,6 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     }
 
     override fun onAttach(context: Context) {
-        Log.d(TAG, ".onAttach begins")
         super.onAttach(context)
         if (context is OnTimelineItemSelectedListener) {
             callback = context
@@ -97,7 +95,6 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     }
 
     override fun onDetach() {
-        Log.d(TAG, ".onDetach begins")
         super.onDetach()
         callback = null
     }

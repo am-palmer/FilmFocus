@@ -66,7 +66,7 @@ class TimelineItemsSharedPrefUtil(context: Context) : BaseSharedPrefUtil(context
         val timelineList: ArrayList<TimelineItem>? = loadTimelineItems()
         if (timelineList != null) {
             for (i in timelineList) {
-                if (i == item) {
+                if (i.film.imdbID == item.film.imdbID && i.date == item.date) {
                     timelineList.remove(i)
                     saveTimelineItems(timelineList)
                     return true
