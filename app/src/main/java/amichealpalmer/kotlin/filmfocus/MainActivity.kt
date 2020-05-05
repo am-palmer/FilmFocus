@@ -22,15 +22,14 @@ import androidx.navigation.ui.setupWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 
+// todo: we need viewmodel or something in order to maintain fragment data when switching between them (?)
+
 class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDataListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener {
 
     private val TAG = "MainActivity"
 
-    //private lateinit var toolbar: Toolbar
-
     private lateinit var timelineSharedPrefUtil: TimelineItemsSharedPrefUtil
     private lateinit var watchlistSharedPrefUtil: WatchlistSharedPrefUtil
-
     private var appBarConfiguration: AppBarConfiguration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

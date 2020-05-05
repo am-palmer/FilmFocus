@@ -1,7 +1,6 @@
 package amichealpalmer.kotlin.filmfocus.utilities.json
 
 import amichealpalmer.kotlin.filmfocus.model.Film
-import amichealpalmer.kotlin.filmfocus.utilities.json.GetJSONBase
 import amichealpalmer.kotlin.filmfocus.view.FilmDetailFragment
 import android.util.Log
 import org.json.JSONException
@@ -9,7 +8,7 @@ import org.json.JSONObject
 
 // Retrieve OMDB JSON Film Data and return it to the calling class.
 
-class GetJSONFilm(private val listener: FilmDetailFragment, private val apikey: String) :
+class GetJSONFilm(private var listener: FilmDetailFragment?, private val apikey: String) :
         GetJSONBase<Film?>() {
 
     val TAG = "GetJSONFilm"
@@ -17,11 +16,12 @@ class GetJSONFilm(private val listener: FilmDetailFragment, private val apikey: 
     override fun onPostExecute(result: Film?) {
         Log.d(TAG, ".onPostExecute starts")
         if (result != null) {
-            listener.onFilmInfoDownload(result)
+            listener?.onFilmInfoDownload(result)
         } else {
             Log.e(TAG, ".onPostExecute: result object is null.")
         }
-
+        // Clear reference to prevent leak
+        listener = null
     }
 
     override fun doInBackground(vararg params: String): Film? { // params[0] should be imdbID
