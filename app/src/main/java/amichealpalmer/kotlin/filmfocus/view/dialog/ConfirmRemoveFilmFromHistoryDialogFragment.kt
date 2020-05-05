@@ -22,7 +22,7 @@ class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClic
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
-            timelineItem = arguments!!.getParcelable<TimelineItem>("timelineItem") as TimelineItem
+            timelineItem = requireArguments().getParcelable<TimelineItem>("timelineItem") as TimelineItem
         } catch (e: NullPointerException) {
             Log.wtf(TAG, ".onCreate - failed to retrieve timelineItem")
         }

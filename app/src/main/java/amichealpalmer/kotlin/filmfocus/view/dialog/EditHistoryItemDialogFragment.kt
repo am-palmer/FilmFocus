@@ -38,8 +38,8 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
-            timelineItem = arguments!!.getParcelable<FilmThumbnail>("timelineItem") as TimelineItem
-            arrayPosition = arguments!!.getInt("arrayPosition")
+            timelineItem = requireArguments().getParcelable<FilmThumbnail>("timelineItem") as TimelineItem
+            arrayPosition = requireArguments().getInt("arrayPosition")
         } catch (e: NullPointerException) {
             Log.e(TAG, ".onCreate - failed to retrieve timelineItem from bundle")
         }

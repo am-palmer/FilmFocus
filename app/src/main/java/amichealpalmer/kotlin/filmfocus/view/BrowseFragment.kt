@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
+import java.lang.ref.WeakReference
 import java.util.*
 
 
@@ -260,7 +261,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             val query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
             currentPage++
             browse_fragment_progressBar?.visibility = View.VISIBLE
-            GetJSONSearch(this, (activity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries
+            GetJSONSearch(WeakReference(this), (activity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries
         }
 
         fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {

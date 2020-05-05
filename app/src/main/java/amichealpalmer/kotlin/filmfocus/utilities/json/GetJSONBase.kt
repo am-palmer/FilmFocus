@@ -5,7 +5,6 @@ import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.IOException
-import java.lang.Exception
 import java.net.MalformedURLException
 import java.net.URL
 
@@ -32,7 +31,6 @@ abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
         val rawData: String?
 
         // Attempt to retrieve raw data and store as String object
-
         try {
             downloadStatus = DownloadStatus.OK
             rawData = URL(searchURL).readText()
@@ -59,7 +57,6 @@ abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
             Log.e(TAG, errorMessage)
             return null
         }
-
         // Raw String object is used to create a JSON object
         var jsonData: JSONObject? = null
         try {
@@ -67,9 +64,6 @@ abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
         } catch (e: JSONException) {
             e.printStackTrace()
             Log.e(TAG, ".doInBackground: Error processing JSON data. Null object being returned.")
-            //return null
-            // cancel(true)
-            // call to the listener .onerror(e)
         }
 
         return jsonData

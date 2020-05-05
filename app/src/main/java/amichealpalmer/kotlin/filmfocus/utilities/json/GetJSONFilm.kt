@@ -5,10 +5,11 @@ import amichealpalmer.kotlin.filmfocus.view.FilmDetailFragment
 import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.ref.WeakReference
 
 // Retrieve OMDB JSON Film Data and return it to the calling class.
-
-class GetJSONFilm(private var listener: FilmDetailFragment?, private val apikey: String) :
+// todo: is there a situation where the weakreferences are garbage collected when we don't want them to be?
+class GetJSONFilm(private var listener: WeakReference<FilmDetailFragment>, private val apikey: String) :
         GetJSONBase<Film?>() {
 
     val TAG = "GetJSONFilm"
@@ -16,12 +17,10 @@ class GetJSONFilm(private var listener: FilmDetailFragment?, private val apikey:
     override fun onPostExecute(result: Film?) {
         Log.d(TAG, ".onPostExecute starts")
         if (result != null) {
-            listener?.onFilmInfoDownload(result)
+            listener.get()?.onFilmInfoDownload(result)
         } else {
             Log.e(TAG, ".onPostExecute: result object is null.")
         }
-        // Clear reference to prevent leak
-        listener = null
     }
 
     override fun doInBackground(vararg params: String): Film? { // params[0] should be imdbID

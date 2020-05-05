@@ -6,18 +6,18 @@ import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
 import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
+import java.lang.ref.WeakReference
 
 // Retrieve OMDB JSON Search Data and return it to the calling class.
 
-class GetJSONSearch(private var listener: BrowseFragment.SearchHelper?, private val apikey: String) :
+class GetJSONSearch(private var listener: WeakReference<BrowseFragment.SearchHelper>, private val apikey: String) :
         GetJSONBase<ArrayList<FilmThumbnail?>>() { // Example input query is "?s=ghost". We then append the website and API key to form a valid URL (in the super class helper method)
 
     private val TAG = "GetJSONSearch"
 
     override fun onPostExecute(result: ArrayList<FilmThumbnail?>) {
         Log.d(TAG, ".onPostExecute starts")
-        listener?.onSearchResultsDownload(result)
-        listener = null // Prevent leak
+        listener.get()?.onSearchResultsDownload(result)
     }
 
     private fun createResultsFromJSON(result: JSONObject): ArrayList<FilmThumbnail?> { // JSONObject is turned into an ArrayList<Result>

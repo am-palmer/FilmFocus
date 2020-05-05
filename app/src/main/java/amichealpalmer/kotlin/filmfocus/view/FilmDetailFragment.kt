@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_film_details.*
+import java.lang.ref.WeakReference
 
 class FilmDetailFragment : Fragment() {
 
@@ -67,7 +68,7 @@ class FilmDetailFragment : Fragment() {
 
         // Use the IMDB ID to retrieve film object todo: move this logic out of view
         val imdbID = arguments?.getString(ARG_IMDBID) as String
-        GetJSONFilm(this, getString(R.string.OMDB_API_KEY)).execute(imdbID)
+        GetJSONFilm(WeakReference(this), getString(R.string.OMDB_API_KEY)).execute(imdbID)
 
         super.onViewCreated(view, savedInstanceState)
     }
