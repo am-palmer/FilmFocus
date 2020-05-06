@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="3"/>
+            app:spanCount="3" />
 
         <ProgressBar
             android:id="@+id/browse_fragment_progressBar"
@@ -31,7 +31,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
             android:visibility="gone" />
-
 
     </FrameLayout>
 

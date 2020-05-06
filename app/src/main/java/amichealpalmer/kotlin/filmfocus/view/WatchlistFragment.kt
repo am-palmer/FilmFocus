@@ -9,7 +9,6 @@ import amichealpalmer.kotlin.filmfocus.model.TimelineItem
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchlistConfirmDeleteDialogFragment
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -17,7 +16,6 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_watchlist.*
 
@@ -46,7 +44,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
             // Get the watchlist from SharedPrefs
             callback!!.retrieveWatchlist()
         } else {
-            savedInstanceState.getParcelableArrayList<FilmThumbnail>("watchlist")
+            savedInstanceState.getParcelableArrayList("watchlist")
                     ?: throw NullPointerException()
         }
         setHasOptionsMenu(true) // Indicates we want onCreateOptionsMenu to be called
@@ -59,11 +57,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         Log.d(TAG, ".onCreateView called")
 
         val view = inflater.inflate(R.layout.fragment_watchlist, container, false)
-        recyclerView = view.findViewById<RecyclerView>(R.id.watchlist_recyclerview)
-        when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> recyclerView.layoutManager = GridLayoutManager(activity, 3)
-            Configuration.ORIENTATION_LANDSCAPE -> recyclerView.layoutManager = GridLayoutManager(activity, 5)
-        }
+        recyclerView = view.findViewById(R.id.watchlist_recyclerview)
         recyclerView.adapter = WatchlistRecyclerAdapter(requireActivity(), watchlist, findNavController())
         return view
     }

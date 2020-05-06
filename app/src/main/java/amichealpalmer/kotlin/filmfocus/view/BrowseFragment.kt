@@ -73,13 +73,6 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         val view = inflater.inflate(R.layout.fragment_browse, container, false)
         recyclerView = view.findViewById(R.id.browse_films_recyclerview_id)
 
-//        // Check current orientation so we can change number of items displayed per row in the adapter
-//        val gridLayoutManager: GridLayoutManager = recyclerView?.layoutManager as GridLayoutManager
-//        when (resources.configuration.orientation) {
-//            Configuration.ORIENTATION_PORTRAIT ->  gridLayoutManager.spanCount = 3 //recyclerView?.layoutManager = GridLayoutManager(activity, 3)
-//            Configuration.ORIENTATION_LANDSCAPE -> gridLayoutManager.spanCount = 5 //recyclerView?.layoutManager = GridLayoutManager(activity, 5)
-//        }
-
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         Log.d(TAG, "is resultList null? ${resultList?.size}")
 
