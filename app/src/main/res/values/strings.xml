@@ -13,6 +13,10 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
+    <string name="DIRECTED_BY">DIRECTED BY</string>
+    <string name="STARRING">STARRING</string>
+    <string name="IMDB">IMDB</string>
+    <string name="METACRITIC">METACRITIC</string>
 
     <string name="watched">Watched</string>
     <string name="dropped">Dropped</string>

@@ -15,7 +15,6 @@ import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
 import java.lang.ref.WeakReference
@@ -78,7 +77,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
         try {
             Log.d(TAG, "onCreateView: trying")
-            recyclerView?.adapter = BrowseRecyclerAdapter(requireActivity(), resultList!!, findNavController()) // We pass in the nav controller so we can assign onClick navigation for each search result
+            recyclerView?.adapter = BrowseRecyclerAdapter(requireActivity(), resultList!!, WeakReference(this)) // We pass in the nav controller so we can assign onClick navigation for each search result
             Log.d(TAG, ".onCreateView: adapter instantiated")
             recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {

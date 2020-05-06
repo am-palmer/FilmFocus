@@ -13,10 +13,10 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_history.*
+import java.lang.ref.WeakReference
 
 private const val ARG_TIMELINE_LIST = "timelineList"
 
@@ -59,7 +59,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         val view = inflater.inflate(R.layout.fragment_history, container, false)
         recyclerView = view.findViewById(R.id.fragment_history_timeline_rv)
         recyclerView?.layoutManager = LinearLayoutManager(activity)
-        recyclerView?.adapter = HistoryRecyclerAdapter(requireActivity(), timelineList, findNavController())
+        recyclerView?.adapter = HistoryRecyclerAdapter(requireActivity(), timelineList, WeakReference(this))
         return view
     }
 

@@ -9,15 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_film_details.*
+import kotlinx.android.synthetic.main.fragment_dialog_film_details.*
 import java.lang.ref.WeakReference
 
-class FilmDetailFragment : Fragment() {
+class FilmDetailDialogFragment : DialogFragment() {
 
     private val ARG_IMDBID = "imdbID"
-    private val TAG = "FilmDetailsFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".OnCreate called")
@@ -38,7 +37,7 @@ class FilmDetailFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView starts")
-        val view = inflater.inflate(R.layout.fragment_film_details, container, false)
+        val view = inflater.inflate(R.layout.fragment_dialog_film_details, container, false)
         return view
     }
 
@@ -69,6 +68,8 @@ class FilmDetailFragment : Fragment() {
         // Use the IMDB ID to retrieve film object todo: move this logic out of view
         val imdbID = arguments?.getString(ARG_IMDBID) as String
         GetJSONFilm(WeakReference(this), getString(R.string.OMDB_API_KEY)).execute(imdbID)
+
+        fragment_film_details_back_button.setOnClickListener { this.dismiss() }
 
         super.onViewCreated(view, savedInstanceState)
     }
@@ -120,10 +121,12 @@ class FilmDetailFragment : Fragment() {
 
     companion object {
 
+        const val TAG = "FilmDetailDialogFrag"
+
         private const val ARG_IMDBID = "imdbID"
 
-        fun newInstance(imdbID: String): FilmDetailFragment {
-            val fragment = FilmDetailFragment()
+        fun newInstance(imdbID: String): FilmDetailDialogFragment {
+            val fragment = FilmDetailDialogFragment()
             val args = Bundle()
             args.putString(ARG_IMDBID, imdbID)
             fragment.arguments = args

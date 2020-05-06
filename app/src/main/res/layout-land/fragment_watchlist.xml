@@ -17,14 +17,15 @@
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="5"
-        tools:visibility="gone"/>
+        tools:listitem="@layout/browse_films_item"
+        tools:visibility="visible"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fragment_watchlist_empty_view_container"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:visibility="visible">
+        tools:visibility="gone">
 
         <ImageView
             android:id="@+id/imageView"

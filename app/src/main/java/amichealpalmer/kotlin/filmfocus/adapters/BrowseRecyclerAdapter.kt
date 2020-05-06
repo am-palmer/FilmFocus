@@ -1,23 +1,25 @@
 package amichealpalmer.kotlin.filmfocus.adapters
 
 
+//import amichealpalmer.kotlin.filmfocus.view.BrowseFragmentDirections
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.view.BrowseFragmentDirections
+import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
+import amichealpalmer.kotlin.filmfocus.view.FilmDetailDialogFragment
 import android.content.Context
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
-import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import java.lang.ref.WeakReference
 
 
 class BrowseRecyclerAdapter(
         private val context: Context,
         private var resultList: ArrayList<FilmThumbnail>, // The list of films currently being displayed in the browser
-        private val navController: NavController
+        private val parent: WeakReference<BrowseFragment>
 ) : RecyclerView.Adapter<BrowseRecyclerAdapter.HelperViewHolder>() {
 
     private val TAG = "BrowseRecyclerAdapter"
@@ -34,7 +36,7 @@ class BrowseRecyclerAdapter(
         return helperViewHolder!!
     }
 
-    fun getAdapterPosition(): Int{
+    fun getAdapterPosition(): Int {
         return helperViewHolder?.adapterPosition ?: 0
     }
 
@@ -43,7 +45,7 @@ class BrowseRecyclerAdapter(
         notifyDataSetChanged()
     }
 
-    fun clearList(){
+    fun clearList() {
         resultList.clear()
     }
 
@@ -83,14 +85,11 @@ class BrowseRecyclerAdapter(
 
         init {
             cardView.setOnClickListener {
-                // Display FilmDetailsFragment
-                val direction = BrowseFragmentDirections.actionNavBrowseFragmentToFilmDetailFragment(resultList[adapterPosition].imdbID) // Specify what navigation is taking place
-                navController.navigate(direction)
-                // todo: we lose search results when this happens. browse fragment is being destroyed!
+                // Display FilmDetailsDialogFragment
+                val fragment = FilmDetailDialogFragment.newInstance(resultList[adapterPosition].imdbID)
+                fragment.show(parent.get()!!.childFragmentManager, FilmDetailDialogFragment.TAG)
             }
-
             cardView.setOnCreateContextMenuListener(this)
-
         }
 
         override fun onCreateContextMenu(menu: ContextMenu?, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {

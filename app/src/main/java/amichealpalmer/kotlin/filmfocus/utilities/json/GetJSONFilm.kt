@@ -1,7 +1,7 @@
 package amichealpalmer.kotlin.filmfocus.utilities.json
 
 import amichealpalmer.kotlin.filmfocus.model.Film
-import amichealpalmer.kotlin.filmfocus.view.FilmDetailFragment
+import amichealpalmer.kotlin.filmfocus.view.FilmDetailDialogFragment
 import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
@@ -9,7 +9,7 @@ import java.lang.ref.WeakReference
 
 // Retrieve OMDB JSON Film Data and return it to the calling class.
 // todo: is there a situation where the weakreferences are garbage collected when we don't want them to be?
-class GetJSONFilm(private var listener: WeakReference<FilmDetailFragment>, private val apikey: String) :
+class GetJSONFilm(private var listener: WeakReference<FilmDetailDialogFragment>, private val apikey: String) :
         GetJSONBase<Film?>() {
 
     val TAG = "GetJSONFilm"

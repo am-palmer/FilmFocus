@@ -6,7 +6,7 @@ import android.os.Parcelable
 // Class holding all the models relating to film objects.
 
 
-// The most verbose Film model, containing all relevant details about a film, which is fetched when we load a FilmDetailFragment
+// The most verbose Film model, containing all relevant details about a film, which is fetched when we load a FilmDetailDialogFragment
 class Film(
         val title: String, // e.g. Guardians of the Galaxy Vol. 2
         val imdbID: String,

@@ -15,9 +15,9 @@ import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_watchlist.*
+import java.lang.ref.WeakReference
 
 class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener, WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
 
@@ -58,7 +58,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
 
         val view = inflater.inflate(R.layout.fragment_watchlist, container, false)
         recyclerView = view.findViewById(R.id.watchlist_recyclerview)
-        recyclerView.adapter = WatchlistRecyclerAdapter(requireActivity(), watchlist, findNavController())
+        recyclerView.adapter = WatchlistRecyclerAdapter(requireActivity(), watchlist, WeakReference(this))
         return view
     }
 
@@ -95,7 +95,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
             watchedDialogFragment.setOnWatchedDialogSubmissionListener(this)
         }
         val watchlistConfirmDeleteDialogFragment = childFragmentManager.findFragmentByTag(WatchlistConfirmDeleteDialogFragment.TAG)
-        if (watchlistConfirmDeleteDialogFragment is WatchlistConfirmDeleteDialogFragment){
+        if (watchlistConfirmDeleteDialogFragment is WatchlistConfirmDeleteDialogFragment) {
             watchlistConfirmDeleteDialogFragment.setOnWatchlistConfirmDeleteDialogListener(this)
         }
     }

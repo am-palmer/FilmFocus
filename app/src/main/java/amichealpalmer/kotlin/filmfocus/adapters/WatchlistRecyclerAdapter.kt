@@ -1,9 +1,11 @@
 package amichealpalmer.kotlin.filmfocus.adapters
 
 
+//import amichealpalmer.kotlin.filmfocus.view.WatchlistFragmentDirections
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.view.WatchlistFragmentDirections
+import amichealpalmer.kotlin.filmfocus.view.FilmDetailDialogFragment
+import amichealpalmer.kotlin.filmfocus.view.WatchlistFragment
 import android.content.Context
 import android.util.Log
 import android.view.*
@@ -11,9 +13,9 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
-import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -21,7 +23,7 @@ import kotlin.collections.ArrayList
 class WatchlistRecyclerAdapter(
         private val context: Context,
         private var resultList: ArrayList<FilmThumbnail>, // The list of films currently being displayed in the browser
-        private val navController: NavController
+        private val parent: WeakReference<WatchlistFragment>
 ) : RecyclerView.Adapter<WatchlistRecyclerAdapter.HelperViewHolder>(), Filterable {
 
     private val TAG = "WatchlistRecyclerAdapt"
@@ -118,10 +120,9 @@ class WatchlistRecyclerAdapter(
 
         init {
             cardView.setOnClickListener {
-                // Display FilmDetailsFragment
-                val direction = WatchlistFragmentDirections.actionNavWatchlistFragmentToFilmDetailFragment(resultList[adapterPosition].imdbID)
-                navController.navigate(direction)
-                // todo: this currently destroys the watchlist fragment!
+                // Display FilmDetailsDialogFragment
+                val fragment = FilmDetailDialogFragment.newInstance(resultList[adapterPosition].imdbID)
+                fragment.show(parent.get()!!.childFragmentManager, FilmDetailDialogFragment.TAG) // todo: bugtest we can't have our weakreference destroyed, which would cause NPE.
             }
 
             cardView.setOnCreateContextMenuListener(this)
