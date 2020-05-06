@@ -18,6 +18,7 @@
         android:layout_height="match_parent"
         android:background="#2d2d2d"
         android:contentDescription="@string/film_poster"
+        tools:src="@sample/posters"
         android:scaleType="fitXY" />
 
 </androidx.cardview.widget.CardView>

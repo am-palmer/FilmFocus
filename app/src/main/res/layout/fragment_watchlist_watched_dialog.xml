@@ -50,7 +50,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_watchlist_watched_dialog_title"
             android:contentDescription="@string/film_poster"
-            app:srcCompat="@drawable/cover_placeholder" />
+            app:srcCompat="@drawable/poster_placeholder" />
 
         <Button
             android:id="@+id/fragment_watchlist_watched_dialog_doneButton"
