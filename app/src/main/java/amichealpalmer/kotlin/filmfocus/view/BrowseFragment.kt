@@ -9,7 +9,6 @@ import amichealpalmer.kotlin.filmfocus.model.TimelineItem
 import amichealpalmer.kotlin.filmfocus.utilities.json.GetJSONSearch
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -17,7 +16,6 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
 import java.lang.ref.WeakReference
@@ -68,18 +66,19 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         } else {
             Log.d(TAG, ".onCreateView: saved instance state null")
         }
-        resultList = savedInstanceState?.getParcelableArrayList<FilmThumbnail>(ARG_RESULTS)
+        resultList = savedInstanceState?.getParcelableArrayList(ARG_RESULTS)
                 ?: ArrayList<FilmThumbnail>()
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView called")
         val view = inflater.inflate(R.layout.fragment_browse, container, false)
-        recyclerView = view.findViewById<RecyclerView>(R.id.browse_films_recyclerview_id)
+        recyclerView = view.findViewById(R.id.browse_films_recyclerview_id)
 
-        // Check current orientation so we can change number of items displayed per row in the adapter
-        when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> recyclerView?.layoutManager = GridLayoutManager(activity, 3)
-            Configuration.ORIENTATION_LANDSCAPE -> recyclerView?.layoutManager = GridLayoutManager(activity, 5)
-        }
+//        // Check current orientation so we can change number of items displayed per row in the adapter
+//        val gridLayoutManager: GridLayoutManager = recyclerView?.layoutManager as GridLayoutManager
+//        when (resources.configuration.orientation) {
+//            Configuration.ORIENTATION_PORTRAIT ->  gridLayoutManager.spanCount = 3 //recyclerView?.layoutManager = GridLayoutManager(activity, 3)
+//            Configuration.ORIENTATION_LANDSCAPE -> gridLayoutManager.spanCount = 5 //recyclerView?.layoutManager = GridLayoutManager(activity, 5)
+//        }
 
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         Log.d(TAG, "is resultList null? ${resultList?.size}")

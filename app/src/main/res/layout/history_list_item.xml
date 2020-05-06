@@ -47,7 +47,7 @@
             android:layout_height="match_parent"
             android:background="#2d2d2d"
             android:scaleType="fitXY"
-            tools:srcCompat="@drawable/poster_placeholder"
+            tools:srcCompat="@sample/posters"
             android:contentDescription="@string/film_poster" />
     </androidx.cardview.widget.CardView>
 
