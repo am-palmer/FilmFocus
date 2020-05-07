@@ -10,15 +10,16 @@
     android:layout_margin="5dp"
     cardview:cardCornerRadius="4dp"
     tools:context=".MainActivity"
-    android:focusable="true">
+    android:focusable="true"
+    android:background="@android:color/transparent">
 
     <ImageView
         android:id="@+id/film_poster_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#2d2d2d"
         android:contentDescription="@string/film_poster"
         tools:src="@sample/posters"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        />
 
 </androidx.cardview.widget.CardView>
