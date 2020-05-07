@@ -10,20 +10,20 @@
         android:layout_height="380dp"
         tools:context=".view.FilmDetailDialogFragment">
 
+        <ProgressBar
+            android:id="@+id/film_details_progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            tools:visibility="gone"
+            android:layout_gravity="center"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/film_details_constraint_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ProgressBar
-                android:id="@+id/film_details_progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/fragment_browse_title_card_view"
@@ -50,7 +50,11 @@
                         android:textColor="@android:color/white"
                         android:textSize="18sp"
                         android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/fragment_film_details_back_button"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="The Princess Bride" />
@@ -63,9 +67,7 @@
                         android:background="?android:attr/selectableItemBackground"
                         android:drawableEnd="@drawable/ic_arrow_back_white_24dp"
                         app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_title"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintStart_toEndOf="@id/fragment_film_details_tv_title" />
+                        app:layout_constraintEnd_toEndOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -229,9 +231,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/fragment_film_details_tv_cast"
                 app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_IMDB"
                 app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_IMDB"
+                app:layout_constraintVertical_bias="0.0"
                 tools:text="English, Japanese, Arabic, Czech, Russian, British English, Mandarin, Korean" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

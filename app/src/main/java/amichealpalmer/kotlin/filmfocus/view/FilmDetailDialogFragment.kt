@@ -43,28 +43,6 @@ class FilmDetailDialogFragment : DialogFragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        // While the ASyncTask runs, we show a ProgressBar
-        film_details_progressBar?.visibility = View.VISIBLE
-
-        // Hiding views
-        fragment_film_details_tv_title?.visibility = View.GONE
-        fragment_film_details_tv_director?.visibility = View.GONE
-        fragment_film_details_tv_year?.visibility = View.GONE
-        fragment_film_details_tv_runtime?.visibility = View.GONE
-        fragment_film_details_tv_plot?.visibility = View.GONE
-        fragment_film_details_tv_awards?.visibility = View.GONE
-        fragment_film_details_tv_cast?.visibility = View.GONE
-        fragment_film_details_tv_genre?.visibility = View.GONE
-        fragment_film_details_tv_imdbScore?.visibility = View.GONE
-        fragment_film_details_tv_metacriticScore?.visibility = View.GONE
-        fragment_film_details_tv_language?.visibility = View.GONE
-        fragment_film_details_iv_poster?.visibility = View.GONE
-        fragment_film_details_tv_DIRECTEDBY?.visibility = View.GONE
-        fragment_film_details_tv_METACRITIC?.visibility = View.GONE
-        fragment_film_details_tv_IMDB?.visibility = View.GONE
-        fragment_film_details_tv_STARRING?.visibility = View.GONE
-
         // Use the IMDB ID to retrieve film object todo: move this logic out of view
         val imdbID = arguments?.getString(ARG_IMDBID) as String
         GetJSONFilm(WeakReference(this), getString(R.string.OMDB_API_KEY)).execute(imdbID)
@@ -94,24 +72,9 @@ class FilmDetailDialogFragment : DialogFragment() {
         fragment_film_details_tv_metacriticScore?.text = film.metascore
         fragment_film_details_tv_language?.text = film.language
 
-        // Un-hide Views
-        fragment_film_details_tv_title?.visibility = View.VISIBLE
-        fragment_film_details_tv_director?.visibility = View.VISIBLE
-        fragment_film_details_tv_year?.visibility = View.VISIBLE
-        fragment_film_details_tv_runtime?.visibility = View.VISIBLE
-        fragment_film_details_tv_plot?.visibility = View.VISIBLE
-        fragment_film_details_tv_awards?.visibility = View.VISIBLE
-        fragment_film_details_tv_cast?.visibility = View.VISIBLE
-        fragment_film_details_tv_genre?.visibility = View.VISIBLE
-        fragment_film_details_tv_imdbScore?.visibility = View.VISIBLE
-        fragment_film_details_tv_metacriticScore?.visibility = View.VISIBLE
-        fragment_film_details_tv_language?.visibility = View.VISIBLE
-        fragment_film_details_iv_poster?.visibility = View.VISIBLE
-        fragment_film_details_tv_DIRECTEDBY?.visibility = View.VISIBLE
-        fragment_film_details_tv_METACRITIC?.visibility = View.VISIBLE
-        fragment_film_details_tv_IMDB?.visibility = View.VISIBLE
-        fragment_film_details_tv_STARRING?.visibility = View.VISIBLE
-
+        // Visibility
+        film_details_constraint_layout.visibility = View.VISIBLE
+        film_details_progressBar.visibility = View.GONE
 
         if (fragment_film_details_iv_poster != null) {
             Picasso.get().load(film.posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
