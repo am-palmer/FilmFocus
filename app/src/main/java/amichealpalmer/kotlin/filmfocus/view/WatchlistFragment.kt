@@ -59,6 +59,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         val view = inflater.inflate(R.layout.fragment_watchlist, container, false)
         recyclerView = view.findViewById(R.id.watchlist_recyclerview)
         recyclerView.adapter = WatchlistRecyclerAdapter(requireActivity(), watchlist, WeakReference(this))
+        recyclerView.setHasFixedSize(true)
         return view
     }
 

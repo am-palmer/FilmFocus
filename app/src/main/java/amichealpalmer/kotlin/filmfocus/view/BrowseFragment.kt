@@ -31,7 +31,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     internal var callback: onResultActionListener? = null
     private var resultList: ArrayList<FilmThumbnail>? = null
-    private var recyclerView: RecyclerView? = null
+    private lateinit var recyclerView: RecyclerView
 
     private val TAG = "BrowseFragment"
     private var noMoreResults = false
@@ -76,10 +76,11 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         Log.d(TAG, "is resultList null? ${resultList?.size}")
 
         try {
-            Log.d(TAG, "onCreateView: trying")
-            recyclerView?.adapter = BrowseRecyclerAdapter(requireActivity(), resultList!!, WeakReference(this)) // We pass in the nav controller so we can assign onClick navigation for each search result
-            Log.d(TAG, ".onCreateView: adapter instantiated")
-            recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            //Log.d(TAG, "onCreateView: trying")
+            recyclerView.adapter = BrowseRecyclerAdapter(requireActivity(), resultList!!, WeakReference(this)) // We pass in the nav controller so we can assign onClick navigation for each search result
+            recyclerView.setHasFixedSize(true)
+            //Log.d(TAG, ".onCreateView: adapter instantiated")
+            recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                     // Could perhaps rewrite this so it loads new entries before the bottom is reached, right now it is jarring. Good functionality: load the first TWO pages at once, then load subsequent page based on scroll position rather than canScrollVertically

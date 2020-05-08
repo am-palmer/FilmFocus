@@ -1,7 +1,6 @@
 package amichealpalmer.kotlin.filmfocus.adapters
 
 
-//import amichealpalmer.kotlin.filmfocus.view.BrowseFragmentDirections
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
@@ -50,11 +49,8 @@ class BrowseRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: HelperViewHolder, position: Int) {
-        //Log.d(TAG, ".onBindViewHolder called. Title of film is: ${resultList[position].title}")
         if (resultList.size > 0) {
-            Picasso.get().load(resultList[position].posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
-                    .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(holder.poster)
-
+            holder.loadPoster(resultList[position].posterURL)
             holder.itemView.setOnLongClickListener {
                 this.position = (holder.adapterPosition)
                 false
@@ -73,15 +69,14 @@ class BrowseRecyclerAdapter(
         return resultList[position]
     }
 
-
     override fun getItemCount(): Int {
         return resultList.size
     }
 
     inner class HelperViewHolder(view: View)
         : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
-        val poster: ImageView = view.findViewById(R.id.film_poster_id)
-        private val cardView: CardView = view.findViewById(R.id.film_item_cardview_id)
+        private val poster: ImageView = view.findViewById(R.id.film_poster_id)
+        private val cardView = view.findViewById<CardView>(R.id.film_item_cardview_id)
 
         init {
             cardView.setOnClickListener {
@@ -93,10 +88,14 @@ class BrowseRecyclerAdapter(
         }
 
         override fun onCreateContextMenu(menu: ContextMenu?, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
-            Log.d(TAG, ".onCreateContextMenu called.")
             val inflater = MenuInflater(context)
             inflater.inflate(R.menu.browse_film_context_menu, menu)
 
+        }
+
+        fun loadPoster(posterURL: String) {
+            Picasso.get().load(posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
+                    .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(poster)
         }
 
     }

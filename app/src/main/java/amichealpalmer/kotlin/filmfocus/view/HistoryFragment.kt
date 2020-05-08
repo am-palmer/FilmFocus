@@ -18,8 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_history.*
 import java.lang.ref.WeakReference
 
-private const val ARG_TIMELINE_LIST = "timelineList"
-
 // todo: sometimes the literal time 'line' breaks when a film is removed.
 
 class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener, ConfirmClearHistoryDialogFragment.onConfirmClearHistoryDialogListener { // note code duplication with other fragments
@@ -27,7 +25,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     private val TAG = "HistoryFragment"
     private var callback: OnTimelineItemSelectedListener? = null
     private lateinit var timelineList: ArrayList<TimelineItem>
-    private var recyclerView: RecyclerView? = null
+    private lateinit var recyclerView: RecyclerView
 
     fun setOnTimelineItemSelectedListener(callback: OnTimelineItemSelectedListener) {
         this.callback = callback
@@ -43,10 +41,8 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".onCreate begins")
-        // Get list from SharedPrefs
-        timelineList = callback!!.retrieveHistory()
-        // Reverse the list so it's shown from newest to oldest
-        timelineList.reverse()
+        timelineList = callback!!.retrieveHistory() // Get list from SharedPrefs
+        timelineList.reverse() // Reverse the list so it's shown from newest to oldest
         setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
     }
@@ -55,11 +51,11 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         Log.d(TAG, ".onCreateView begins")
-
         val view = inflater.inflate(R.layout.fragment_history, container, false)
         recyclerView = view.findViewById(R.id.fragment_history_timeline_rv)
-        recyclerView?.layoutManager = LinearLayoutManager(activity)
-        recyclerView?.adapter = HistoryRecyclerAdapter(requireActivity(), timelineList, WeakReference(this))
+        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recyclerView.adapter = HistoryRecyclerAdapter(requireActivity(), timelineList, WeakReference(this))
+        recyclerView.setHasFixedSize(true)
         return view
     }
 
@@ -124,7 +120,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
             position = adapter.position
             Log.d(TAG, "onContextItemSelected: position is $position")
         } catch (e: NullPointerException) {
-            Log.d(TAG, e.localizedMessage, e)
+            Log.e(TAG, e.localizedMessage, e)
             return super.onContextItemSelected(item)
         }
         when (item.itemId) {
@@ -149,7 +145,6 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
             }
             else -> true
         }
-
         return super.onContextItemSelected(item)
     }
 
@@ -219,7 +214,8 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     }
 
     companion object {
-        private val TAG = "HistoryFragmentCompan"
+        private const val TAG = "HistoryFragmentCompan"
+        private const val ARG_TIMELINE_LIST = "timelineList"
         fun newInstance(timelineList: ArrayList<TimelineItem>): HistoryFragment {
             Log.d(TAG, ".newInstance")
             val fragment = HistoryFragment()
