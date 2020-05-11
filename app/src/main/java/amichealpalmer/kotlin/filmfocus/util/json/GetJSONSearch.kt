@@ -1,4 +1,4 @@
-package amichealpalmer.kotlin.filmfocus.utilities.json
+package amichealpalmer.kotlin.filmfocus.util.json
 
 //import amichealpalmer.kotlin.filmfocus.activities.SearchActivity
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail

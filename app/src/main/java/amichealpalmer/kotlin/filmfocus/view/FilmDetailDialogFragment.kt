@@ -2,7 +2,7 @@ package amichealpalmer.kotlin.filmfocus.view
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.Film
-import amichealpalmer.kotlin.filmfocus.utilities.json.GetJSONFilm
+import amichealpalmer.kotlin.filmfocus.util.json.GetJSONFilm
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater

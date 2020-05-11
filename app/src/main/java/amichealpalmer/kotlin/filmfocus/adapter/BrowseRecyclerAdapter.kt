@@ -1,4 +1,4 @@
-package amichealpalmer.kotlin.filmfocus.adapters
+package amichealpalmer.kotlin.filmfocus.adapter
 
 
 import amichealpalmer.kotlin.filmfocus.R

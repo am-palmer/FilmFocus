@@ -1,7 +1,7 @@
-package amichealpalmer.kotlin.filmfocus.utilities.sharedprefs
+package amichealpalmer.kotlin.filmfocus.util.sharedprefs
 
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
-import amichealpalmer.kotlin.filmfocus.utilities.LocalDateSerializer
+import amichealpalmer.kotlin.filmfocus.util.LocalDateSerializer
 import android.content.Context
 import android.util.Log
 import com.google.gson.reflect.TypeToken

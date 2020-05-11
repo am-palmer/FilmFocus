@@ -1,4 +1,4 @@
-package amichealpalmer.kotlin.filmfocus.utilities
+package amichealpalmer.kotlin.filmfocus.util
 
 
 import com.google.gson.*

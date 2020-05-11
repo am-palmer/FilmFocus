@@ -1,4 +1,4 @@
-package amichealpalmer.kotlin.filmfocus.utilities.sharedprefs
+package amichealpalmer.kotlin.filmfocus.util.sharedprefs
 
 import android.content.Context
 import android.content.SharedPreferences

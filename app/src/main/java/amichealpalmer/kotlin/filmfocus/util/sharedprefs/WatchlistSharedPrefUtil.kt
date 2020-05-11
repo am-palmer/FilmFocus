@@ -1,4 +1,4 @@
-package amichealpalmer.kotlin.filmfocus.utilities.sharedprefs
+package amichealpalmer.kotlin.filmfocus.util.sharedprefs
 
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import android.content.Context

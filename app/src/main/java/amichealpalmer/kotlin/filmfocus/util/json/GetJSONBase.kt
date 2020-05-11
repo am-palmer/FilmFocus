@@ -1,4 +1,4 @@
-package amichealpalmer.kotlin.filmfocus.utilities.json
+package amichealpalmer.kotlin.filmfocus.util.json
 
 import android.os.AsyncTask
 import android.util.Log

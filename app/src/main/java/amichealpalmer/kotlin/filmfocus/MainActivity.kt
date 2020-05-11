@@ -3,8 +3,8 @@ package amichealpalmer.kotlin.filmfocus
 
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.TimelineItem
-import amichealpalmer.kotlin.filmfocus.utilities.sharedprefs.TimelineItemsSharedPrefUtil
-import amichealpalmer.kotlin.filmfocus.utilities.sharedprefs.WatchlistSharedPrefUtil
+import amichealpalmer.kotlin.filmfocus.util.sharedprefs.TimelineItemsSharedPrefUtil
+import amichealpalmer.kotlin.filmfocus.util.sharedprefs.WatchlistSharedPrefUtil
 import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
 import amichealpalmer.kotlin.filmfocus.view.HistoryFragment
 import amichealpalmer.kotlin.filmfocus.view.WatchlistFragment
