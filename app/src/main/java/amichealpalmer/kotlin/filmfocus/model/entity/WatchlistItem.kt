@@ -25,6 +25,8 @@ class WatchlistItem(title: String, year: String, imdbID: String, type: String, p
         parcel.writeInt(id)
     }
 
+    constructor(filmThumbnail: FilmThumbnail) : this(filmThumbnail.title, filmThumbnail.year, filmThumbnail.imdbID, filmThumbnail.type, filmThumbnail.posterURL)
+
     constructor(parcel: Parcel) : this(parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!, parcel.readString()!!)
 
     companion object CREATOR : Parcelable.Creator<WatchlistItem> {
