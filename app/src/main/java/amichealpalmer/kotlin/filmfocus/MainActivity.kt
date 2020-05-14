@@ -2,7 +2,7 @@ package amichealpalmer.kotlin.filmfocus
 
 
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.model.TimelineItem
+import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.util.sharedprefs.TimelineItemsSharedPrefUtil
 import amichealpalmer.kotlin.filmfocus.util.sharedprefs.WatchlistSharedPrefUtil
 import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
@@ -23,10 +23,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 
 // todo: we need viewmodel or something in order to maintain fragment data when switching between them (?)
-
+// todo: use alertdialogs instead of dialogfragments for basic yes/no dialogs
 class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDataListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener {
-
-    private val TAG = "MainActivity"
 
     private lateinit var timelineSharedPrefUtil: TimelineItemsSharedPrefUtil
     private lateinit var watchlistSharedPrefUtil: WatchlistSharedPrefUtil
@@ -83,6 +81,7 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
         }
     }
 
+    // todo: livedata will reduce a lot of this
     // todo: move ALL of these to a helper object where the sharedPrefutil objects are safely checked - if the screen is rotated, this activity is destroyed meaning the util objects are too. helper object should implement all of the interfaces
     override fun retrieveWatchlist(): ArrayList<FilmThumbnail> {
         return watchlistSharedPrefUtil.loadWatchlist()
@@ -131,6 +130,9 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
         timelineSharedPrefUtil.addItemToTimeline(timelineItem)
     }
 
+    companion object{
+        private const val TAG = "MainActivity"
+    }
 
 }
 

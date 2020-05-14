@@ -91,11 +91,11 @@ class Film(
    These are displayed in the RecyclerViews throughout the app.
  */
 
-class FilmThumbnail(val title: String,
-                    val year: String,
-                    val imdbID: String,
-                    private val type: String,
-                    val posterURL: String) : Parcelable {
+open class FilmThumbnail(val title: String,
+                         val year: String,
+                         val imdbID: String,
+                         val type: String,
+                         val posterURL: String) : Parcelable {
     override fun toString(): String {
         return "FilmThumbnail(title='$title', year='$year', imdbID='$imdbID', type='$type', posterURL='$posterURL')"
     }

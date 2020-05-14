@@ -2,6 +2,8 @@ package amichealpalmer.kotlin.filmfocus.view.dialog
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.*
+import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
+import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater

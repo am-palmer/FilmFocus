@@ -4,8 +4,8 @@ import amichealpalmer.kotlin.filmfocus.MainActivity
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapter.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.model.TIMELINE_ITEM_STATUS
-import amichealpalmer.kotlin.filmfocus.model.TimelineItem
+import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
+import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchlistConfirmDeleteDialogFragment
 import android.content.Context

@@ -1,6 +1,6 @@
 package amichealpalmer.kotlin.filmfocus.util.sharedprefs
 
-import amichealpalmer.kotlin.filmfocus.model.TimelineItem
+import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.util.LocalDateSerializer
 import android.content.Context
 import android.util.Log

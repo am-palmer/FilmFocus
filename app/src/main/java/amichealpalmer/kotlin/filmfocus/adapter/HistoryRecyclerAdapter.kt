@@ -4,8 +4,8 @@ package amichealpalmer.kotlin.filmfocus.adapter
 //import amichealpalmer.kotlin.filmfocus.view.HistoryFragmentDirections
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FILM_RATING_VALUE
-import amichealpalmer.kotlin.filmfocus.model.TIMELINE_ITEM_STATUS
-import amichealpalmer.kotlin.filmfocus.model.TimelineItem
+import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
+import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.view.FilmDetailDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.HistoryFragment
 import android.content.Context

@@ -3,7 +3,7 @@ package amichealpalmer.kotlin.filmfocus.view
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapter.HistoryRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.model.TimelineItem
+import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmClearHistoryDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmRemoveFilmFromHistoryDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.EditHistoryItemDialogFragment
