@@ -1,7 +1,6 @@
 package amichealpalmer.kotlin.filmfocus.model.room
 
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
-import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
@@ -19,6 +18,6 @@ interface TimelineItemDao {
 
     // Get our LiveData object
     @Query("SELECT * FROM timeline")
-    fun getAllTimelineItems(): LiveData<List<WatchlistItem>>
+    fun getAllTimelineItems(): LiveData<List<TimelineItem>>
 
 }

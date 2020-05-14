@@ -1,7 +1,6 @@
 package amichealpalmer.kotlin.filmfocus.model.room
 
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
-import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import android.app.Application
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
@@ -11,7 +10,7 @@ import androidx.lifecycle.LiveData
 class TimelineItemRepository(application: Application) {
 
     private val timelineDao: TimelineItemDao by lazy { TimelineItemDatabase.getInstance(application)!!.timelineItemDao() }
-    private val timelineList: LiveData<List<WatchlistItem>> by lazy { timelineDao.getAllTimelineItems() }
+    private val timelineList: LiveData<List<TimelineItem>> by lazy { timelineDao.getAllTimelineItems() }
 
     // Exposed API functions for the rest of the app
 

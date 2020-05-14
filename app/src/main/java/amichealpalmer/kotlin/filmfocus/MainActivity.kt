@@ -20,7 +20,7 @@ import androidx.navigation.ui.setupWithNavController
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 
-// todo: we need viewmodel or something in order to maintain fragment data when switching between them (?)
+// todo: we need viewmodel
 // todo: use alertdialogs instead of dialogfragments for basic yes/no dialogs
 class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDataListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener {
 
