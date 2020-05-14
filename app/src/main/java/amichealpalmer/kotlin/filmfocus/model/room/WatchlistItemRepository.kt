@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData
 
 class WatchlistItemRepository(application: Application) {
 
-    private val watchlistDao: WatchlistItemDao by lazy { WatchlistItemDatabase.getInstance(application)!!.WatchlistItemDao() }
+    private val watchlistDao: WatchlistItemDao by lazy { WatchlistItemDatabase.getInstance(application)!!.watchlistItemDao() }
     private val watchlist: LiveData<List<WatchlistItem>> by lazy { watchlistDao.getAllWatchlistItems() }
 
     // Exposed API functions for the rest of the app

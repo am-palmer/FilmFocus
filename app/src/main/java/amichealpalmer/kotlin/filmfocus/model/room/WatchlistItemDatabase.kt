@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
 @Database(entities = [WatchlistItem::class], version = 1)
 abstract class WatchlistItemDatabase : RoomDatabase() {
 
-    abstract fun WatchlistItemDao(): WatchlistItemDao
+    abstract fun watchlistItemDao(): WatchlistItemDao
 
     companion object {
         private var instance: WatchlistItemDatabase? = null
@@ -17,7 +17,9 @@ abstract class WatchlistItemDatabase : RoomDatabase() {
         fun getInstance(context: Context): WatchlistItemDatabase? {
             if (instance == null) {
                 synchronized(WatchlistItemDatabase::class) {
-                    instance = Room.databaseBuilder(context.applicationContext, WatchlistItemDatabase::class.java, "watchlist_database")
+                    instance = Room.databaseBuilder(context.applicationContext,
+                            WatchlistItemDatabase::class.java,
+                            "watchlist_database")
                             .fallbackToDestructiveMigration()
                             .build()
                 }
