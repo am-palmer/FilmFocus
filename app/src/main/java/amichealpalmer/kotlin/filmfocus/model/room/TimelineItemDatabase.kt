@@ -1,13 +1,16 @@
 package amichealpalmer.kotlin.filmfocus.model.room
 
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
+import amichealpalmer.kotlin.filmfocus.util.LocalDateTypeConverter
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
 
 @Database(entities = [TimelineItem::class], version = 1)
+@TypeConverters(LocalDateTypeConverter::class)
 abstract class TimelineItemDatabase : RoomDatabase() {
 
     abstract fun timelineItemDao(): TimelineItemDao

@@ -1,6 +1,5 @@
 package amichealpalmer.kotlin.filmfocus.model.entity
 
-import amichealpalmer.kotlin.filmfocus.model.FilmRating
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import android.os.Parcel
 import android.os.Parcelable
@@ -17,7 +16,7 @@ enum class TIMELINE_ITEM_STATUS {
  */
 
 @Entity(tableName = "timeline")
-class TimelineItem(val film: FilmThumbnail, val rating: FilmRating, val date: LocalDate, private var review: String?, val status: TIMELINE_ITEM_STATUS) : Parcelable {
+class TimelineItem(val film: FilmThumbnail, val rating: Float, val date: LocalDate, private var review: String?, val status: TIMELINE_ITEM_STATUS) : Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
@@ -38,7 +37,7 @@ class TimelineItem(val film: FilmThumbnail, val rating: FilmRating, val date: Lo
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(film, flags)
-        parcel.writeParcelable(rating, flags)
+        parcel.writeFloat(rating)
         parcel.writeString(date.toString())
         parcel.writeString(review)
         parcel.writeString(status.name)
@@ -46,7 +45,7 @@ class TimelineItem(val film: FilmThumbnail, val rating: FilmRating, val date: Lo
     }
 
     constructor(parcel: Parcel) : this(parcel.readParcelable<FilmThumbnail>(FilmThumbnail::class.java.classLoader)!!,
-            parcel.readParcelable<FilmRating>(FilmRating::class.java.classLoader)!!,
+            parcel.readFloat(),
             LocalDate(parcel.readString()!!),
             parcel.readString()!!,
             TIMELINE_ITEM_STATUS.valueOf(parcel.readString()!!))

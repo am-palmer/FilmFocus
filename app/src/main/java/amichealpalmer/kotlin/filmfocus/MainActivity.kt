@@ -3,8 +3,6 @@ package amichealpalmer.kotlin.filmfocus
 
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
-import amichealpalmer.kotlin.filmfocus.util.sharedprefs.TimelineItemsSharedPrefUtil
-import amichealpalmer.kotlin.filmfocus.util.sharedprefs.WatchlistSharedPrefUtil
 import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
 import amichealpalmer.kotlin.filmfocus.view.HistoryFragment
 import amichealpalmer.kotlin.filmfocus.view.WatchlistFragment
@@ -26,14 +24,12 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 // todo: use alertdialogs instead of dialogfragments for basic yes/no dialogs
 class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDataListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener {
 
-    private lateinit var timelineSharedPrefUtil: TimelineItemsSharedPrefUtil
-    private lateinit var watchlistSharedPrefUtil: WatchlistSharedPrefUtil
     private var appBarConfiguration: AppBarConfiguration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Must initialize these fields before super call so they are available for fragments
-        timelineSharedPrefUtil = TimelineItemsSharedPrefUtil(this)
-        watchlistSharedPrefUtil = WatchlistSharedPrefUtil(this)
+//        timelineSharedPrefUtil = TimelineItemsSharedPrefUtil(this)
+//        watchlistSharedPrefUtil = WatchlistSharedPrefUtil(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -81,53 +77,52 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
         }
     }
 
-    // todo: livedata will reduce a lot of this
-    // todo: move ALL of these to a helper object where the sharedPrefutil objects are safely checked - if the screen is rotated, this activity is destroyed meaning the util objects are too. helper object should implement all of the interfaces
+    // todo: livedata will replace all of these listeners, they should be deleted and have the calls integrated into fragments
     override fun retrieveWatchlist(): ArrayList<FilmThumbnail> {
-        return watchlistSharedPrefUtil.loadWatchlist()
+       // return watchlistSharedPrefUtil.loadWatchlist()
     }
 
     override fun clearWatchlist() {
-        watchlistSharedPrefUtil.clearWatchlist()
+       // watchlistSharedPrefUtil.clearWatchlist()
     }
 
     override fun removeFilmFromWatchlist(film: FilmThumbnail) {
-        watchlistSharedPrefUtil.removeFilmFromWatchlist(film)
+       // watchlistSharedPrefUtil.removeFilmFromWatchlist(film)
     }
 
     override fun addItemToTimeline(timelineItem: TimelineItem) {
-        watchlistSharedPrefUtil.removeFilmFromWatchlist(timelineItem.film)
-        timelineSharedPrefUtil.addItemToTimeline(timelineItem)
+       // watchlistSharedPrefUtil.removeFilmFromWatchlist(timelineItem.film)
+       // timelineSharedPrefUtil.addItemToTimeline(timelineItem)
     }
 
     // Return boolean back to fragment so we can display correct toast message
     override fun addFilmToWatchlistFromHistory(film: FilmThumbnail): Boolean {
-        return watchlistSharedPrefUtil.addFilmToWatchlist(film)
+        //return watchlistSharedPrefUtil.addFilmToWatchlist(film)
     }
 
     override fun clearHistory(): Boolean {
-        return timelineSharedPrefUtil.clearTimeline()
+        //return timelineSharedPrefUtil.clearTimeline()
     }
 
     override fun removeItemFromHistory(timelineItem: TimelineItem) {
-        timelineSharedPrefUtil.removeItemFromTimeline(timelineItem)
+        //timelineSharedPrefUtil.removeItemFromTimeline(timelineItem)
     }
 
     override fun updateHistoryItem(timelineItem: TimelineItem) {
-        timelineSharedPrefUtil.updateTimelineItem(timelineItem)
+        //timelineSharedPrefUtil.updateTimelineItem(timelineItem)
     }
 
     override fun retrieveHistory(): ArrayList<TimelineItem> {
-        return timelineSharedPrefUtil.loadTimelineItems()
+        //return timelineSharedPrefUtil.loadTimelineItems()
     }
 
     // Returns false back to BrowseFragment if already present in Watchlist
     override fun addFilmToWatchlistFromBrowse(filmThumbnail: FilmThumbnail): Boolean {
-        return watchlistSharedPrefUtil.addFilmToWatchlist(filmThumbnail)
+        //return watchlistSharedPrefUtil.addFilmToWatchlist(filmThumbnail)
     }
 
     override fun markFilmAsWatchedFromBrowse(timelineItem: TimelineItem) {
-        timelineSharedPrefUtil.addItemToTimeline(timelineItem)
+        //timelineSharedPrefUtil.addItemToTimeline(timelineItem)
     }
 
     companion object{

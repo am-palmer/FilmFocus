@@ -1,7 +1,7 @@
 package amichealpalmer.kotlin.filmfocus.view.dialog
 
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.model.*
+import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import android.os.Bundle
@@ -24,7 +24,8 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
     private val TAG = "EditHistoryItemDiaFrag"
     private lateinit var callback: onHistoryEditDialogSubmissionListener
     private var rating: Float? = null
-    private var hasRating = false
+
+    //private var hasRating = false
     private lateinit var timelineItem: TimelineItem
     private lateinit var status: TIMELINE_ITEM_STATUS
     private var arrayPosition = 0
@@ -45,12 +46,7 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
         } catch (e: NullPointerException) {
             Log.e(TAG, ".onCreate - failed to retrieve timelineItem from bundle")
         }
-        rating = timelineItem.rating.value
-        if (rating!!.toFloat() > 0f) {
-            hasRating = true
-        } else {
-            rating = 0f
-        }
+        rating = timelineItem.rating
         status = timelineItem.status
 
     }
@@ -66,7 +62,7 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
 
         // Load content from the timeline item
         fragment_watchlist_watched_dialog_ratingBar.rating = rating!!
-        when (status){
+        when (status) {
             TIMELINE_ITEM_STATUS.DROPPED -> fragment_watchlist_watched_dialog_toggleWatched.isChecked = false
             TIMELINE_ITEM_STATUS.WATCHED -> fragment_watchlist_watched_dialog_toggleWatched.isChecked = true
         }
@@ -88,7 +84,6 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
 
     override fun onRatingChanged(ratingBar: RatingBar?, rating: Float, fromUser: Boolean) {
         this.rating = rating
-        hasRating = true
     }
 
     override fun onClick(v: View?) {
@@ -100,13 +95,7 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
                 // We send all the info to the Watchlist Fragment as a timeline item
                 val date = timelineItem.date
                 val text = fragment_watchlist_watched_dialog_review_et.text.toString()
-                val ratingObject: FilmRating?
-                if (hasRating) {
-                    ratingObject = FilmRating(rating!!.toFloat(), FILM_RATING_VALUE.HAS_RATING)
-                } else {
-                    ratingObject = FilmRating(0f, FILM_RATING_VALUE.NO_RATING)
-                }
-                val item = TimelineItem(timelineItem.film, ratingObject, date, text, status)
+                val item = TimelineItem(timelineItem.film, rating ?: 0f, date, text, status)
                 callback.onEditHistoryItemDialogSubmissionListener(item, arrayPosition)
                 this.dismiss()
             }

@@ -130,32 +130,3 @@ open class FilmThumbnail(val title: String,
         }
     }
 }
-
-enum class FILM_RATING_VALUE {
-    HAS_RATING, NO_RATING
-}
-
-class FilmRating(var value: Float, val state: FILM_RATING_VALUE) : Parcelable {
-
-    constructor(parcel: Parcel) : this(parcel.readFloat(), (FILM_RATING_VALUE.valueOf(parcel.readString()!!)))
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeFloat(value)
-        dest.writeString(state.name)
-    }
-
-    companion object CREATOR : Parcelable.Creator<FilmRating> {
-        override fun createFromParcel(parcel: Parcel): FilmRating {
-            return FilmRating(parcel)
-        }
-
-        override fun newArray(size: Int): Array<FilmRating?> {
-            return arrayOfNulls(size)
-        }
-    }
-
-}

@@ -10,7 +10,6 @@ import java.net.URL
 
 abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
 
-    private val TAG = "GetJSONBase"
     private var downloadStatus = DownloadStatus.NOT_INITIALIZED
 
     enum class DownloadStatus { // Track status of download
@@ -22,12 +21,9 @@ abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
     abstract override fun doInBackground(vararg params: String): T
 
     fun getJSONDataObject(apikey: String, query: String): JSONObject? { // Helper method getting JSON data for a query todo improve handling of exceptions so we aren't just flinging null objects around
-        val omdbUrl = "https://www.omdbapi.com/" // make this an xml resource?
-        Log.d(TAG, ".doInBackground started")
         // Todo: handle errors better
-        // val defaultList = ArrayList<GetJSONSearch.Result?>() // Not a good solution...
 
-        val searchURL = omdbUrl + query + "&apikey=${apikey}"
+        val searchURL = OMDB_URL + query + "&apikey=${apikey}"
         val rawData: String?
 
         // Attempt to retrieve raw data and store as String object
@@ -50,7 +46,7 @@ abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
                 }
                 else -> {
                     downloadStatus = DownloadStatus.ERROR
-                    ".doInBackground: Unknown error retreiving raw data: ${e.message}"
+                    ".doInBackground: Unknown error retrieving raw data: ${e.message}"
 
                 }
             }
@@ -68,5 +64,10 @@ abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
 
         return jsonData
 
+    }
+
+    companion object {
+        private const val TAG = "GetJSONBase"
+        private const val OMDB_URL = "https://www.omdbapi.com/"
     }
 }

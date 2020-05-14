@@ -1,7 +1,7 @@
 package amichealpalmer.kotlin.filmfocus.view.dialog
 
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.model.*
+import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import android.os.Bundle
@@ -80,13 +80,7 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
                 // We send all the info to the Watchlist Fragment as a timeline item
                 val date = LocalDate.now()
                 val text = fragment_watchlist_watched_dialog_review_et.text.toString()
-                val ratingObject: FilmRating?
-                if (hasRating) {
-                    ratingObject = FilmRating(rating!!.toFloat(), FILM_RATING_VALUE.HAS_RATING)
-                } else {
-                    ratingObject = FilmRating(0f, FILM_RATING_VALUE.NO_RATING)
-                }
-                val item = TimelineItem(film, ratingObject, date, text, status)
+                val item = TimelineItem(film, rating ?: 0f, date, text, status)
                 callback.onWatchedDialogSubmissionListener(item)
                 this.dismiss()
             }

@@ -8,11 +8,9 @@ import org.json.JSONObject
 import java.lang.ref.WeakReference
 
 // Retrieve OMDB JSON Film Data and return it to the calling class.
-// todo: is there a situation where the weakreferences are garbage collected when we don't want them to be?
 class GetJSONFilm(private var listener: WeakReference<FilmDetailDialogFragment>, private val apikey: String) :
         GetJSONBase<Film?>() {
 
-    val TAG = "GetJSONFilm"
 
     override fun onPostExecute(result: Film?) {
         Log.d(TAG, ".onPostExecute starts")
@@ -87,6 +85,10 @@ class GetJSONFilm(private var listener: WeakReference<FilmDetailDialogFragment>,
         }
 
         return film
+    }
+
+    companion object {
+        private const val TAG = "GetJSONFilm"
     }
 
 }

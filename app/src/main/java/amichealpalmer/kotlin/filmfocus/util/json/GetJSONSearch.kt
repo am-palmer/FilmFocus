@@ -1,6 +1,5 @@
 package amichealpalmer.kotlin.filmfocus.util.json
 
-//import amichealpalmer.kotlin.filmfocus.activities.SearchActivity
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
 import android.util.Log
@@ -9,11 +8,8 @@ import org.json.JSONObject
 import java.lang.ref.WeakReference
 
 // Retrieve OMDB JSON Search Data and return it to the calling class.
-
 class GetJSONSearch(private var listener: WeakReference<BrowseFragment.SearchHelper>, private val apikey: String) :
         GetJSONBase<ArrayList<FilmThumbnail?>>() { // Example input query is "?s=ghost". We then append the website and API key to form a valid URL (in the super class helper method)
-
-    private val TAG = "GetJSONSearch"
 
     override fun onPostExecute(result: ArrayList<FilmThumbnail?>) {
         Log.d(TAG, ".onPostExecute starts")
@@ -45,7 +41,7 @@ class GetJSONSearch(private var listener: WeakReference<BrowseFragment.SearchHel
 
     override fun doInBackground(vararg params: String): ArrayList<FilmThumbnail?> { // params[0] should contain our query
         Log.d(TAG, ".doInBackground started")
-        val defaultResult = ArrayList<FilmThumbnail?>() // todo better handling of nullability
+        val defaultResult = ArrayList<FilmThumbnail?>()
 
         // Get our JSON object from the parent class
         Log.d(TAG, "calling super.getJSONDataObject and passing our search query")
@@ -59,6 +55,10 @@ class GetJSONSearch(private var listener: WeakReference<BrowseFragment.SearchHel
             defaultResult
         }
 
+    }
+
+    companion object{
+        private const val TAG = "GetJSONSearch"
     }
 
 }

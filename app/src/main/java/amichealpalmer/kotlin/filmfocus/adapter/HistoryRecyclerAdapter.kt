@@ -1,9 +1,7 @@
 package amichealpalmer.kotlin.filmfocus.adapter
 
 
-//import amichealpalmer.kotlin.filmfocus.view.HistoryFragmentDirections
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.model.FILM_RATING_VALUE
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.view.FilmDetailDialogFragment
@@ -69,7 +67,7 @@ class HistoryRecyclerAdapter(
             val monthProperty: LocalDate.Property = date.monthOfYear()
             // Set the views
             val dayInt = date.dayOfMonth
-            var dateDay = "null"
+            var dateDay: String
 
             // Figure out the ordinal indicator
             val j = dayInt % 10
@@ -87,8 +85,8 @@ class HistoryRecyclerAdapter(
             holder.dateMonthTextView.text = monthProperty.asText
             holder.dateDayTextView.text = dateDay
             Log.d(TAG, ".onBindViewHolder: configuring rating bar")
-            if (timelineList[position].rating.state == FILM_RATING_VALUE.NO_RATING || timelineList[position].rating.value == 0f) {
-                holder.ratingBar.visibility = View.GONE // Hide the rating bar if a rating hasn't been set
+            if (timelineList[position].rating == 0f) {
+                holder.ratingBar.visibility = View.GONE // Hide the rating bar if a rating hasn't been set or it is 0
                 // We also change the constraints on the review so there isn't a weird gap
                 Log.d(TAG, ".onBindViewHolder: rating constraintset")
                 val constraintSet = ConstraintSet()
@@ -98,7 +96,7 @@ class HistoryRecyclerAdapter(
 
                 constraintSet.applyTo(holder.constraintLayoutWrapper)
             } else {
-                holder.ratingBar.rating = timelineList[position].rating.value
+                holder.ratingBar.rating = timelineList[position].rating
                 holder.ratingBar.visibility = View.VISIBLE
             }
 
@@ -109,7 +107,7 @@ class HistoryRecyclerAdapter(
                 holder.reviewTextView.visibility = View.VISIBLE
             } else {
                 holder.reviewTextView.visibility = View.GONE // Hide review field if not set
-                if (timelineList[position].rating.value > 0f) {
+                if (timelineList[position].rating > 0f) {
                     Log.d(TAG, ".onBindViewHolder: rating for $position is > 0f. review constraintset to change layout")
                     val constraintSet = ConstraintSet()
                     constraintSet.clone(holder.constraintLayoutWrapper)
