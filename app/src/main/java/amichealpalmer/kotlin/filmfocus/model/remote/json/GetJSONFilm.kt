@@ -1,4 +1,4 @@
-package amichealpalmer.kotlin.filmfocus.util.json
+package amichealpalmer.kotlin.filmfocus.model.remote.json
 
 import amichealpalmer.kotlin.filmfocus.model.Film
 import amichealpalmer.kotlin.filmfocus.view.FilmDetailDialogFragment
