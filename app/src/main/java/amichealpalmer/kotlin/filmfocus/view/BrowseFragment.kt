@@ -8,9 +8,10 @@ import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.FilmThumbnailViewModel
 import amichealpalmer.kotlin.filmfocus.viewmodel.FilmThumbnailViewModelFactory
+import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -75,11 +76,11 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         recyclerView.adapter = adapter
 
         resultListViewModel.getResults().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            Log.d(TAG, "change in observable!")
+            //Log.d(TAG, "change in observable!")
             adapter.submitList(it)
             adapter.notifyDataSetChanged() // todo: we shouldn't need to call this directly, fix
+            browse_fragment_progressBar.visibility = View.GONE // todo: check this does what we expect
             if (it.isNotEmpty()){
-                // todo not working
                 fragment_search_empty_container.visibility = View.GONE
                 fragment_browse_recycler_framelayout.visibility = View.VISIBLE
             }
@@ -90,7 +91,9 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
                 super.onScrollStateChanged(recyclerView, newState)
                 when {
                     !recyclerView.canScrollVertically(1) -> {
-                        // todo: request next page from repo
+                        // Request next page from repo
+                        resultListViewModel.nextPage()
+                        browse_fragment_progressBar.visibility = View.VISIBLE
                     }
                 }
             }
@@ -134,6 +137,10 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 val searchString = query.toLowerCase(Locale.US).trim()
+
+                // Close the keyboard
+                val inputMethodManager: InputMethodManager = activity!!.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(activity!!.currentFocus!!.windowToken, 0)
 
                 // Set up the UI
                 fragment_search_empty_container.visibility = View.GONE
