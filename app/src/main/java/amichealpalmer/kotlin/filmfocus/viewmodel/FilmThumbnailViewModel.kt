@@ -12,14 +12,22 @@ import androidx.lifecycle.ViewModelProvider
 
 class FilmThumbnailViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository: FilmThumbnailRepository by lazy { FilmThumbnailRepository() }
+    private val repository: FilmThumbnailRepository by lazy { FilmThumbnailRepository(application) }
 
-    fun clearResults() {
-        repository.clearResults()
+    fun newQuery(query: String) {
+        repository.newQuery(query)
     }
 
-    fun getResults(): MutableLiveData<ArrayList<FilmThumbnail>> {
+    fun nextPage(){
+        repository.getNextPage()
+    }
+
+    fun getResults(): MutableLiveData<ArrayList<FilmThumbnail?>> {
         return repository.getResults
+    }
+
+    fun getQuery(): MutableLiveData<String?> {
+        return repository.getQuery
     }
 
 }

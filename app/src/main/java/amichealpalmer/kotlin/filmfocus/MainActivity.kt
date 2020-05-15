@@ -1,17 +1,11 @@
 package amichealpalmer.kotlin.filmfocus
 
 
-import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
-import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
-import amichealpalmer.kotlin.filmfocus.view.HistoryFragment
-import amichealpalmer.kotlin.filmfocus.view.WatchlistFragment
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -22,7 +16,7 @@ import kotlinx.android.synthetic.main.toolbar.view.*
 
 // todo: we need viewmodel
 // todo: use alertdialogs instead of dialogfragments for basic yes/no dialogs
-class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDataListener, BrowseFragment.onResultActionListener, HistoryFragment.OnTimelineItemSelectedListener {
+class MainActivity : AppCompatActivity() {
 
     private var appBarConfiguration: AppBarConfiguration? = null
 
@@ -64,66 +58,18 @@ class MainActivity : AppCompatActivity(), WatchlistFragment.WatchlistFragmentDat
         }
     }
 
-
-    override fun onAttachFragment(fragment: Fragment) {
-        if (fragment is WatchlistFragment) {
-            fragment.setWatchlistFragmentDataListener(this)
-        }
-        if (fragment is BrowseFragment) {
-            fragment.setOnResultActionListener(this)
-        }
-        if (fragment is HistoryFragment) {
-            fragment.setOnTimelineItemSelectedListener(this)
-        }
-    }
-
-    // todo: livedata will replace all of these listeners, they should be deleted and have the calls integrated into fragments
-    override fun retrieveWatchlist(): ArrayList<FilmThumbnail> {
-       // return watchlistSharedPrefUtil.loadWatchlist()
-    }
-
-    override fun clearWatchlist() {
-       // watchlistSharedPrefUtil.clearWatchlist()
-    }
-
-    override fun removeFilmFromWatchlist(film: FilmThumbnail) {
-       // watchlistSharedPrefUtil.removeFilmFromWatchlist(film)
-    }
-
-    override fun addItemToTimeline(timelineItem: TimelineItem) {
-       // watchlistSharedPrefUtil.removeFilmFromWatchlist(timelineItem.film)
-       // timelineSharedPrefUtil.addItemToTimeline(timelineItem)
-    }
-
-    // Return boolean back to fragment so we can display correct toast message
-    override fun addFilmToWatchlistFromHistory(film: FilmThumbnail): Boolean {
-        //return watchlistSharedPrefUtil.addFilmToWatchlist(film)
-    }
-
-    override fun clearHistory(): Boolean {
-        //return timelineSharedPrefUtil.clearTimeline()
-    }
-
-    override fun removeItemFromHistory(timelineItem: TimelineItem) {
-        //timelineSharedPrefUtil.removeItemFromTimeline(timelineItem)
-    }
-
-    override fun updateHistoryItem(timelineItem: TimelineItem) {
-        //timelineSharedPrefUtil.updateTimelineItem(timelineItem)
-    }
-
-    override fun retrieveHistory(): ArrayList<TimelineItem> {
-        //return timelineSharedPrefUtil.loadTimelineItems()
-    }
-
-    // Returns false back to BrowseFragment if already present in Watchlist
-    override fun addFilmToWatchlistFromBrowse(filmThumbnail: FilmThumbnail): Boolean {
-        //return watchlistSharedPrefUtil.addFilmToWatchlist(filmThumbnail)
-    }
-
-    override fun markFilmAsWatchedFromBrowse(timelineItem: TimelineItem) {
-        //timelineSharedPrefUtil.addItemToTimeline(timelineItem)
-    }
+//
+//    override fun onAttachFragment(fragment: Fragment) {
+//        if (fragment is WatchlistFragment) {
+//            fragment.setWatchlistFragmentDataListener(this)
+//        }
+//        if (fragment is BrowseFragment) {
+//           // fragment.setOnResultActionListener(this)
+//        }
+//        if (fragment is HistoryFragment) {
+//            fragment.setOnTimelineItemSelectedListener(this)
+//        }
+//    }
 
     companion object{
         private const val TAG = "MainActivity"

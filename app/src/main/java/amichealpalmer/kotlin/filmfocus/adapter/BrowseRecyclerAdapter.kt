@@ -2,9 +2,10 @@ package amichealpalmer.kotlin.filmfocus.adapter
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.view.FilmDetailDialogFragment
-import android.view.*
-import android.widget.AdapterView
+import amichealpalmer.kotlin.filmfocus.view.FilmActionListener
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
@@ -14,9 +15,7 @@ import com.squareup.picasso.Picasso
 
 class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.FilmThumbnailViewHolder>(DIFF_CALLBACK) {
 
-    private var viewFilmDetailsListener: ViewFilmDetailsListener? = null
-    private var addFilmToWatchlistListener: AddFilmToWatchlistListener? = null
-    private var markFilmWatchedListener: MarkFilmWatchedListener? = null
+    private var filmActionListener: FilmActionListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmThumbnailViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.browse_films_item, parent, false)
@@ -34,6 +33,7 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
 
     companion object { // todo: necessary?
         private const val TAG = "BrowseRecyclerAdapter"
+
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<FilmThumbnail>() {
             override fun areItemsTheSame(oldItem: FilmThumbnail, newItem: FilmThumbnail): Boolean {
                 return oldItem.imdbID == newItem.imdbID
@@ -52,11 +52,11 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
         init {
 
             cardView.setOnClickListener {
+
                 // Display FilmDetailsDialogFragment
-                // todo: this has to happen in the fragment
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    viewFilmDetailsListener.viewFilm(getItem(position))
+                    filmActionListener?.showFilmDetails(getItem(position))
                 }
                 //todo: move this call to the fragment implementing the listener
                 //val fragment = FilmDetailDialogFragment.newInstance(resultList[adapterPosition].imdbID)
@@ -65,11 +65,17 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
 
             cardView.setOnCreateContextMenuListener { menu, v, menuInfo ->
                 menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
-                    // todo: notify that we want to add the item to the watchlist (if it isn't already present)
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        filmActionListener?.addFilmToWatchlist(getItem(position))
+                    }
                     true
                 }
                 menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
-                    // todo: show the mark watched dialog
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        filmActionListener?.markFilmWatched(getItem(position))
+                    }
                     true
                 }
             }
