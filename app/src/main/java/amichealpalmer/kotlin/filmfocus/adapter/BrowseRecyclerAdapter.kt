@@ -1,96 +1,78 @@
 package amichealpalmer.kotlin.filmfocus.adapter
 
-
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.view.BrowseFragment
 import amichealpalmer.kotlin.filmfocus.view.FilmDetailDialogFragment
-import android.content.Context
-import android.util.Log
 import android.view.*
+import android.widget.AdapterView
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import java.lang.ref.WeakReference
 
+class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.FilmThumbnailViewHolder>(DIFF_CALLBACK) {
 
-class BrowseRecyclerAdapter(
-        private val context: Context,
-        private var resultList: ArrayList<FilmThumbnail>, // The list of films currently being displayed in the browser
-        private val parent: WeakReference<BrowseFragment>
-) : RecyclerView.Adapter<BrowseRecyclerAdapter.HelperViewHolder>() {
+    private var viewFilmDetailsListener: ViewFilmDetailsListener? = null
+    private var addFilmToWatchlistListener: AddFilmToWatchlistListener? = null
+    private var markFilmWatchedListener: MarkFilmWatchedListener? = null
 
-    private val TAG = "BrowseRecyclerAdapter"
-    var position = 0
-    private var helperViewHolder: BrowseRecyclerAdapter.HelperViewHolder? = null
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelperViewHolder {
-        Log.d(TAG, ".onCreateViewHolder called")
-        val view: View
-        val mInflater = LayoutInflater.from(context)
-        view = mInflater.inflate(R.layout.browse_films_item, parent, false)
-
-        helperViewHolder = HelperViewHolder(view)
-        return helperViewHolder!!
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmThumbnailViewHolder {
+        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.browse_films_item, parent, false)
+        return FilmThumbnailViewHolder(view)
     }
 
-    fun getAdapterPosition(): Int {
-        return helperViewHolder?.adapterPosition ?: 0
+    override fun onBindViewHolder(holder: FilmThumbnailViewHolder, position: Int) {
+        val currentItem: FilmThumbnail = getItem(position)
+        holder.loadPoster(currentItem.posterURL)
     }
 
-    fun updateList(resultList: List<FilmThumbnail>) {
-        this.resultList.addAll(resultList)
-        notifyDataSetChanged()
+    fun getFilmThumbnailAtPosition(position: Int): FilmThumbnail {
+        return getItem(position)
     }
 
-    fun clearList() {
-        resultList.clear()
-    }
+    companion object { // todo: necessary?
+        private const val TAG = "BrowseRecyclerAdapter"
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<FilmThumbnail>() {
+            override fun areItemsTheSame(oldItem: FilmThumbnail, newItem: FilmThumbnail): Boolean {
+                return oldItem.imdbID == newItem.imdbID
+            }
 
-    override fun onBindViewHolder(holder: HelperViewHolder, position: Int) {
-        if (resultList.size > 0) {
-            holder.loadPoster(resultList[position].posterURL)
-            holder.itemView.setOnLongClickListener {
-                this.position = (holder.adapterPosition)
-                false
+            override fun areContentsTheSame(oldItem: FilmThumbnail, newItem: FilmThumbnail): Boolean {
+                return oldItem.imdbID == newItem.imdbID
             }
         }
     }
 
-    override fun onViewRecycled(holder: HelperViewHolder) {
-        // may not be required
-        holder.itemView.setOnLongClickListener(null)
-        super.onViewRecycled(holder)
-
-    }
-
-    fun getItem(position: Int): FilmThumbnail {
-        return resultList[position]
-    }
-
-    override fun getItemCount(): Int {
-        return resultList.size
-    }
-
-    inner class HelperViewHolder(view: View)
-        : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
+    inner class FilmThumbnailViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         private val poster: ImageView = view.findViewById(R.id.film_poster_id)
         private val cardView = view.findViewById<CardView>(R.id.film_item_cardview_id)
 
         init {
+
             cardView.setOnClickListener {
                 // Display FilmDetailsDialogFragment
-                val fragment = FilmDetailDialogFragment.newInstance(resultList[adapterPosition].imdbID)
-                fragment.show(parent.get()!!.childFragmentManager, FilmDetailDialogFragment.TAG)
+                // todo: this has to happen in the fragment
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    viewFilmDetailsListener.viewFilm(getItem(position))
+                }
+                //todo: move this call to the fragment implementing the listener
+                //val fragment = FilmDetailDialogFragment.newInstance(resultList[adapterPosition].imdbID)
+                //fragment.show(parent.get()!!.childFragmentManager, FilmDetailDialogFragment.TAG)
             }
-            cardView.setOnCreateContextMenuListener(this)
-        }
 
-        override fun onCreateContextMenu(menu: ContextMenu?, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
-            val inflater = MenuInflater(context)
-            inflater.inflate(R.menu.browse_film_context_menu, menu)
-
+            cardView.setOnCreateContextMenuListener { menu, v, menuInfo ->
+                menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
+                    // todo: notify that we want to add the item to the watchlist (if it isn't already present)
+                    true
+                }
+                menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
+                    // todo: show the mark watched dialog
+                    true
+                }
+            }
         }
 
         fun loadPoster(posterURL: String) {

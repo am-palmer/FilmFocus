@@ -6,7 +6,6 @@ import amichealpalmer.kotlin.filmfocus.adapter.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
-import amichealpalmer.kotlin.filmfocus.model.remote.json.GetJSONSearch
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import android.content.Context
 import android.os.Bundle
@@ -222,14 +221,14 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
             when (item.itemId) {
                 R.id.browse_film_context_menu_add -> {
-                    val film = adapter.getItem(position)
+                    val film = adapter.getFilmThumbnailAtPosition(position)
                     when (addFilmToWatchlist(film)) { // Note secondary effect
                         true -> Toast.makeText(requireContext(), "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
                         false -> Toast.makeText(requireContext(), "${film.title} is already in Watchlist", Toast.LENGTH_SHORT).show()
                     }
                 }
                 R.id.browse_film_context_menu_mark_watched -> {
-                    val film = adapter.getItem(position)
+                    val film = adapter.getFilmThumbnailAtPosition(position)
                     val dialogFragment = WatchedDialogFragment.newInstance(film)
                     dialogFragment.setOnWatchedDialogSubmissionListener(this)
                     dialogFragment.show(childFragmentManager, WatchedDialogFragment.TAG)
