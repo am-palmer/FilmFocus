@@ -66,6 +66,8 @@ abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
 
     }
 
+
+
     companion object {
         private const val TAG = "GetJSONBase"
         private const val OMDB_URL = "https://www.omdbapi.com/"

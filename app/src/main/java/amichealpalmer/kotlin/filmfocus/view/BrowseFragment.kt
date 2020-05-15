@@ -56,15 +56,15 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        //Restore instance state
-        if (savedInstanceState != null) {
-            Log.d(TAG, "savedInstanceState: retrieving search query")
-            searchString = savedInstanceState.getString(ARG_SEARCH_STRING)
-            noMoreResults = savedInstanceState.getBoolean("noMoreResults")
-            currentPage = savedInstanceState.getInt("currentPage")
-        } else {
-            Log.d(TAG, ".onCreateView: saved instance state null")
-        }
+        //Restore instance state todo use viewmodel
+//        if (savedInstanceState != null) {
+//            Log.d(TAG, "savedInstanceState: retrieving search query")
+//           // searchString = savedInstanceState.getString(ARG_SEARCH_STRING)
+//           // noMoreResults = savedInstanceState.getBoolean("noMoreResults")
+//            //currentPage = savedInstanceState.getInt("currentPage")
+//        } else {
+//            Log.d(TAG, ".onCreateView: saved instance state null")
+//        }
         resultList = savedInstanceState?.getParcelableArrayList(ARG_RESULTS)
                 ?: ArrayList<FilmThumbnail>()
         // Inflate the layout for this fragment
@@ -76,7 +76,6 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         Log.d(TAG, "is resultList null? ${resultList?.size}")
 
         try {
-            //Log.d(TAG, "onCreateView: trying")
             recyclerView.adapter = BrowseRecyclerAdapter(requireActivity(), resultList!!, WeakReference(this)) // We pass in the nav controller so we can assign onClick navigation for each search result
             recyclerView.setHasFixedSize(true)
             //Log.d(TAG, ".onCreateView: adapter instantiated")
@@ -108,7 +107,7 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // Set the empty view as visible by default, turn it off once a query is entered
-        if (savedInstanceState != null && resultList!!.size > 0) {
+        if (resultList!!.size > 0) {
             fragment_search_empty_container.visibility = View.GONE
             fragment_browse_recycler_framelayout.visibility = View.VISIBLE
         } else {
@@ -137,8 +136,8 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
             scrollPos = adapter.getAdapterPosition()
         }
         outState.putInt("recyclerScrollPosition", scrollPos ?: 0)
-        outState.putInt("currentPage", currentPage)
-        outState.putBoolean("noMoreResults", noMoreResults)
+//        outState.putInt("currentPage", currentPage)
+//        outState.putBoolean("noMoreResults", noMoreResults)
     }
 
     override fun onAttach(context: Context) {
@@ -180,18 +179,19 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 // We reset the fields holding search data for a new search
-                currentPage = 1
-                noMoreResults = false
+//                currentPage = 1
+//                noMoreResults = false
                 searchString = query.toLowerCase(Locale.US).trim()
 
                 // Clear the UI
-                resultList?.clear()
+        //        resultList?.clear()
                 fragment_search_empty_container.visibility = View.GONE
                 fragment_browse_recycler_framelayout.visibility = View.VISIBLE
                 val adapter = recyclerView?.adapter
                 if (adapter is BrowseRecyclerAdapter) {
                     adapter.clearList()
                 }
+
 
                 SearchHelper().searchByTitleKeyword(searchString!!)
                 return true
@@ -245,41 +245,41 @@ class BrowseFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissi
         return false
     }
 
-    inner class SearchHelper {
-        private val activity = callback as MainActivity
-
-        fun searchByTitleKeyword(titleContains: String) { // This method is called multiple times to load each subsequent page
-            Log.d(TAG, ".searchByTitleKeyword starts")
-            val query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
-            currentPage++
-            browse_fragment_progressBar?.visibility = View.VISIBLE
-            GetJSONSearch(WeakReference(this), (activity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries
-        }
-
-        fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {
-            browse_fragment_progressBar?.visibility = View.GONE
-            val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
-            Log.d(TAG, "onSearchResultsDownload: RESULTLIST IS EMPTY? ${resultList.isEmpty()}")
-            Log.d(TAG, "and CurrentPage is: $currentPage")
-            if (resultList.isEmpty() && currentPage == 2) { // Indicates there are no results for the search term. Todo: magic numbers... also doesn't work as intended
-                Log.d(TAG, "onSearchResultsDownload -> no results, showing no results view")
-                fragment_browse_no_results_container?.visibility = View.VISIBLE
-                fragment_browse_recycler_framelayout?.visibility = View.GONE
-                fragment_search_empty_container?.visibility = View.GONE
-            } else {
-                Log.d(TAG, ".onSearchResultsDownload -> results found, showing results in recyclerview")
-                fragment_browse_no_results_container?.visibility = View.GONE
-                fragment_browse_recycler_framelayout?.visibility = View.VISIBLE
-                if (resultList.size > 0) {
-                    adapter.updateList(resultList as List<FilmThumbnail>)
-                } else {
-                    noMoreResults = true
-                }
-            }
-
-        }
-
-    }
+//    inner class SearchHelper {
+//        //private val activity = callback as MainActivity
+//
+//        fun searchByTitleKeyword(titleContains: String) { // This method is called multiple times to load each subsequent page
+//            Log.d(TAG, ".searchByTitleKeyword starts")
+//            val query = "?s=$titleContains&page=$currentPage" // Indicates searchHelper by title
+//            currentPage++
+//            browse_fragment_progressBar?.visibility = View.VISIBLE // todo: need this call somewhere
+//            GetJSONSearch(WeakReference(this), (activity.getString(R.string.OMDB_API_KEY))).execute(query) // Call class handling API searchHelper queries
+//        }
+//
+//        fun onSearchResultsDownload(resultList: ArrayList<FilmThumbnail?>) {
+//            browse_fragment_progressBar?.visibility = View.GONE
+//            val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
+//            Log.d(TAG, "onSearchResultsDownload: RESULTLIST IS EMPTY? ${resultList.isEmpty()}")
+//            Log.d(TAG, "and CurrentPage is: $currentPage")
+//            if (resultList.isEmpty() && currentPage == 2) { // Indicates there are no results for the search term. Todo: magic numbers... also doesn't work as intended
+//                Log.d(TAG, "onSearchResultsDownload -> no results, showing no results view")
+//                fragment_browse_no_results_container?.visibility = View.VISIBLE
+//                fragment_browse_recycler_framelayout?.visibility = View.GONE
+//                fragment_search_empty_container?.visibility = View.GONE
+//            } else {
+//                Log.d(TAG, ".onSearchResultsDownload -> results found, showing results in recyclerview")
+//                fragment_browse_no_results_container?.visibility = View.GONE
+//                fragment_browse_recycler_framelayout?.visibility = View.VISIBLE
+//                if (resultList.size > 0) {
+//                    adapter.updateList(resultList as List<FilmThumbnail>)
+//                } else {
+//                    noMoreResults = true
+//                }
+//            }
+//
+//        }
+//
+//    }
 
     override fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem) {
         var status = when (timelineItem.status) {
