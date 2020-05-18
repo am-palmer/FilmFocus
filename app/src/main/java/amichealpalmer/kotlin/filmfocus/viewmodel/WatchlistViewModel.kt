@@ -29,10 +29,10 @@ class WatchlistViewModel(application: Application) : AndroidViewModel(applicatio
         repository.deleteAll()
     }
 
-    class WatchlistViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return WatchlistViewModel(application) as T
-        }
-    }
+}
 
+class WatchlistViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return WatchlistViewModel(application) as T
+    }
 }

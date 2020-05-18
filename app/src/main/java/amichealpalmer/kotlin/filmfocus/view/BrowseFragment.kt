@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_browse.*
 import java.util.*
 
 
-private const val ARG_RESULTS = "resultList"
+//private const val ARG_RESULTS = "resultList"
 private const val ARG_SEARCH_STRING = "searchString"
 
 

@@ -8,41 +8,31 @@ import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchlistConfirmDeleteDialogFragment
+import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModel
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_watchlist.*
 import java.lang.ref.WeakReference
 
 class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener, WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
 
-    private val TAG = "WatchlistFragment"
+
     //internal var callback: WatchlistFragmentDataListener? = null
     //private lateinit var watchlist: ArrayList<FilmThumbnail>
-    lateinit var recyclerView: RecyclerView
-//
-//    fun setWatchlistFragmentDataListener(callback: WatchlistFragmentDataListener) {
-//        this.callback = callback
-//    }
-//
-//    interface WatchlistFragmentDataListener {
-//        fun retrieveWatchlist(): ArrayList<FilmThumbnail>
-//        fun clearWatchlist()
-//        fun removeFilmFromWatchlist(film: FilmThumbnail)
-//        fun addItemToTimeline(timelineItem: TimelineItem) // Called when a film is marked watched
-//    }
+//    lateinit var recyclerView: RecyclerView
+
+    private lateinit var watchlistViewModel: WatchlistViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, ".onCreate starts")
-
-        // todo get the viewmodel
-
-        setHasOptionsMenu(true) // Indicates we want onCreateOptionsMenu to be called
         super.onCreate(savedInstanceState)
+
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -58,6 +48,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         recyclerView = view.findViewById(R.id.watchlist_recyclerview)
         recyclerView.adapter = WatchlistRecyclerAdapter(requireActivity(), watchlist, WeakReference(this))
         recyclerView.setHasFixedSize(true)
+        setHasOptionsMenu(true)
         onWatchlistStateChange()
         super.onViewCreated(view, savedInstanceState)
     }
@@ -207,6 +198,10 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
             watchlist_recyclerview.visibility = View.GONE
             fragment_watchlist_empty_view_container.visibility = View.VISIBLE
         }
+    }
+
+    companion object{
+        private const val TAG = "WatchlistFragment"
     }
 
 }
