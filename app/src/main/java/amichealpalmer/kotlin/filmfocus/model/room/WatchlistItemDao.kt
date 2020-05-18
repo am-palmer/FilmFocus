@@ -1,7 +1,7 @@
 package amichealpalmer.kotlin.filmfocus.model.room
 
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -21,6 +21,6 @@ interface WatchlistItemDao {
 
     // Get our LiveData object
     @Query("SELECT * FROM watchlist")
-    fun getAllWatchlistItems(): MutableLiveData<ArrayList<WatchlistItem>>
+    fun getAllWatchlistItems(): LiveData<List<WatchlistItem>>
 
 }

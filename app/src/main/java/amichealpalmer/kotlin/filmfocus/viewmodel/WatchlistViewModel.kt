@@ -5,7 +5,7 @@ import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemRepository
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
@@ -21,7 +21,7 @@ class WatchlistViewModel(application: Application) : AndroidViewModel(applicatio
         repository.delete(watchlistItem)
     }
 
-    fun getWatchlist(): MutableLiveData<ArrayList<WatchlistItem>> {
+    fun getWatchlist(): LiveData<List<WatchlistItem>> {
         return repository.getWatchlist
     }
 

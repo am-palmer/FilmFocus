@@ -3,7 +3,7 @@ package amichealpalmer.kotlin.filmfocus.viewmodel
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemRepository
 import android.app.Application
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 
 class TimelineItemViewModel(application: Application) {
 
@@ -21,7 +21,7 @@ class TimelineItemViewModel(application: Application) {
         repository.deleteAll()
     }
 
-    fun getTimelineItemList(): MutableLiveData<ArrayList<TimelineItem>> {
+    fun getTimelineItemList(): LiveData<List<TimelineItem>> {
         return repository.getTimelineItems
     }
 

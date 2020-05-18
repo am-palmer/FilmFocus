@@ -22,6 +22,8 @@ import java.lang.ref.WeakReference
 
 class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener, ConfirmClearHistoryDialogFragment.onConfirmClearHistoryDialogListener { // note code duplication with other fragments
 
+    // todo: check we can still edit items properly, and have multiple copies of films -> room replacement strategy?
+
     private val TAG = "HistoryFragment"
     private var callback: OnTimelineItemSelectedListener? = null
     private lateinit var timelineList: ArrayList<TimelineItem>
@@ -114,7 +116,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, ".onContextItemSelected begins")
-        val adapter = recyclerView?.adapter as HistoryRecyclerAdapter
+        val adapter = recyclerView.adapter as HistoryRecyclerAdapter
         var position = -1
         try {
             position = adapter.position
@@ -143,7 +145,6 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
                 editFragment.setHistoryEditDialogSubmissionListener(this)
                 editFragment.show(childFragmentManager, EditHistoryItemDialogFragment.TAG)
             }
-            else -> true
         }
         return super.onContextItemSelected(item)
     }
@@ -169,7 +170,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     }
 
     private fun removeItemFromTimeline(item: TimelineItem) {
-        val adapter = recyclerView?.adapter as HistoryRecyclerAdapter
+        val adapter = recyclerView.adapter as HistoryRecyclerAdapter
         timelineList.remove(item)
         onTimelineItemListStateChange()
         adapter.removeTimelineItem(item)
@@ -179,7 +180,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     }
 
     private fun updateTimelineItem(item: TimelineItem, arrayPosition: Int) {
-        val adapter = recyclerView?.adapter as HistoryRecyclerAdapter
+        val adapter = recyclerView.adapter as HistoryRecyclerAdapter
         timelineList[arrayPosition] = item
         adapter.notifyItemChanged(arrayPosition) // Is this enough?
         onTimelineItemListStateChange()
@@ -191,7 +192,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         if (timelineList.size > 0) {
             timelineList.clear()
             onTimelineItemListStateChange()
-            val recyclerAdapter = recyclerView?.adapter as HistoryRecyclerAdapter
+            val recyclerAdapter = recyclerView.adapter as HistoryRecyclerAdapter
             recyclerAdapter.clearList()
         }
         // Update SharedPrefs

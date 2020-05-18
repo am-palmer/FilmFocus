@@ -8,7 +8,6 @@ import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchlistConfirmDeleteDialogFragment
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -22,31 +21,26 @@ import java.lang.ref.WeakReference
 class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener, WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
 
     private val TAG = "WatchlistFragment"
-    internal var callback: WatchlistFragmentDataListener? = null
-    private lateinit var watchlist: ArrayList<FilmThumbnail>
+    //internal var callback: WatchlistFragmentDataListener? = null
+    //private lateinit var watchlist: ArrayList<FilmThumbnail>
     lateinit var recyclerView: RecyclerView
-
-    fun setWatchlistFragmentDataListener(callback: WatchlistFragmentDataListener) {
-        this.callback = callback
-    }
-
-    interface WatchlistFragmentDataListener {
-        fun retrieveWatchlist(): ArrayList<FilmThumbnail>
-        fun clearWatchlist()
-        fun removeFilmFromWatchlist(film: FilmThumbnail)
-        fun addItemToTimeline(timelineItem: TimelineItem) // Called when a film is marked watched
-    }
+//
+//    fun setWatchlistFragmentDataListener(callback: WatchlistFragmentDataListener) {
+//        this.callback = callback
+//    }
+//
+//    interface WatchlistFragmentDataListener {
+//        fun retrieveWatchlist(): ArrayList<FilmThumbnail>
+//        fun clearWatchlist()
+//        fun removeFilmFromWatchlist(film: FilmThumbnail)
+//        fun addItemToTimeline(timelineItem: TimelineItem) // Called when a film is marked watched
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, ".onCreate starts")
 
-        watchlist = if (savedInstanceState == null) {
-            // Get the watchlist from SharedPrefs
-            callback!!.retrieveWatchlist()
-        } else {
-            savedInstanceState.getParcelableArrayList("watchlist")
-                    ?: throw NullPointerException()
-        }
+        // todo get the viewmodel
+
         setHasOptionsMenu(true) // Indicates we want onCreateOptionsMenu to be called
         super.onCreate(savedInstanceState)
     }
@@ -57,34 +51,15 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         Log.d(TAG, ".onCreateView called")
 
         val view = inflater.inflate(R.layout.fragment_watchlist, container, false)
-        recyclerView = view.findViewById(R.id.watchlist_recyclerview)
-        recyclerView.adapter = WatchlistRecyclerAdapter(requireActivity(), watchlist, WeakReference(this))
-        recyclerView.setHasFixedSize(true)
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        recyclerView = view.findViewById(R.id.watchlist_recyclerview)
+        recyclerView.adapter = WatchlistRecyclerAdapter(requireActivity(), watchlist, WeakReference(this))
+        recyclerView.setHasFixedSize(true)
         onWatchlistStateChange()
         super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is WatchlistFragmentDataListener) {
-            callback = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement onFilmSelectedListener")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        callback = null
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putParcelableArrayList("watchlist", watchlist)
-        super.onSaveInstanceState(outState)
     }
 
     // Checking if any of the dialogs associated with this fragment exist and reattaching the listeners
@@ -114,10 +89,10 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            val activity = callback as MainActivity
+            //val activity = callback as MainActivity
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                activity.closeKeyboard() // Todo: obscene solution
+                //activity.closeKeyboard() // Todo: obscene solution
                 onQueryTextChange(query)
                 return true
             }
@@ -195,28 +170,31 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
 
     // Removes film from the watchlist in the fragment, the adapter, and notifies the activity to save Watchlist to sharedPrefs
     private fun removeFilmFromWatchlist(film: FilmThumbnail) {
-        val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
-        watchlist.remove(film)
-        adapter.removeFilmFromWatchlist(film)
-        onWatchlistStateChange()
+        // todo rewrite with room
+//        val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
+//        watchlist.remove(film)
+//        adapter.removeFilmFromWatchlist(film)
+//        onWatchlistStateChange()
         // Update SharedPrefs
-        callback!!.removeFilmFromWatchlist(film)
+        //callback!!.removeFilmFromWatchlist(film)
     }
 
     // Completely clears Watchlist
     private fun clearWatchlist() {
-        val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
-        adapter.clearWatchlist()
-        watchlist.clear()
-        onWatchlistStateChange()
-        // Update SharedPrefs
-        callback!!.clearWatchlist()
+        // todo rewrite with room
+//        val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
+//        adapter.clearWatchlist()
+//        watchlist.clear()
+//        onWatchlistStateChange()
+//        // Update SharedPrefs
+//        //callback!!.clearWatchlist()
     }
 
     private fun addFilmToHistory(timelineItem: TimelineItem) {
-        removeFilmFromWatchlist(timelineItem.film)
+        // todo rewrite with room
+        //removeFilmFromWatchlist(timelineItem.film)
         // Update SharedPrefs
-        callback!!.addItemToTimeline(timelineItem)
+        //callback!!.addItemToTimeline(timelineItem)
     }
 
     // Called when any action which might result in an empty watchlist is taken, so we can show the empty view if need be

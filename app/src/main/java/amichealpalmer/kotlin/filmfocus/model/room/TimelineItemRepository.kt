@@ -3,14 +3,14 @@ package amichealpalmer.kotlin.filmfocus.model.room
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import android.app.Application
 import android.os.AsyncTask
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 
 // todo: coroutines
 
 class TimelineItemRepository(application: Application) {
 
     private val timelineDao: TimelineItemDao by lazy { TimelineItemDatabase.getInstance(application)!!.timelineItemDao() }
-    private val timelineList: MutableLiveData<ArrayList<TimelineItem>> by lazy { timelineDao.getAllTimelineItems() }
+    private val timelineList: LiveData<List<TimelineItem>> by lazy { timelineDao.getAllTimelineItems() }
 
     // Exposed API functions for the rest of the app
 
