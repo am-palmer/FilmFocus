@@ -6,8 +6,8 @@ import amichealpalmer.kotlin.filmfocus.adapter.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
-import amichealpalmer.kotlin.filmfocus.viewmodel.FilmThumbnailViewModel
-import amichealpalmer.kotlin.filmfocus.viewmodel.FilmThumbnailViewModelFactory
+import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModel
+import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModelFactory
 import android.app.Activity
 import android.os.Bundle
 import android.view.*
@@ -24,18 +24,19 @@ private const val ARG_RESULTS = "resultList"
 private const val ARG_SEARCH_STRING = "searchString"
 
 
-// todo: no longer retains content upon switching fragment in menu
-
 class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
-    private lateinit var resultListViewModel: FilmThumbnailViewModel
+    private lateinit var resultListViewModel: BrowseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Get our ViewModel
-        resultListViewModel = ViewModelProvider(requireActivity(), FilmThumbnailViewModelFactory(requireActivity().application))
-                .get(FilmThumbnailViewModel::class.java)
+        // Get our ViewModels
+        resultListViewModel = ViewModelProvider(requireActivity(), BrowseViewModelFactory(requireActivity().application))
+                .get(BrowseViewModel::class.java)
+
+        // todo get timeline and watchlist viewmodels
+
 
     }
 
@@ -80,7 +81,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
             adapter.submitList(it)
             adapter.notifyDataSetChanged() // todo: we shouldn't need to call this directly, fix
             browse_fragment_progressBar.visibility = View.GONE // todo: check this does what we expect
-            if (it.isNotEmpty()){
+            if (it.isNotEmpty()) {
                 fragment_search_empty_container.visibility = View.GONE
                 fragment_browse_recycler_framelayout.visibility = View.VISIBLE
             }
@@ -165,54 +166,15 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
     }
 
-
-    // todo: now in adapter, code the listeners here
-//
-//    override fun onContextItemSelected(item: MenuItem): Boolean { // todo: code duplication with watchlistRecyclerAdapter
-//        try {
-//            Log.d(TAG, ".onContextItemSelected called")
-//            Log.d(TAG, "menu item: ${item}")
-//            val adapter = recyclerView?.adapter as BrowseRecyclerAdapter
-//            var position: Int
-//            try {
-//                position = adapter.position
-//            } catch (e: NullPointerException) {
-//                Log.d(TAG, e.localizedMessage, e)
-//                return super.onContextItemSelected(item)
-//            }
-//
-//            when (item.itemId) {
-//                R.id.browse_film_context_menu_add -> {
-//                    val film = adapter.getFilmThumbnailAtPosition(position)
-//                    when (addFilmToWatchlist(film)) { // Note secondary effect
-//                        true -> Toast.makeText(requireContext(), "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
-//                        false -> Toast.makeText(requireContext(), "${film.title} is already in Watchlist", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//                R.id.browse_film_context_menu_mark_watched -> {
-//                    val film = adapter.getFilmThumbnailAtPosition(position)
-//                    val dialogFragment = WatchedDialogFragment.newInstance(film)
-//                    dialogFragment.setOnWatchedDialogSubmissionListener(this)
-//                    dialogFragment.show(childFragmentManager, WatchedDialogFragment.TAG)
-//                }
-//                else -> true
-//            }
-//
-//            return super.onContextItemSelected(item)
-//
-//        } catch (e: NullPointerException) {
-//            Log.e(TAG, ".onContextItemSelected: NPE - callback null?")
-//        }
-//        return false
-//    }
-
     override fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem) {
         // markFilmAsWatched(timelineItem)
         // todo: notify repository, update timeline
     }
 
     override fun markFilmWatched(film: FilmThumbnail) {
-        TODO("Not yet implemented")
+        val dialogFragment = WatchedDialogFragment.newInstance(film)
+        dialogFragment.setOnWatchedDialogSubmissionListener(this)
+        dialogFragment.show(childFragmentManager, WatchedDialogFragment.TAG)
     }
 
     // todo: if a film is in the watchlist, the option to remove it should be shown in the context menu regardless of where the context menu is shown
@@ -221,7 +183,11 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     }
 
     override fun addFilmToWatchlist(film: FilmThumbnail) {
-        TODO("Not yet implemented")
+//                    val film = adapter.getFilmThumbnailAtPosition(position)
+//                    when (addFilmToWatchlist(film)) { // Note secondary effect
+//                        true -> Toast.makeText(requireContext(), "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
+//                        false -> Toast.makeText(requireContext(), "${film.title} is already in Watchlist", Toast.LENGTH_SHORT).show()
+//                    }
     }
 
     override fun showFilmDetails(film: FilmThumbnail) {

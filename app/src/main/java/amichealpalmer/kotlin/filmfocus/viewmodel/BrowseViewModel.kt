@@ -8,9 +8,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-// Used to hold results in the browse fragment
+// Holds data displayed in the Browse fragment
 
-class FilmThumbnailViewModel(application: Application) : AndroidViewModel(application) {
+class BrowseViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: FilmThumbnailRepository by lazy { FilmThumbnailRepository(application) }
 
@@ -32,8 +32,8 @@ class FilmThumbnailViewModel(application: Application) : AndroidViewModel(applic
 
 }
 
-class FilmThumbnailViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+class BrowseViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return FilmThumbnailViewModel(application) as T
+        return BrowseViewModel(application) as T
     }
 }
