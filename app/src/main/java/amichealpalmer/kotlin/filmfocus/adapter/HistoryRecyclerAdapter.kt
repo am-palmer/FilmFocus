@@ -60,8 +60,8 @@ class HistoryRecyclerAdapter(
     override fun onBindViewHolder(holder: HelperViewHolder, position: Int) {
         Log.d(TAG, ".onBindViewHolder begins for position $position")
         if (timelineList.size > 0) {
-            Picasso.get().load(timelineList[position].film.posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
-                    .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(holder.poster)
+            Picasso.get().load(timelineList[position].film.posterURL).error(R.drawable.ic_image_loading_grey_48dp)
+                    .placeholder(R.drawable.ic_image_loading_grey_48dp).into(holder.poster)
 
             val date = timelineList[position].date
             val monthProperty: LocalDate.Property = date.monthOfYear()

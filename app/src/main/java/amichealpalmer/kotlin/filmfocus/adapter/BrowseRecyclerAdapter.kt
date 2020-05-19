@@ -85,8 +85,8 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
         }
 
         fun displayPoster(posterURL: String) {
-            Picasso.get().load(posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
-                    .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(poster)
+            Picasso.get().load(posterURL).error(R.drawable.ic_image_loading_grey_48dp)
+                    .placeholder(R.drawable.ic_image_loading_grey_48dp).into(poster)
         }
 
     }

@@ -134,7 +134,7 @@
                 android:scaleType="fitXY"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_year"
-                app:srcCompat="@drawable/ic_image_loading_darkgreen_48dp"
+                app:srcCompat="@drawable/ic_image_loading_grey_48dp"
                 tools:srcCompat="@drawable/poster_placeholder" />
 
             <TextView

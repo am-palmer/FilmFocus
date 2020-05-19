@@ -75,8 +75,8 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
 
         fragment_watchlist_watched_dialog_title.setText(R.string.edit_review)
 
-        Picasso.get().load(timelineItem.film.posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
-                .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(fragment_watchlist_watched_dialog_poster_iv)
+        Picasso.get().load(timelineItem.film.posterURL).error(R.drawable.ic_image_loading_grey_48dp)
+                .placeholder(R.drawable.ic_image_loading_grey_48dp).into(fragment_watchlist_watched_dialog_poster_iv)
 
         // ?
         dialog!!.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)

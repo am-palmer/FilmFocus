@@ -77,8 +77,8 @@ class FilmDetailDialogFragment : DialogFragment() {
         film_details_progressBar.visibility = View.GONE
 
         if (fragment_film_details_iv_poster != null) {
-            Picasso.get().load(film.posterURL).error(R.drawable.ic_image_loading_darkgreen_48dp)
-                    .placeholder(R.drawable.ic_image_loading_darkgreen_48dp).into(fragment_film_details_iv_poster)
+            Picasso.get().load(film.posterURL).error(R.drawable.ic_image_loading_grey_48dp)
+                    .placeholder(R.drawable.ic_image_loading_grey_48dp).into(fragment_film_details_iv_poster)
         }
     }
 
