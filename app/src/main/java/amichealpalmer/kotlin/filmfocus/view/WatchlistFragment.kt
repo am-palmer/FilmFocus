@@ -6,51 +6,59 @@ import amichealpalmer.kotlin.filmfocus.adapter.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
+import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchlistConfirmDeleteDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModel
+import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModelFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_watchlist.*
-import java.lang.ref.WeakReference
 
-class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmissionListener, WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
+class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener, WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
 
-
-    //internal var callback: WatchlistFragmentDataListener? = null
-    //private lateinit var watchlist: ArrayList<FilmThumbnail>
-//    lateinit var recyclerView: RecyclerView
+    // todo: finish refactoring this like browsefragment
 
     private lateinit var watchlistViewModel: WatchlistViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
+        watchlistViewModel = ViewModelProvider(requireActivity(), WatchlistViewModelFactory(requireActivity().application))
+                .get(WatchlistViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        Log.d(TAG, ".onCreateView called")
-
-        val view = inflater.inflate(R.layout.fragment_watchlist, container, false)
-        return view
+        return inflater.inflate(R.layout.fragment_watchlist, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView = view.findViewById(R.id.watchlist_recyclerview)
-        recyclerView.adapter = WatchlistRecyclerAdapter(requireActivity(), watchlist, WeakReference(this))
-        recyclerView.setHasFixedSize(true)
-        setHasOptionsMenu(true)
-        onWatchlistStateChange()
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().title = "Watchlist"
+        setHasOptionsMenu(true)
+
+        // Set up adapter
+        val recyclerView: RecyclerView = view.findViewById(R.id.watchlist_recyclerview)
+        recyclerView.setHasFixedSize(true)
+        val adapter = WatchlistRecyclerAdapter()
+        adapter.setFilmActionListener(this)
+        recyclerView.adapter = adapter
+
+        // Register observer for View model
+        watchlistViewModel.getWatchlist().observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+            adapter.notifyDataSetChanged()
+            onWatchlistStateChange()
+        })
+
     }
 
     // Checking if any of the dialogs associated with this fragment exist and reattaching the listeners
@@ -79,6 +87,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
             actionView = searchView
         }
 
+        // todo: reimplement adapter filter
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             //val activity = callback as MainActivity
 
@@ -90,8 +99,8 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
 
             override fun onQueryTextChange(newText: String): Boolean {
                 // Use the adapter filter to update the view
-                val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
-                adapter.filter.filter(newText)
+                // val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
+                //adapter.filter.filter(newText)
                 return true
             }
         })
@@ -112,34 +121,18 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        Log.d(TAG, ".onContextItemSelected called")
-        val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
-        var position = -1
-        try {
-            position = adapter.position
-        } catch (e: NullPointerException) {
-            Log.d(TAG, e.localizedMessage, e)
-            return super.onContextItemSelected(item)
-        }
-        when (item.itemId) {
-            R.id.film_thumbnail_context_menu_mark_watched -> {
-                val film = adapter.getItem(position)
-                val dialogFragment = WatchedDialogFragment.newInstance(film)
-                dialogFragment.setOnWatchedDialogSubmissionListener(this)
-                dialogFragment.show(childFragmentManager, WatchedDialogFragment.TAG)
-            }
-            R.id.film_thumbnail_context_menu_remove -> {
-                val film = adapter.getItem(position)
-                Toast.makeText(requireContext(), "Removed ${film.title} from Watchlist", Toast.LENGTH_SHORT).show()
-                removeFilmFromWatchlist(film)
-            }
-            else -> true
-        }
-        return super.onContextItemSelected(item)
+    override fun onWatchlistConfirmDeleteDialogSubmit() {
+        clearWatchlist()
     }
 
-    // Called when user submits Watched dialog; calls addFilmToHistory which removes film from the watchlist and adds it to the history
+    override fun markFilmWatched(film: FilmThumbnail) {
+        // Show the "Watched" dialog
+        val dialogFragment = WatchedDialogFragment.newInstance(film)
+        dialogFragment.setOnWatchedDialogSubmissionListener(this)
+        dialogFragment.show(childFragmentManager, WatchedDialogFragment.TAG)
+    }
+
+    // Called when user submits Watched dialog
     override fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem) {
         var status = when (timelineItem.status) {
             TIMELINE_ITEM_STATUS.DROPPED -> "Dropped"
@@ -149,49 +142,39 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         addFilmToHistory(timelineItem)
     }
 
-    override fun onWatchlistConfirmDeleteDialogSubmit() {
-        when (watchlist.isEmpty()) {
-            true -> Toast.makeText(requireContext(), "Watchlist is already empty", Toast.LENGTH_SHORT).show()
-            false -> {
-                clearWatchlist()
-                Toast.makeText(requireContext(), "Cleared watchlist", Toast.LENGTH_SHORT).show()
-            }
-        }
+    override fun showFilmDetails(film: FilmThumbnail) {
+        val fragment = FilmDetailDialogFragment.newInstance(film.imdbID)
+        fragment.show(childFragmentManager, FilmDetailDialogFragment.TAG)
     }
 
-    // Removes film from the watchlist in the fragment, the adapter, and notifies the activity to save Watchlist to sharedPrefs
-    private fun removeFilmFromWatchlist(film: FilmThumbnail) {
-        // todo rewrite with room
-//        val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
-//        watchlist.remove(film)
-//        adapter.removeFilmFromWatchlist(film)
-//        onWatchlistStateChange()
-        // Update SharedPrefs
-        //callback!!.removeFilmFromWatchlist(film)
+    override fun removeFilmFromWatchlist(watchlistItem: WatchlistItem) {
+        watchlistViewModel.removeItem(watchlistItem)
+        Toast.makeText(requireContext(), "Removed ${watchlistItem.title} from Watchlist", Toast.LENGTH_SHORT).show()
     }
 
-    // Completely clears Watchlist
     private fun clearWatchlist() {
-        // todo rewrite with room
-//        val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
-//        adapter.clearWatchlist()
-//        watchlist.clear()
-//        onWatchlistStateChange()
-//        // Update SharedPrefs
-//        //callback!!.clearWatchlist()
+        if (watchlistViewModel.getWatchlist().value.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "Watchlist already empty", Toast.LENGTH_SHORT).show()
+        } else {
+            watchlistViewModel.clearWatchlist()
+            Toast.makeText(requireContext(), "Cleared watchlist", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun addFilmToHistory(timelineItem: TimelineItem) {
-        // todo rewrite with room
-        //removeFilmFromWatchlist(timelineItem.film)
-        // Update SharedPrefs
-        //callback!!.addItemToTimeline(timelineItem)
+        watchlistViewModel.addItemToHistory(timelineItem)
+        removeFilmFromWatchlist(timelineItem.film as WatchlistItem)
     }
 
-    // Called when any action which might result in an empty watchlist is taken, so we can show the empty view if need be
+    override fun addFilmToWatchlist(film: FilmThumbnail) {
+        // Has no function here
+    }
+
+    // Called when any action which might result in an empty watchlist is taken, so we can show the empty view if need be -> used by the observer anonymous method
     private fun onWatchlistStateChange() {
         // todo: could have animation because right now change is abrupt
-        if (watchlist.isNotEmpty()) {
+        if (!watchlistViewModel.getWatchlist().value.isNullOrEmpty()) {
             fragment_watchlist_empty_view_container.visibility = View.GONE
             watchlist_recyclerview.visibility = View.VISIBLE
         } else {
@@ -200,7 +183,7 @@ class WatchlistFragment : Fragment(), WatchedDialogFragment.onWatchedDialogSubmi
         }
     }
 
-    companion object{
+    companion object {
         private const val TAG = "WatchlistFragment"
     }
 

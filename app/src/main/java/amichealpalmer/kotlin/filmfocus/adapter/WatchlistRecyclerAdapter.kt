@@ -22,6 +22,10 @@ class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAda
     //private val fullList = ArrayList<FilmThumbnail>(resultList)
     //private var filteredList = ArrayList<FilmThumbnail>()
 
+    fun setFilmActionListener(listener: FilmActionListener){
+        this.filmActionListener = listener
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WatchlistItemViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.browse_films_item, parent, false)
         return WatchlistItemViewHolder(view)

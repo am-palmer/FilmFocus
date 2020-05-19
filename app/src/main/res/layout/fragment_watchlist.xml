@@ -12,6 +12,7 @@
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="3"
+        android:visibility="gone"
         tools:listitem="@layout/browse_films_item"
         tools:visibility="visible" />
 
@@ -20,6 +21,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="visible"
         tools:visibility="gone">
 
         <ImageView

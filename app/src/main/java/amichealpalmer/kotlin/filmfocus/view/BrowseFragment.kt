@@ -6,6 +6,7 @@ import amichealpalmer.kotlin.filmfocus.adapter.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
+import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModel
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModelFactory
@@ -47,16 +48,16 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Set the empty view as visible by default, turn it off once a query is entered
+        // Set the empty view as visible by default, turn it off once a query is entered // todo: move this to a method
         if (browseViewModel.getResults().value!!.size > 0) {
-            fragment_search_empty_container.visibility = View.GONE
+            fragment_browse_empty_container.visibility = View.GONE
             fragment_browse_recycler_framelayout.visibility = View.VISIBLE
         } else {
             if (browseViewModel.getQuery().value == null) {
-                fragment_search_empty_container.visibility = View.VISIBLE
+                fragment_browse_empty_container.visibility = View.VISIBLE
                 fragment_browse_recycler_framelayout.visibility = View.GONE
             } else {
-                fragment_search_empty_container.visibility = View.GONE
+                fragment_browse_empty_container.visibility = View.GONE
                 val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext
                         ?: context)
                 searchView.setQuery(browseViewModel.getQuery().value, false) // Set the search field to query, if it exists
@@ -71,7 +72,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
         val recyclerView: RecyclerView = view.findViewById(R.id.browse_films_recyclerview_id)
         recyclerView.setHasFixedSize(true)
-        recyclerView.post { browse_films_recyclerview_id.scrollToPosition(scrollPosition) }
+        recyclerView.post { browse_films_recyclerview_id.scrollToPosition(scrollPosition) } // todo // needed? probably not, but we need to save the scroll position if we want to do this
         val adapter = BrowseRecyclerAdapter()
         adapter.setFilmActionListener(this)
         recyclerView.adapter = adapter
@@ -79,11 +80,8 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         browseViewModel.getResults().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             adapter.submitList(it)
             adapter.notifyDataSetChanged() // todo: we shouldn't need to call this directly, fix
+            onResultsStateChange()
             browse_fragment_progressBar.visibility = View.GONE // todo: check this does what we expect
-            if (it.isNotEmpty()) {
-                fragment_search_empty_container.visibility = View.GONE
-                fragment_browse_recycler_framelayout.visibility = View.VISIBLE
-            }
         })
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -143,7 +141,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
                 inputMethodManager.hideSoftInputFromWindow(activity!!.currentFocus!!.windowToken, 0)
 
                 // Set up the UI
-                fragment_search_empty_container.visibility = View.GONE
+                fragment_browse_empty_container.visibility = View.GONE
                 fragment_browse_recycler_framelayout.visibility = View.VISIBLE
                 browse_fragment_progressBar.visibility = View.VISIBLE
 
@@ -210,8 +208,19 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         browseViewModel.markWatched(timelineItem)
     }
 
-    override fun removeFilmFromWatchlist(film: FilmThumbnail) {
+    override fun removeFilmFromWatchlist(watchlistItem: WatchlistItem) {
         // Does nothing in this context
+    }
+
+    // Check what view we should be displaying
+    private fun onResultsStateChange() {
+        if (!browseViewModel.getResults().value!!.isNullOrEmpty()) {
+            fragment_browse_empty_container.visibility = View.GONE
+            fragment_browse_recycler_framelayout.visibility = View.VISIBLE
+        } else {
+            fragment_browse_empty_container.visibility = View.VISIBLE
+            fragment_browse_recycler_framelayout.visibility = View.GONE
+        }
     }
 
     companion object {
