@@ -1,14 +1,11 @@
 package amichealpalmer.kotlin.filmfocus.adapter
 
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.view.FilmActionListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
@@ -16,27 +13,35 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import java.util.*
-import kotlin.collections.ArrayList
 
-class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAdapter.WatchlistItemViewHolder>(DIFF_CALLBACK), Filterable {
+class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAdapter.WatchlistItemViewHolder>(DIFF_CALLBACK) {
 
     private var filmActionListener: FilmActionListener? = null
     //var position = 0
-    // todo: reimplement filtering the list (Filterable interface) - have to use switchmap, probably in the watchlistfragment
 
-    private lateinit var fullList: List<WatchlistItem>
-    private var filteredList = ArrayList<WatchlistItem>()
+    private var fullList = listOf<WatchlistItem>()
 
-    fun setFilmActionListener(listener: FilmActionListener){
+    fun setFilmActionListener(listener: FilmActionListener) {
         this.filmActionListener = listener
     }
 
-    // We notify the adapter when the watchlist changes, for the purposes of filtering
-    fun setWatchlist(watchlist: List<WatchlistItem>){
-        fullList = watchlist
-        notifyDataSetChanged()
+    // We notify the adapter when the Watchlist changes, for the purposes of filtering
+    fun modifyList(list: List<WatchlistItem>?){
+        fullList = list ?: listOf()
+        submitList(list)
     }
 
+    // Used by the searchView in WatchlistFragment to filter the items in the watchlist
+    fun filter(query: CharSequence?) {
+        val pattern = query.toString().toLowerCase(Locale.US).trim()
+        val list = mutableListOf<WatchlistItem>()
+        if (pattern.isNotEmpty()) {
+            list.addAll(fullList.filter { it.title.toLowerCase(Locale.US).contains(pattern) })
+        } else {
+            list.addAll(fullList)
+        }
+        submitList(list)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WatchlistItemViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.browse_films_item, parent, false)
@@ -51,42 +56,13 @@ class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAda
     companion object {
         private const val TAG = "WatchlistRecyclerAdapt"
 
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<WatchlistItem>(){
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<WatchlistItem>() {
             override fun areItemsTheSame(oldItem: WatchlistItem, newItem: WatchlistItem): Boolean {
                 return oldItem.imdbID == newItem.imdbID
             }
 
             override fun areContentsTheSame(oldItem: WatchlistItem, newItem: WatchlistItem): Boolean {
                 return areItemsTheSame(oldItem, newItem)
-            }
-        }
-    }
-
-    // todo: reimplement this with livedata list
-    override fun getFilter(): Filter {
-        return object : Filter() {
-            override fun performFiltering(constraint: CharSequence?): FilterResults {
-                filteredList.clear()
-                if (constraint == null || constraint.isEmpty()) {
-                    filteredList.addAll(fullList)
-                } else {
-                    val pattern = constraint.toString().toLowerCase(Locale.US).trim()
-                    for (item in fullList) {
-                        if (item.title.toLowerCase(Locale.US).contains(pattern) || item.year.contains(pattern)) {
-                            filteredList.add(item)
-                        }
-                    }
-                }
-                val filterResults = FilterResults()
-                filterResults.values = filteredList
-
-                return filterResults
-            }
-
-            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                resultList.clear()
-                resultList.addAll(results!!.values as ArrayList<FilmThumbnail>)
-                notifyDataSetChanged()
             }
         }
     }

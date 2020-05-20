@@ -24,9 +24,10 @@ import kotlinx.android.synthetic.main.fragment_watchlist.*
 
 class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener, WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
 
-    // todo: finish refactoring this like browsefragment
+    // todo: store search string (if it exists) as well as scroll position and restore them on rotation
 
     private lateinit var watchlistViewModel: WatchlistViewModel
+    private lateinit var adapter: WatchlistRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,10 +52,11 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
         val adapter = WatchlistRecyclerAdapter()
         adapter.setFilmActionListener(this)
         recyclerView.adapter = adapter
+        this.adapter = adapter
 
         // Register observer for View model
         watchlistViewModel.getWatchlist().observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
+            adapter.modifyList(it)
             adapter.notifyDataSetChanged()
             onWatchlistStateChange()
         })
@@ -87,24 +89,20 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
             actionView = searchView
         }
 
-        // todo: reimplement adapter filter
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            //val activity = callback as MainActivity
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                //activity.closeKeyboard() // Todo: obscene solution
-                onQueryTextChange(query)
+                // todo: dismiss the keyboard
                 return true
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                // Use the adapter filter to update the view
-                // val adapter = recyclerView.adapter as WatchlistRecyclerAdapter
-                //adapter.filter.filter(newText)
+                // Use the adapter filter to update the recyclerview
+                adapter.filter(newText)
                 return true
             }
         })
-        searchView.setOnClickListener { view -> } // ??
+        //searchView.setOnClickListener { view -> } // ??
 
         super.onCreateOptionsMenu(menu, inflater)
     }
