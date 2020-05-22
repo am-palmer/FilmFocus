@@ -3,6 +3,7 @@ package amichealpalmer.kotlin.filmfocus.adapter
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.view.FilmActionListener
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -82,20 +83,19 @@ class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAda
             }
 
             cardView.setOnCreateContextMenuListener { menu, v, menuInfo ->
-                menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
-                    val position = adapterPosition
-                    if (position != RecyclerView.NO_POSITION) {
+                Log.d(TAG, "long clicked context menu")
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
                         filmActionListener?.markFilmWatched(getItem(position))
+                        true
                     }
-                    true
-                }
-                menu?.add(R.string.remove_from_watchlist)?.setOnMenuItemClickListener {
-                    val position = adapterPosition
-                    if (position != RecyclerView.NO_POSITION) {
+                    menu?.add(R.string.remove_from_watchlist)?.setOnMenuItemClickListener {
                         filmActionListener?.removeFilmFromWatchlist(getItem(position))
+                        true
                     }
-                    true
                 }
+
             }
 
         }

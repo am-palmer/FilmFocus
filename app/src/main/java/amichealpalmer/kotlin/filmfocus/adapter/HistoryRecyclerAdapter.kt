@@ -32,6 +32,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
 
     interface TimelineActionListener{
         fun editTimelineItem(item: TimelineItem)
+        fun removeTimelineItem(item: TimelineItem)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineItemViewHolder {

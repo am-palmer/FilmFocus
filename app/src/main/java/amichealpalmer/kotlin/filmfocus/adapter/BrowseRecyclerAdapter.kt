@@ -3,6 +3,7 @@ package amichealpalmer.kotlin.filmfocus.adapter
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.view.FilmActionListener
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,31 +57,43 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
         private val cardView = view.findViewById<CardView>(R.id.film_item_cardview_id)
 
         init {
-            val position = adapterPosition
-            if (position != RecyclerView.NO_POSITION) {
 
-                val item = getItem(position)
-
-                //displayPoster(item.posterURL)
-
-                cardView.setOnClickListener {
-                    // Display FilmDetailsDialogFragment
-                    filmActionListener?.showFilmDetails(item)
+            cardView.setOnClickListener {
+                // Display FilmDetailsDialogFragment
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    filmActionListener?.showFilmDetails(getItem(position))
                 }
+            }
 
-                cardView.setOnCreateContextMenuListener { menu, v, menuInfo ->
+
+
+            // todo: doesn't work, why?
+            cardView.setOnCreateContextMenuListener { menu, v, menuInfo ->
+                Log.d(TAG, "createContextmenuListener triggered")
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
                     menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
-                        filmActionListener?.addFilmToWatchlist(item)
+                        filmActionListener?.addFilmToWatchlist(getItem(position))
                         true
                     }
                     menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
-                        filmActionListener?.markFilmWatched(item)
+                        filmActionListener?.markFilmWatched(getItem(position))
                         true
                     }
                 }
             }
 
+            cardView.setOnLongClickListener{
+                //Toast.makeText(context, listFriends[position].id, Toast.LENGTH_SHORT).show()
+                //mBundle.putString(friendProfile.EXTRA_ID, listFriends[position].id)
+                //profileFrag.profileData = mBundle
+                //return@setOnLongClickListener true
+                true
+            }
+
         }
+
 
         fun displayPoster(posterURL: String) {
             Picasso.get().load(posterURL).error(R.drawable.ic_image_loading_grey_48dp)

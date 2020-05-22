@@ -12,7 +12,6 @@ import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModel
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModelFactory
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
@@ -173,10 +172,9 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     override fun addFilmToWatchlist(film: FilmThumbnail) {
         val currentWatchlist = browseViewModel.getWatchlist()
         // Wait for thread to get the object, and then try to add the film to the watchlist, first checking if it exists
-// todo: currently shows both toast messages meaning there's some async problem
+// todo:  this will trigger when it changes, so it will always trigger twice! need 'observe once' or some other fix
         currentWatchlist.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             // todo: we need to remove this observer later on possibly
-            Log.d(TAG, ".observe triggers")
             var exists = false
             for (f in currentWatchlist.value!!) {
                 if (f.imdbID == film.imdbID) {

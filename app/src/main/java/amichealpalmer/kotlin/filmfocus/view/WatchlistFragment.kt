@@ -102,7 +102,7 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
                 return true
             }
         })
-        //searchView.setOnClickListener { view -> } // ??
+        searchView.setOnClickListener { view -> } // ??
 
         super.onCreateOptionsMenu(menu, inflater)
     }
