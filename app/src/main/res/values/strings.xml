@@ -26,6 +26,7 @@
     <string name="remove_item_from_history">Remove From History</string>
     <string name="mark_watched">Mark Watched</string>
     <string name="edit_review">Edit Review</string>
+    <string name="edit">Edit</string>
     <string name="remove_all_from_watchlist">Clear Watchlist</string>
 
     <string name="dialog_review_hint">Write a review for this film (160 characters)…</string>

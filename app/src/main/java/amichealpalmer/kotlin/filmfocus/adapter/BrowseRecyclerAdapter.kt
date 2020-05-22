@@ -3,7 +3,6 @@ package amichealpalmer.kotlin.filmfocus.adapter
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.view.FilmActionListener
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,37 +50,36 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
     }
 
     inner class FilmThumbnailViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+
+        // todo: synthetic imports
         private val poster: ImageView = view.findViewById(R.id.film_poster_id)
         private val cardView = view.findViewById<CardView>(R.id.film_item_cardview_id)
 
         init {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
 
-            cardView.setOnClickListener {
-                // Display FilmDetailsDialogFragment
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    filmActionListener?.showFilmDetails(getItem(position))
+                val item = getItem(position)
+
+                //displayPoster(item.posterURL)
+
+                cardView.setOnClickListener {
+                    // Display FilmDetailsDialogFragment
+                    filmActionListener?.showFilmDetails(item)
+                }
+
+                cardView.setOnCreateContextMenuListener { menu, v, menuInfo ->
+                    menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
+                        filmActionListener?.addFilmToWatchlist(item)
+                        true
+                    }
+                    menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
+                        filmActionListener?.markFilmWatched(item)
+                        true
+                    }
                 }
             }
 
-            cardView.setOnCreateContextMenuListener { menu, v, menuInfo ->
-                menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
-                    val position = adapterPosition
-                    Log.d(TAG, "add to watchlist clicked with adapterposition: $position")
-                    if (position != RecyclerView.NO_POSITION) {
-                        filmActionListener?.addFilmToWatchlist(getItem(position))
-                    }
-                    true
-                }
-                menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
-                    val position = adapterPosition
-                    Log.d(TAG, "mark watched clicked with adapterposition: $position")
-                    if (position != RecyclerView.NO_POSITION) {
-                        filmActionListener?.markFilmWatched(getItem(position))
-                    }
-                    true
-                }
-            }
         }
 
         fun displayPoster(posterURL: String) {

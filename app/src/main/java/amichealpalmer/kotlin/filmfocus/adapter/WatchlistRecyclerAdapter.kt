@@ -26,7 +26,7 @@ class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAda
     }
 
     // We notify the adapter when the Watchlist changes, for the purposes of filtering
-    fun modifyList(list: List<WatchlistItem>?){
+    fun modifyList(list: List<WatchlistItem>?) {
         fullList = list ?: listOf()
         submitList(list)
     }
