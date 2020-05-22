@@ -4,66 +4,87 @@ import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.adapter.HistoryRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
+import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmClearHistoryDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmRemoveFilmFromHistoryDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.EditHistoryItemDialogFragment
+import amichealpalmer.kotlin.filmfocus.viewmodel.TimelineViewModel
+import amichealpalmer.kotlin.filmfocus.viewmodel.TimelineViewModelFactory
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_history.*
 import java.lang.ref.WeakReference
 
+// todo: continue refactoring to use viewmodel
 // todo: sometimes the literal time 'line' breaks when a film is removed.
 
-class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener, ConfirmClearHistoryDialogFragment.onConfirmClearHistoryDialogListener { // note code duplication with other fragments
+class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.TimelineActionListener, ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener, ConfirmClearHistoryDialogFragment.onConfirmClearHistoryDialogListener { // note code duplication with other fragments
 
     // todo: check we can still edit items properly, and have multiple copies of films -> room replacement strategy?
 
-    private val TAG = "HistoryFragment"
-    private var callback: OnTimelineItemSelectedListener? = null
-    private lateinit var timelineList: ArrayList<TimelineItem>
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var timelineViewModel: TimelineViewModel
+    private lateinit var adapter: HistoryRecyclerAdapter
 
-    fun setOnTimelineItemSelectedListener(callback: OnTimelineItemSelectedListener) {
-        this.callback = callback
-    }
-
-    interface OnTimelineItemSelectedListener {
-        fun addFilmToWatchlistFromHistory(film: FilmThumbnail): Boolean // Todo: would be nice if the browse and history fragments could make use of the same method in activity
-        fun clearHistory(): Boolean
-        fun removeItemFromHistory(timelineItem: TimelineItem)
-        fun updateHistoryItem(timelineItem: TimelineItem)
-        fun retrieveHistory(): ArrayList<TimelineItem>
-    }
+//    interface OnTimelineItemSelectedListener {
+//        fun addFilmToWatchlistFromHistory(film: FilmThumbnail): Boolean // Todo: would be nice if the browse and history fragments could make use of the same method in activity
+//        fun clearHistory(): Boolean
+//        fun removeItemFromHistory(timelineItem: TimelineItem)
+//        fun updateHistoryItem(timelineItem: TimelineItem)
+//        fun retrieveHistory(): ArrayList<TimelineItem>
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, ".onCreate begins")
-        timelineList = callback!!.retrieveHistory() // Get list from SharedPrefs
-        timelineList.reverse() // Reverse the list so it's shown from newest to oldest
-        setHasOptionsMenu(true)
+        //timelineList = callback!!.retrieveHistory() // Get list from SharedPrefs
+        //timelineList.reverse() // Reverse the list so it's shown from newest to oldest
+        //setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
+
+        timelineViewModel = ViewModelProvider(requireActivity(), TimelineViewModelFactory(requireActivity().application))
+                .get(TimelineViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        Log.d(TAG, ".onCreateView begins")
-        val view = inflater.inflate(R.layout.fragment_history, container, false)
-        recyclerView = view.findViewById(R.id.fragment_history_timeline_rv)
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = HistoryRecyclerAdapter(requireActivity(), timelineList, WeakReference(this))
-        recyclerView.setHasFixedSize(true)
-        return view
+//        // Inflate the layout for this fragment
+//        Log.d(TAG, ".onCreateView begins")
+//        val view = inflater.inflate(R.layout.fragment_history, container, false)
+//        recyclerView = view.findViewById(R.id.fragment_history_timeline_rv)
+//        recyclerView.layoutManager = LinearLayoutManager(activity)
+//        recyclerView.adapter = HistoryRecyclerAdapter(requireActivity(), timelineList, WeakReference(this))
+//        recyclerView.setHasFixedSize(true)
+        return inflater.inflate(R.layout.fragment_history, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        onTimelineItemListStateChange()
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().title = "History"
+        //onTimelineItemListStateChange()
+        setHasOptionsMenu(true)
+
+        // Adapter
+        val recyclerView: RecyclerView = view.findViewById(R.id.fragment_history_timeline_rv)
+        recyclerView.setHasFixedSize(true)
+        val adapter = HistoryRecyclerAdapter()
+        adapter.setFilmActionListener(this)
+        adapter.setTimelineActionListener(this)
+        recyclerView.adapter = adapter
+        this.adapter = adapter
+
+        // Observer
+        timelineViewModel.getTimelineItemList().observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
+            adapter.notifyDataSetChanged()
+            onTimelineItemListStateChange()
+        })
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -79,7 +100,6 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
                 return true
             }
         }
-
         return super.onOptionsItemSelected(item)
     }
 
@@ -155,13 +175,34 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     }
 
     override fun onConfirmClearHistoryDialogSubmit() {
-        when (timelineList.isEmpty()) {
-            true -> Toast.makeText(requireContext(), "History is already empty", Toast.LENGTH_SHORT).show()
-            false -> {
-                clearHistory()
-                Toast.makeText(requireContext(), "Cleared History", Toast.LENGTH_SHORT).show()
-            }
-        }
+        // when (timelineList.isEmpty()) {
+        // true -> Toast.makeText(requireContext(), "History is already empty", Toast.LENGTH_SHORT).show()
+        //false -> {
+        clearHistory()
+        //   Toast.makeText(requireContext(), "Cleared History", Toast.LENGTH_SHORT).show()
+        // }
+        // }
+    }
+
+    override fun addFilmToWatchlist(film: FilmThumbnail) {
+        TODO("Not yet implemented")
+    }
+
+    override fun markFilmWatched(film: FilmThumbnail) {
+        TODO("Not yet implemented")
+    }
+
+    override fun removeFilmFromWatchlist(watchlistItem: WatchlistItem) {
+        // todo: ability to remove film from watchlist from other fragments
+    }
+
+    override fun showFilmDetails(film: FilmThumbnail) {
+        val fragment = FilmDetailDialogFragment.newInstance(film.imdbID)
+        fragment.show(childFragmentManager, FilmDetailDialogFragment.TAG)
+    }
+
+    override fun editTimelineItem(item: TimelineItem) {
+        TODO("Not yet implemented")
     }
 
     override fun onEditHistoryItemDialogSubmissionListener(timelineItem: TimelineItem, arrayPosition: Int) {
@@ -188,24 +229,14 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
         callback!!.updateHistoryItem(item)
     }
 
-    private fun clearHistory(): Boolean {
-        if (timelineList.size > 0) {
-            timelineList.clear()
-            onTimelineItemListStateChange()
-            val recyclerAdapter = recyclerView.adapter as HistoryRecyclerAdapter
-            recyclerAdapter.clearList()
-        }
-        // Update SharedPrefs
-        return callback!!.clearHistory() // Passing boolean around which we don't need
-    }
-
-    private fun addItemToWatchlist(film: FilmThumbnail): Boolean {
-        return callback!!.addFilmToWatchlistFromHistory(film)
+    private fun clearHistory() {
+        timelineViewModel.clearTimeline()
+        Toast.makeText(context, "Cleared History", Toast.LENGTH_SHORT).show()
     }
 
     // Called when we need to check if we should display the empty view for the Timeline fragment
     private fun onTimelineItemListStateChange() {
-        if (timelineList.isNotEmpty()) {
+        if (!timelineViewModel.getTimelineItemList().value.isNullOrEmpty()) {
             fragment_history_empty_view_container.visibility = View.GONE
             fragment_history_timeline_rv.visibility = View.VISIBLE
         } else {
@@ -215,16 +246,7 @@ class HistoryFragment : Fragment(), ConfirmRemoveFilmFromHistoryDialogFragment.O
     }
 
     companion object {
-        private const val TAG = "HistoryFragmentCompan"
-        private const val ARG_TIMELINE_LIST = "timelineList"
-        fun newInstance(timelineList: ArrayList<TimelineItem>): HistoryFragment {
-            Log.d(TAG, ".newInstance")
-            val fragment = HistoryFragment()
-            val args = Bundle()
-            args.putParcelableArrayList(ARG_TIMELINE_LIST, timelineList)
-            fragment.arguments = args
-            return fragment
-        }
+        private const val TAG = "HistoryFragment"
     }
 
 }

@@ -173,7 +173,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     override fun addFilmToWatchlist(film: FilmThumbnail) {
         val currentWatchlist = browseViewModel.getWatchlist()
         // Wait for thread to get the object, and then try to add the film to the watchlist, first checking if it exists
-
+// todo: currently shows both toast messages meaning there's some async problem
         currentWatchlist.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             // todo: we need to remove this observer later on possibly
             Log.d(TAG, ".observe triggers")

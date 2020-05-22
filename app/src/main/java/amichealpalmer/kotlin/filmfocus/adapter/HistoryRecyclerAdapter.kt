@@ -31,7 +31,6 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
     }
 
     interface TimelineActionListener{
-        fun clearTimeline()
         fun editTimelineItem(item: TimelineItem)
     }
 

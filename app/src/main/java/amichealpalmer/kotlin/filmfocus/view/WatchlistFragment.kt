@@ -108,7 +108,6 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d(TAG, ".onOptionsItemSelected triggers")
         when (item.itemId) {
             R.id.watchlist_fragment_more_menu_removeAll -> {
                 val fragment = WatchlistConfirmDeleteDialogFragment.newInstance(this)
