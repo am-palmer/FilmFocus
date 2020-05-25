@@ -11,11 +11,13 @@ import amichealpalmer.kotlin.filmfocus.view.dialog.EditHistoryItemDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.TimelineViewModel
 import amichealpalmer.kotlin.filmfocus.viewmodel.TimelineViewModelFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_history.*
 
@@ -29,33 +31,14 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     private lateinit var timelineViewModel: TimelineViewModel
     private lateinit var adapter: HistoryRecyclerAdapter
 
-//    interface OnTimelineItemSelectedListener {
-//        fun addFilmToWatchlistFromHistory(film: FilmThumbnail): Boolean // Todo: would be nice if the browse and history fragments could make use of the same method in activity
-//        fun clearHistory(): Boolean
-//        fun removeItemFromHistory(timelineItem: TimelineItem)
-//        fun updateHistoryItem(timelineItem: TimelineItem)
-//        fun retrieveHistory(): ArrayList<TimelineItem>
-//    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        //timelineList = callback!!.retrieveHistory() // Get list from SharedPrefs
-        //timelineList.reverse() // Reverse the list so it's shown from newest to oldest
-        //setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
-
         timelineViewModel = ViewModelProvider(requireActivity(), TimelineViewModelFactory(requireActivity().application))
                 .get(TimelineViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-//        // Inflate the layout for this fragment
-//        Log.d(TAG, ".onCreateView begins")
-//        val view = inflater.inflate(R.layout.fragment_history, container, false)
-//        recyclerView = view.findViewById(R.id.fragment_history_timeline_rv)
-//        recyclerView.layoutManager = LinearLayoutManager(activity)
-//        recyclerView.adapter = HistoryRecyclerAdapter(requireActivity(), timelineList, WeakReference(this))
-//        recyclerView.setHasFixedSize(true)
         return inflater.inflate(R.layout.fragment_history, container, false)
     }
 
@@ -69,6 +52,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         val recyclerView: RecyclerView = view.findViewById(R.id.fragment_history_timeline_rv)
         recyclerView.setHasFixedSize(true)
         val adapter = HistoryRecyclerAdapter()
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter.setFilmActionListener(this)
         adapter.setTimelineActionListener(this)
         recyclerView.adapter = adapter
@@ -76,7 +60,8 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
 
         // Observer
         timelineViewModel.getTimelineItemList().observe(viewLifecycleOwner, Observer {
-            adapter.submitList(it)
+            Log.d(TAG, ".observe starts: list size is " + timelineViewModel.getTimelineItemList().value?.size)
+            adapter.submitList(it.reversed()) // todo: check if reversed is correct order here
             adapter.notifyDataSetChanged()
             onTimelineItemListStateChange()
         })
@@ -99,20 +84,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         return super.onOptionsItemSelected(item)
     }
 
-//    override fun onAttach(context: Context) {
-//        super.onAttach(context)
-//        if (context is OnTimelineItemSelectedListener) {
-//            callback = context
-//        } else {
-//            throw RuntimeException(context.toString() + " must implement OnTimelineItemSelectedListener")
-//        }
-//    }
-
-//    override fun onDetach() {
-//        super.onDetach()
-//        callback = null
-//    }
-
     // Reattach listener interfaces to dialog fragments associated with this fragment
     override fun onResume() {
         super.onResume()
@@ -130,6 +101,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         }
     }
 
+    /*
 //    override fun onContextItemSelected(item: MenuItem): Boolean {
 //        Log.d(TAG, ".onContextItemSelected begins")
 //        val adapter = recyclerView.adapter as HistoryRecyclerAdapter
@@ -165,6 +137,8 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
 //        return super.onContextItemSelected(item)
 //    }
 
+     */
+
     override fun onConfirmRemoveItemDialogAction(timelineItem: TimelineItem) {
         removeTimelineItem(timelineItem)
         Toast.makeText(requireContext(), "Removed ${timelineItem.film.title} from History", Toast.LENGTH_SHORT).show()
@@ -181,11 +155,11 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     }
 
     override fun addFilmToWatchlist(film: FilmThumbnail) {
-        TODO("Not yet implemented")
+        timelineViewModel.addItemToWatchlist(film)
     }
 
     override fun markFilmWatched(film: FilmThumbnail) {
-        TODO("Not yet implemented")
+        // Does nothing here
     }
 
     override fun removeFilmFromWatchlist(watchlistItem: WatchlistItem) {
@@ -198,7 +172,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     }
 
     override fun editTimelineItem(item: TimelineItem) {
-        TODO("Not yet implemented")
+        timelineViewModel.addUpdateItem(item)
     }
 
     override fun onEditHistoryItemDialogSubmissionListener(timelineItem: TimelineItem, arrayPosition: Int) {
@@ -208,29 +182,8 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     }
 
     override fun removeTimelineItem(item: TimelineItem) {
-        TODO("Not yet implemented")
+        timelineViewModel.removeItem(item)
     }
-
-    //todo: reimplement as removeTimelineItem
-//    private fun removeItemFromTimeline(item: TimelineItem) {
-//        val adapter = recyclerView.adapter as HistoryRecyclerAdapter
-//        timelineList.remove(item)
-//        onTimelineItemListStateChange()
-//        adapter.removeTimelineItem(item)
-//        adapter.notifyDataSetChanged()
-//        // Update sharedPrefs
-//        callback!!.removeItemFromHistory(item)
-//    }
-
-    //todo: reimplement as edittimelineitem
-//    private fun updateTimelineItem(item: TimelineItem, arrayPosition: Int) {
-//        val adapter = recyclerView.adapter as HistoryRecyclerAdapter
-//        timelineList[arrayPosition] = item
-//        adapter.notifyItemChanged(arrayPosition) // Is this enough?
-//        onTimelineItemListStateChange()
-//        // Update sharedPrefs
-//        callback!!.updateHistoryItem(item)
-//    }
 
     private fun clearHistory() {
         timelineViewModel.clearTimeline()
@@ -240,9 +193,11 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     // Called when we need to check if we should display the empty view for the Timeline fragment
     private fun onTimelineItemListStateChange() {
         if (!timelineViewModel.getTimelineItemList().value.isNullOrEmpty()) {
+            //Log.d(TAG, ".ontimelineitemstatechange: value is not null not empty, showing timeline rv")
             fragment_history_empty_view_container.visibility = View.GONE
             fragment_history_timeline_rv.visibility = View.VISIBLE
         } else {
+            //Log.d(TAG, ".ontimelineitemstatechange: value IS NULL or empty, showing empty view")
             fragment_history_empty_view_container.visibility = View.VISIBLE
             fragment_history_timeline_rv.visibility = View.GONE
         }

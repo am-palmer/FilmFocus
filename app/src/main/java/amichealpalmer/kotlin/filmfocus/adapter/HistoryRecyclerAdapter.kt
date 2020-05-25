@@ -26,11 +26,11 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
         this.listener = listener
     }
 
-    fun setTimelineActionListener(timelineListener: TimelineActionListener){
+    fun setTimelineActionListener(timelineListener: TimelineActionListener) {
         this.timelineListener = timelineListener
     }
 
-    interface TimelineActionListener{
+    interface TimelineActionListener {
         fun editTimelineItem(item: TimelineItem)
         fun removeTimelineItem(item: TimelineItem)
     }
@@ -43,6 +43,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
     override fun onBindViewHolder(holder: TimelineItemViewHolder, position: Int) {
         val currentItem: TimelineItem = getItem(position)
         holder.displayPoster(currentItem.film.posterURL)
+        holder.setViewsForHolder()
     }
 
     companion object {
@@ -61,7 +62,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
 
     inner class TimelineItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        // todo: synthetic imports
+        // todo: synthetic imports ?
         private val poster: ImageView = view.findViewById(R.id.timeline_item_film_poster)
         private val constraintLayoutWrapper: ConstraintLayout = view.findViewById(R.id.history_timeline_item_constraintLayout)
         private val ratingBar: RatingBar = view.findViewById(R.id.timeline_item_ratingBar)
@@ -73,7 +74,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
         private val timelineLineBottom: ImageView = view.findViewById(R.id.timeline_line_bottom)
         private val reviewTextView: TextView = view.findViewById(R.id.timeline_item_review_tv)
 
-        init {
+        fun setViewsForHolder() {
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 val item = getItem(position)
@@ -85,12 +86,15 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
 
                 poster.setOnCreateContextMenuListener { menu, v, menuInfo ->
                     menu?.add(R.string.edit)?.setOnMenuItemClickListener {
-                        // todo: implement listener with timeline edit function
                         timelineListener?.editTimelineItem(item)
                         true
                     }
                     menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
                         listener?.addFilmToWatchlist(item.film)
+                        true
+                    }
+                    menu?.add(R.string.remove_item_from_history)?.setOnMenuItemClickListener {
+                        timelineListener?.removeTimelineItem(item)
                         true
                     }
                 }

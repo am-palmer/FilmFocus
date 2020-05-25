@@ -1,7 +1,9 @@
 package amichealpalmer.kotlin.filmfocus.viewmodel
 
+import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemRepository
+import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemRepository
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -11,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 class TimelineViewModel(application: Application): AndroidViewModel(application) {
 
     private val repository: TimelineItemRepository by lazy { TimelineItemRepository(application) }
+    private val watchlist: WatchlistItemRepository by lazy { WatchlistItemRepository(application) }
 
     // todo: check we aren't reversing the list at the wrong time etc
 
@@ -28,6 +31,10 @@ class TimelineViewModel(application: Application): AndroidViewModel(application)
 
     fun getTimelineItemList(): LiveData<List<TimelineItem>> {
         return repository.getTimelineItems
+    }
+
+    fun addItemToWatchlist(filmThumbnail: FilmThumbnail){
+        watchlist.insert(filmThumbnail)
     }
 
 }

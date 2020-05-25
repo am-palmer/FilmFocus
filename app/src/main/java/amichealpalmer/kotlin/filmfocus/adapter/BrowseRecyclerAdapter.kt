@@ -66,9 +66,6 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
                 }
             }
 
-
-
-            // todo: doesn't work, why?
             cardView.setOnCreateContextMenuListener { menu, v, menuInfo ->
                 Log.d(TAG, "createContextmenuListener triggered")
                 val position = adapterPosition
@@ -84,13 +81,6 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
                 }
             }
 
-            cardView.setOnLongClickListener{
-                //Toast.makeText(context, listFriends[position].id, Toast.LENGTH_SHORT).show()
-                //mBundle.putString(friendProfile.EXTRA_ID, listFriends[position].id)
-                //profileFrag.profileData = mBundle
-                //return@setOnLongClickListener true
-                true
-            }
 
         }
 

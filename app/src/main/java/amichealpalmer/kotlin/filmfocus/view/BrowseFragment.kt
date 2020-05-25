@@ -7,6 +7,7 @@ import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
+import amichealpalmer.kotlin.filmfocus.util.observeOnce
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModel
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModelFactory
@@ -21,11 +22,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
 import java.util.*
-
-
-//private const val ARG_RESULTS = "resultList"
-private const val ARG_SEARCH_STRING = "searchString"
-
 
 class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
@@ -63,7 +59,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
             }
         }
 
-        val scrollPosition = savedInstanceState?.getInt(BUNDLE_SCROLL_POSITION) ?: 0
+        //val scrollPosition = savedInstanceState?.getInt(0) ?: 0
 
         requireActivity().title = "Browse"
         setHasOptionsMenu(true)
@@ -71,7 +67,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
         val recyclerView: RecyclerView = view.findViewById(R.id.browse_films_recyclerview_id)
         recyclerView.setHasFixedSize(true)
-        recyclerView.post { browse_films_recyclerview_id.scrollToPosition(scrollPosition) } // todo // needed? probably not, but we need to save the scroll position if we want to do this
+        //recyclerView.post { browse_films_recyclerview_id.scrollToPosition(scrollPosition) } // todo // needed? probably not, but we need to save the scroll position if we want to do this
         val adapter = BrowseRecyclerAdapter()
         adapter.setFilmActionListener(this)
         recyclerView.adapter = adapter
@@ -106,7 +102,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
             //val scrollPos = adapter.getAdapterPosition
             // todo: get the adapter(?) position and save it in bundle - do we need to do this?
         }
-        outState.putInt(BUNDLE_SCROLL_POSITION, scrollPos ?: 0)
+        // outState.putInt(BUNDLE_SCROLL_POSITION, scrollPos ?: 0)
     }
 
     // Reattaching listener interface to dialogs if they exist
@@ -172,9 +168,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     override fun addFilmToWatchlist(film: FilmThumbnail) {
         val currentWatchlist = browseViewModel.getWatchlist()
         // Wait for thread to get the object, and then try to add the film to the watchlist, first checking if it exists
-// todo:  this will trigger when it changes, so it will always trigger twice! need 'observe once' or some other fix
-        currentWatchlist.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            // todo: we need to remove this observer later on possibly
+        currentWatchlist.observeOnce(viewLifecycleOwner, androidx.lifecycle.Observer {
             var exists = false
             for (f in currentWatchlist.value!!) {
                 if (f.imdbID == film.imdbID) {
@@ -187,7 +181,6 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
                 Toast.makeText(requireContext(), "Added ${film.title} to Watchlist", Toast.LENGTH_SHORT).show()
             }
         })
-
     }
 
     override fun markFilmWatched(film: FilmThumbnail) {
@@ -223,17 +216,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
     companion object {
         private const val TAG = "BrowseFragment"
-        private const val BUNDLE_SCROLL_POSITION = "scrollPosition"
-
-        fun newInstance(searchString: String?): BrowseFragment {
-            val fragment = BrowseFragment()
-            val args = Bundle()
-            if (searchString != null) {
-                args.putString(ARG_SEARCH_STRING, searchString)
-            }
-            fragment.arguments = args
-            return fragment
-        }
+        //private const val BUNDLE_SCROLL_POSITION = "scrollPosition"
 
     }
 
