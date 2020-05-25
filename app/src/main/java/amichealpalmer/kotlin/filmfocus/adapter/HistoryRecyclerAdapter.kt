@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
+// todo: time 'line' is broken when a new item is added to the history
 class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.TimelineItemViewHolder>(DIFF_CALLBACK) {
 
     private var listener: FilmActionListener? = null
@@ -31,7 +32,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
     }
 
     interface TimelineActionListener {
-        fun editTimelineItem(item: TimelineItem)
+        fun editTimelineItem(item: TimelineItem, position: Int)
         fun removeTimelineItem(item: TimelineItem)
     }
 
@@ -44,6 +45,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
         val currentItem: TimelineItem = getItem(position)
         holder.displayPoster(currentItem.film.posterURL)
         holder.setViewsForHolder()
+        holder.setLineSegments()
     }
 
     companion object {
@@ -86,7 +88,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
 
                 poster.setOnCreateContextMenuListener { menu, v, menuInfo ->
                     menu?.add(R.string.edit)?.setOnMenuItemClickListener {
-                        timelineListener?.editTimelineItem(item)
+                        timelineListener?.editTimelineItem(item, position)
                         true
                     }
                     menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
@@ -134,15 +136,6 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
                     }
                 }
 
-                // Programmatically remove portion(s) of timeline if this is the first or last entry in the list
-                if (position == 0) {
-                    timelineLineTop.visibility = View.INVISIBLE
-                }
-
-                if (position == (itemCount) - 1) {
-                    timelineLineBottom.visibility = View.INVISIBLE
-                }
-
                 // Programmatically change views if film is marked as watched or dropped
                 when (item.status) {
                     TIMELINE_ITEM_STATUS.WATCHED -> {
@@ -161,6 +154,21 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
         fun displayPoster(posterURL: String) {
             Picasso.get().load(posterURL).error(R.drawable.ic_image_loading_grey_48dp)
                     .placeholder(R.drawable.ic_image_loading_grey_48dp).into(poster)
+        }
+
+        // Creates the actual 'line' shown in the timeline
+        fun setLineSegments() {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                // Programmatically remove portion(s) of timeline if this is the first or last entry in the list
+                if (position == 0) {
+                    timelineLineTop.visibility = View.INVISIBLE
+                }
+
+                if (position == (itemCount) - 1) {
+                    timelineLineBottom.visibility = View.INVISIBLE
+                }
+            }
         }
 
         // Figure out the ordinal indicator to display for the date and append it, i.e. 4 becomes 4th

@@ -25,7 +25,6 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
     private lateinit var callback: onHistoryEditDialogSubmissionListener
     private var rating: Float? = null
 
-    //private var hasRating = false
     private lateinit var timelineItem: TimelineItem
     private lateinit var status: TIMELINE_ITEM_STATUS
     private var arrayPosition = 0
@@ -96,6 +95,8 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
                 val date = timelineItem.date
                 val text = fragment_watchlist_watched_dialog_review_et.text.toString()
                 val item = TimelineItem(timelineItem.film, rating ?: 0f, date, text, status)
+                // Set the id (primary key) so Room knows to replace the existing entry
+                item.id = timelineItem.id
                 callback.onEditHistoryItemDialogSubmissionListener(item, arrayPosition)
                 this.dismiss()
             }

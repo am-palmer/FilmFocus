@@ -8,10 +8,10 @@ import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmClearHistoryDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmRemoveFilmFromHistoryDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.EditHistoryItemDialogFragment
+import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.TimelineViewModel
 import amichealpalmer.kotlin.filmfocus.viewmodel.TimelineViewModelFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -60,8 +60,8 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
 
         // Observer
         timelineViewModel.getTimelineItemList().observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, ".observe starts: list size is " + timelineViewModel.getTimelineItemList().value?.size)
-            adapter.submitList(it.reversed()) // todo: check if reversed is correct order here
+            //Log.d(TAG, ".observe starts: list size is " + timelineViewModel.getTimelineItemList().value?.size)
+            adapter.submitList(it.reversed())
             adapter.notifyDataSetChanged()
             onTimelineItemListStateChange()
         })
@@ -144,16 +144,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         Toast.makeText(requireContext(), "Removed ${timelineItem.film.title} from History", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onConfirmClearHistoryDialogSubmit() {
-        // when (timelineList.isEmpty()) {
-        // true -> Toast.makeText(requireContext(), "History is already empty", Toast.LENGTH_SHORT).show()
-        //false -> {
-        clearHistory()
-        //   Toast.makeText(requireContext(), "Cleared History", Toast.LENGTH_SHORT).show()
-        // }
-        // }
-    }
-
     override fun addFilmToWatchlist(film: FilmThumbnail) {
         timelineViewModel.addItemToWatchlist(film)
     }
@@ -171,18 +161,26 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         fragment.show(childFragmentManager, FilmDetailDialogFragment.TAG)
     }
 
-    override fun editTimelineItem(item: TimelineItem) {
-        timelineViewModel.addUpdateItem(item)
+    override fun editTimelineItem(item: TimelineItem, position: Int) {
+        val dialogFragment = EditHistoryItemDialogFragment.newInstance(item, position)
+        dialogFragment.setHistoryEditDialogSubmissionListener(this)
+        dialogFragment.show(childFragmentManager, WatchedDialogFragment.TAG)
     }
 
     override fun onEditHistoryItemDialogSubmissionListener(timelineItem: TimelineItem, arrayPosition: Int) {
-        //updateTimelineItem(timelineItem, arrayPosition)
         timelineViewModel.addUpdateItem(timelineItem)
+        adapter.notifyItemChanged(arrayPosition)
+        adapter.notifyDataSetChanged()
         Toast.makeText(requireContext(), "Updated details for ${timelineItem.film.title}", Toast.LENGTH_SHORT).show()
     }
 
     override fun removeTimelineItem(item: TimelineItem) {
+        // todo: show confirm dialog
         timelineViewModel.removeItem(item)
+    }
+
+    override fun onConfirmClearHistoryDialogSubmit() {
+        clearHistory()
     }
 
     private fun clearHistory() {
@@ -193,11 +191,9 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     // Called when we need to check if we should display the empty view for the Timeline fragment
     private fun onTimelineItemListStateChange() {
         if (!timelineViewModel.getTimelineItemList().value.isNullOrEmpty()) {
-            //Log.d(TAG, ".ontimelineitemstatechange: value is not null not empty, showing timeline rv")
             fragment_history_empty_view_container.visibility = View.GONE
             fragment_history_timeline_rv.visibility = View.VISIBLE
         } else {
-            //Log.d(TAG, ".ontimelineitemstatechange: value IS NULL or empty, showing empty view")
             fragment_history_empty_view_container.visibility = View.VISIBLE
             fragment_history_timeline_rv.visibility = View.GONE
         }

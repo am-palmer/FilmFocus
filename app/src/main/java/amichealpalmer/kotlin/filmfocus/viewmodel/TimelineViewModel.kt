@@ -15,8 +15,6 @@ class TimelineViewModel(application: Application): AndroidViewModel(application)
     private val repository: TimelineItemRepository by lazy { TimelineItemRepository(application) }
     private val watchlist: WatchlistItemRepository by lazy { WatchlistItemRepository(application) }
 
-    // todo: check we aren't reversing the list at the wrong time etc
-
     fun addUpdateItem(timelineItem: TimelineItem) {
         repository.insertUpdate(timelineItem)
     }
