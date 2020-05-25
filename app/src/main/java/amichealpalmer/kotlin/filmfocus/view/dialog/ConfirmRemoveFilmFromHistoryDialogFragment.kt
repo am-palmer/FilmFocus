@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import kotlinx.android.synthetic.main.fragment_dialog_generic_confirm.*
+import kotlin.properties.Delegates
 
 class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClickListener {
 
@@ -18,11 +19,13 @@ class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClic
     private lateinit var callback: OnConfirmRemoveFilmDialogActionListener
 
     private lateinit var timelineItem: TimelineItem
+    private var position by Delegates.notNull<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
             timelineItem = requireArguments().getParcelable<TimelineItem>("timelineItem") as TimelineItem
+            position = 0 // todo: we're not even using this class anymore, so we can delete it. replace it with an alertdialog
         } catch (e: NullPointerException) {
             Log.wtf(TAG, ".onCreate - failed to retrieve timelineItem")
         }
@@ -49,14 +52,14 @@ class ConfirmRemoveFilmFromHistoryDialogFragment : DialogFragment(), View.OnClic
         when (v?.id) {
             fragment_dialog_generic_cancelButton.id -> this.dismiss()
             fragment_dialog_generic_takeActionButton.id -> { // We remove the item from the history
-                callback.onConfirmRemoveItemDialogAction(timelineItem)
+                callback.onConfirmRemoveItemDialogAction(timelineItem, position)
                 this.dismiss()
             }
         }
     }
 
     interface OnConfirmRemoveFilmDialogActionListener {
-        fun onConfirmRemoveItemDialogAction(timelineItem: TimelineItem)
+        fun onConfirmRemoveItemDialogAction(timelineItem: TimelineItem, position: Int)
     }
 
     fun setOnConfirmRemoveFilmDialogActionListener(callback: OnConfirmRemoveFilmDialogActionListener) {

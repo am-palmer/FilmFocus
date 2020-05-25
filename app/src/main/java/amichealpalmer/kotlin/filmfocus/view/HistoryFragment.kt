@@ -62,10 +62,11 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         timelineViewModel.getTimelineItemList().observe(viewLifecycleOwner, Observer {
             //Log.d(TAG, ".observe starts: list size is " + timelineViewModel.getTimelineItemList().value?.size)
             adapter.submitList(it.reversed())
-            adapter.notifyDataSetChanged()
+            //adapter.notifyDataSetChanged()
             onTimelineItemListStateChange()
         })
 
+        adapter.notifyDataSetChanged()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -139,8 +140,9 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
 
      */
 
-    override fun onConfirmRemoveItemDialogAction(timelineItem: TimelineItem) {
-        removeTimelineItem(timelineItem)
+
+    override fun onConfirmRemoveItemDialogAction(timelineItem: TimelineItem, position: Int) {
+        removeTimelineItem(timelineItem, position)
         Toast.makeText(requireContext(), "Removed ${timelineItem.film.title} from History", Toast.LENGTH_SHORT).show()
     }
 
@@ -169,13 +171,21 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
 
     override fun onEditHistoryItemDialogSubmissionListener(timelineItem: TimelineItem, arrayPosition: Int) {
         timelineViewModel.addUpdateItem(timelineItem)
-        adapter.notifyItemChanged(arrayPosition)
-        adapter.notifyDataSetChanged()
+        adapter.notifyItemChanged(arrayPosition) // todo: calls onbindviewholder, which calls viewholder inner class, but the changes aren't reflected immediately?
+        //adapter.notifyDataSetChanged()
         Toast.makeText(requireContext(), "Updated details for ${timelineItem.film.title}", Toast.LENGTH_SHORT).show()
     }
 
-    override fun removeTimelineItem(item: TimelineItem) {
+    override fun removeTimelineItem(item: TimelineItem, position: Int) {
         // todo: show confirm dialog
+        adapter.notifyItemRemoved(position)
+        // Update the items before and after the removed item (if they exist)
+        if (adapter.currentList[position + 1] != null) {
+            adapter.notifyItemChanged(position + 1)
+        }
+        if (adapter.currentList[position - 1] != null) {
+            adapter.notifyItemChanged(position - 1)
+        }
         timelineViewModel.removeItem(item)
     }
 

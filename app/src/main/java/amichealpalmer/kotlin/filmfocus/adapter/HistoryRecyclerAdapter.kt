@@ -4,6 +4,7 @@ import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.view.FilmActionListener
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +34,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
 
     interface TimelineActionListener {
         fun editTimelineItem(item: TimelineItem, position: Int)
-        fun removeTimelineItem(item: TimelineItem)
+        fun removeTimelineItem(item: TimelineItem, position: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineItemViewHolder {
@@ -42,10 +43,12 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
     }
 
     override fun onBindViewHolder(holder: TimelineItemViewHolder, position: Int) {
+        Log.d(TAG, ".onbindviewholder called")
         val currentItem: TimelineItem = getItem(position)
         holder.displayPoster(currentItem.film.posterURL)
         holder.setViewsForHolder()
         holder.setLineSegments()
+
     }
 
     companion object {
@@ -77,6 +80,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
         private val reviewTextView: TextView = view.findViewById(R.id.timeline_item_review_tv)
 
         fun setViewsForHolder() {
+            Log.d(TAG, "set views for viewholder")
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 val item = getItem(position)
@@ -96,7 +100,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
                         true
                     }
                     menu?.add(R.string.remove_item_from_history)?.setOnMenuItemClickListener {
-                        timelineListener?.removeTimelineItem(item)
+                        timelineListener?.removeTimelineItem(item, position)
                         true
                     }
                 }

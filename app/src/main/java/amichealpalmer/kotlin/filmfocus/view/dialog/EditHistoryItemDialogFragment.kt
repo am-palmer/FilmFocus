@@ -1,7 +1,6 @@
 package amichealpalmer.kotlin.filmfocus.view.dialog
 
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import android.os.Bundle
@@ -40,7 +39,7 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         try {
-            timelineItem = requireArguments().getParcelable<FilmThumbnail>("timelineItem") as TimelineItem
+            timelineItem = requireArguments().getParcelable<TimelineItem>("timelineItem") as TimelineItem
             arrayPosition = requireArguments().getInt("arrayPosition")
         } catch (e: NullPointerException) {
             Log.e(TAG, ".onCreate - failed to retrieve timelineItem from bundle")
@@ -106,10 +105,10 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         if (buttonView == fragment_watchlist_watched_dialog_toggleWatched) {
-            var value = TIMELINE_ITEM_STATUS.WATCHED
-            when (isChecked) {
-                true -> value = TIMELINE_ITEM_STATUS.WATCHED
-                false -> value = TIMELINE_ITEM_STATUS.DROPPED
+            //var value = TIMELINE_ITEM_STATUS.WATCHED
+            val value = when (isChecked) {
+                true -> TIMELINE_ITEM_STATUS.WATCHED
+                false -> TIMELINE_ITEM_STATUS.DROPPED
             }
             status = value
         }
