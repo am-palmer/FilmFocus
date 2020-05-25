@@ -1,4 +1,4 @@
-package amichealpalmer.kotlin.filmfocus.adapter
+package amichealpalmer.kotlin.filmfocus.view.adapter
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
