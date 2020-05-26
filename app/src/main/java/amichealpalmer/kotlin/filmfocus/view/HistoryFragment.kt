@@ -26,8 +26,6 @@ import kotlinx.android.synthetic.main.fragment_history.*
 
 class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.TimelineActionListener, ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener, ConfirmClearHistoryDialogFragment.onConfirmClearHistoryDialogListener { // note code duplication with other fragments
 
-    // todo: check we can still edit items properly, and have multiple copies of films -> room replacement strategy?
-
     private lateinit var timelineViewModel: TimelineViewModel
     private lateinit var adapter: HistoryRecyclerAdapter
 
@@ -102,45 +100,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         }
     }
 
-    /*
-//    override fun onContextItemSelected(item: MenuItem): Boolean {
-//        Log.d(TAG, ".onContextItemSelected begins")
-//        val adapter = recyclerView.adapter as HistoryRecyclerAdapter
-//        var position = -1
-//        try {
-//            position = adapter.position
-//            Log.d(TAG, "onContextItemSelected: position is $position")
-//        } catch (e: NullPointerException) {
-//            Log.e(TAG, e.localizedMessage, e)
-//            return super.onContextItemSelected(item)
-//        }
-//        when (item.itemId) {
-//            R.id.history_timeline_item_context_menu_remove -> {
-//                val timelineItem = adapter.getItem(position)
-//                val dialogFragment = ConfirmRemoveFilmFromHistoryDialogFragment.newInstance(timelineItem)
-//                dialogFragment.setOnConfirmRemoveFilmDialogActionListener(this)
-//                dialogFragment.show(childFragmentManager, ConfirmRemoveFilmFromHistoryDialogFragment.TAG)
-//            }
-//            R.id.history_timeline_item_context_menu_addToWatchlist -> {
-//                val timelineItem = adapter.getItem(position)
-//                when (addItemToWatchlist(timelineItem.film)) { // Note secondary effect of call
-//                    true -> Toast.makeText(requireContext(), "Added ${timelineItem.film.title} to Watchlist", Toast.LENGTH_SHORT).show()
-//                    false -> Toast.makeText(requireContext(), "${timelineItem.film.title} is already in Watchlist", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//            R.id.history_timeline_item_context_menu_editReview -> {
-//                val timelineItem = adapter.getItem(position)
-//                val editFragment = EditHistoryItemDialogFragment.newInstance(timelineItem, position)
-//                editFragment.setHistoryEditDialogSubmissionListener(this)
-//                editFragment.show(childFragmentManager, EditHistoryItemDialogFragment.TAG)
-//            }
-//        }
-//        return super.onContextItemSelected(item)
-//    }
-
-     */
-
-
     override fun onConfirmRemoveItemDialogAction(timelineItem: TimelineItem, position: Int) {
         removeTimelineItem(timelineItem, position)
         Toast.makeText(requireContext(), "Removed ${timelineItem.film.title} from History", Toast.LENGTH_SHORT).show()
@@ -172,7 +131,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     override fun onEditHistoryItemDialogSubmissionListener(timelineItem: TimelineItem, arrayPosition: Int) {
         timelineViewModel.addUpdateItem(timelineItem)
         adapter.notifyItemChanged(arrayPosition) // todo: calls onbindviewholder, which calls viewholder inner class, but the changes aren't reflected immediately?
-        //adapter.notifyDataSetChanged()
+        adapter.notifyDataSetChanged()
         Toast.makeText(requireContext(), "Updated details for ${timelineItem.film.title}", Toast.LENGTH_SHORT).show()
     }
 
@@ -186,6 +145,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         if (adapter.currentList[position - 1] != null) {
             adapter.notifyItemChanged(position - 1)
         }
+        adapter.notifyDataSetChanged()
         timelineViewModel.removeItem(item)
     }
 

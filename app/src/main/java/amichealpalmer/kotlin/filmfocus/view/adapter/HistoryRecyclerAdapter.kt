@@ -56,11 +56,15 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
 
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TimelineItem>() {
             override fun areItemsTheSame(oldItem: TimelineItem, newItem: TimelineItem): Boolean {
-                return (oldItem.date == newItem.date && oldItem.film.imdbID == newItem.film.imdbID)
+                return (oldItem.id == newItem.id)
             }
 
             override fun areContentsTheSame(oldItem: TimelineItem, newItem: TimelineItem): Boolean {
-                return areItemsTheSame(oldItem, newItem)
+                return (oldItem.film.imdbID == newItem.film.imdbID &&
+                        oldItem.date == newItem.date &&
+                        oldItem.rating == newItem.rating &&
+                        oldItem.getReview() == newItem.getReview() &&
+                        oldItem.status == newItem.status)
             }
         }
     }
