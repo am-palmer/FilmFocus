@@ -5,7 +5,6 @@ import android.os.Parcelable
 
 // Class holding all the models relating to film objects.
 
-
 // The most verbose Film model, containing all relevant details about a film, which is fetched when we load a FilmDetailDialogFragment
 class Film(
         val title: String, // e.g. Guardians of the Galaxy Vol. 2
@@ -114,6 +113,17 @@ open class FilmThumbnail(val title: String,
         parcel.writeString(imdbID)
         parcel.writeString(type)
         parcel.writeString(posterURL)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return if (javaClass == other?.javaClass) {
+            other as FilmThumbnail
+            (this.title == other.title &&
+                    this.posterURL == other.posterURL &&
+                    this.type == other.type &&
+                    this.imdbID == other.imdbID &&
+                    this.year == other.year)
+        } else super.equals(other)
     }
 
     override fun describeContents(): Int {

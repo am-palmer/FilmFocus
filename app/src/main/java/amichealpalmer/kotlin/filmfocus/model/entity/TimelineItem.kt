@@ -35,6 +35,19 @@ class TimelineItem(val film: FilmThumbnail, val rating: Float, val date: LocalDa
         this.review = review
     }
 
+    override fun equals(other: Any?): Boolean {
+        return if (javaClass == other?.javaClass) {
+            other as TimelineItem
+            (this.id == other.id &&
+                    this.status == other.status &&
+                    this.getReview() == other.getReview() &&
+                    this.rating == other.rating &&
+                    this.date == other.date &&
+                    this.film == other.film)
+        }
+        else super.equals(other)
+    }
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeParcelable(film, flags)
         parcel.writeFloat(rating)

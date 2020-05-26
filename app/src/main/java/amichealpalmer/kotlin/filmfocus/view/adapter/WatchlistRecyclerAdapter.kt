@@ -59,11 +59,11 @@ class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAda
 
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<WatchlistItem>() {
             override fun areItemsTheSame(oldItem: WatchlistItem, newItem: WatchlistItem): Boolean {
-                return oldItem.imdbID == newItem.imdbID
+                return areContentsTheSame(oldItem, newItem)
             }
 
             override fun areContentsTheSame(oldItem: WatchlistItem, newItem: WatchlistItem): Boolean {
-                return areItemsTheSame(oldItem, newItem)
+                return oldItem == newItem
             }
         }
     }

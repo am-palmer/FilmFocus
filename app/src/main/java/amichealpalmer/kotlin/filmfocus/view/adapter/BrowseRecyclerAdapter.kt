@@ -32,20 +32,16 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
         holder.displayPoster(currentItem.posterURL)
     }
 
-    fun getFilmThumbnailAtPosition(position: Int): FilmThumbnail {
-        return getItem(position)
-    }
-
     companion object {
         private const val TAG = "BrowseRecyclerAdapter"
 
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<FilmThumbnail>() {
             override fun areItemsTheSame(oldItem: FilmThumbnail, newItem: FilmThumbnail): Boolean {
-                return oldItem.imdbID == newItem.imdbID
+                return areContentsTheSame(oldItem, newItem)
             }
 
             override fun areContentsTheSame(oldItem: FilmThumbnail, newItem: FilmThumbnail): Boolean {
-                return areItemsTheSame(oldItem, newItem)
+                return oldItem == newItem
             }
         }
     }
