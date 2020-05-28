@@ -129,6 +129,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
                 .setMessage(R.string.dialog_confirmRemovalFromHistory_prompt)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes) { _, _ ->
+                    timelineViewModel.removeItem(item)
                     adapter.notifyItemRemoved(position)
                     // Update the items before and after the removed item (if they exist)
                     // todo: this doesn't fix the line
@@ -138,8 +139,8 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
                     if ((position - 1) >= 0 && adapter.currentList[position - 1] != null) {
                         adapter.notifyItemChanged(position - 1)
                     }
-                    adapter.notifyDataSetChanged()
-                    timelineViewModel.removeItem(item)
+                    //adapter.notifyDataSetChanged()
+                    Toast.makeText(requireContext(), "Removed ${item.film.title} from History", Toast.LENGTH_SHORT).show()
                 }
                 .setNegativeButton(android.R.string.no, null).show()
     }

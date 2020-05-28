@@ -149,11 +149,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
         })
 
-//        searchView.setOnClickListener { view -> // todo ??
-//        }
-
         super.onCreateOptionsMenu(menu, inflater)
-
     }
 
     override fun showFilmDetails(film: FilmThumbnail) {

@@ -1,17 +1,12 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">FilmFocus</string>
-    <string name="action_settings">Settings</string>
     <string name="search_title">Search</string>
     <string name="more">More</string>
     <string name="search_hint">Search films…</string>
-    <string name="watchlist_generic_title">Watchlist</string>
 
     <string name="fragment_browse_title">Browse</string>
     <string name="fragment_watchlist_title">Watchlist</string>
     <string name="fragment_history_title">History</string>
-
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
 
     <string name="DIRECTED_BY">DIRECTED BY</string>
     <string name="STARRING">STARRING</string>
@@ -22,7 +17,6 @@
     <string name="dropped">Dropped</string>
     <string name="add_to_watchlist">Add To Watchlist</string>
     <string name="remove_from_watchlist">Remove From Watchlist</string>
-    <string name="remove">Remove</string>
     <string name="remove_item_from_history">Remove From History</string>
     <string name="mark_watched">Mark Watched</string>
     <string name="edit_review">Edit Review</string>
@@ -32,11 +26,9 @@
     <string name="dialog_review_hint">Write a review for this film (160 characters)…</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_review_done">Done</string>
-    <string name="placeholder_review">Amazing film! Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</string>
     <string name="dialog_toggleButton_watched">WATCHED</string>
     <string name="dialog_toggleButton_dropped">DROPPED</string>
 
-    <string name="dialog_title_removeItem">Remove item from history?</string>
     <string name="dialog_confirmRemovalFromHistory_prompt">Are you sure you want to remove this item from your History?</string>
     <string name="dialog_remove">Remove</string>
 
@@ -47,12 +39,10 @@
     <string name="history_menu_clear_history">Clear History</string>
     <string name="dialog_clear_history_prompt">Are you sure you want to clear your History?</string>
 
-    <string name="no_search_results">No Results</string>
     <string name="message_no_search_results">Sorry, we couldn\'t find any matching films.</string>
     <string name="message_watchlist_empty">There\'s nothing in your Watchlist yet</string>
     <string name="message_watchlist_empty_more">Use Browse to find films and add them to your Watchlist.</string>
 
-    <string name="history_empty">History Empty</string>
     <string name="message_history_empty">Your history is empty right now</string>
     <string name="message_history_empty_more">Films you mark Watched or Dropped will be recorded here.</string>
 
