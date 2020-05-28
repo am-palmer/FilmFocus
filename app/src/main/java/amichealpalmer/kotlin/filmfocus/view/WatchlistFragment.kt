@@ -2,17 +2,16 @@ package amichealpalmer.kotlin.filmfocus.view
 
 import amichealpalmer.kotlin.filmfocus.MainActivity
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.view.adapter.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
+import amichealpalmer.kotlin.filmfocus.view.adapter.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
-import amichealpalmer.kotlin.filmfocus.view.dialog.WatchlistConfirmDeleteDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModel
 import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModelFactory
+import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
@@ -22,7 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_watchlist.*
 
-class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener, WatchlistConfirmDeleteDialogFragment.onWatchlistConfirmDeleteDialogListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
+class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener { // note: code duplication with browsefragment. possibly have browsefragment and searchfragment/watchlistfragment subclasses todo: minimize duplication
 
     // todo: store search string (if it exists) as well as scroll position and restore them on rotation
 
@@ -65,15 +64,10 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
     // Checking if any of the dialogs associated with this fragment exist and reattaching the listeners
     override fun onResume() {
-        Log.d(TAG, ".onResume starts")
         super.onResume()
         val watchedDialogFragment = childFragmentManager.findFragmentByTag(WatchedDialogFragment.TAG)
         if (watchedDialogFragment is WatchedDialogFragment) { // May be null
             watchedDialogFragment.setOnWatchedDialogSubmissionListener(this)
-        }
-        val watchlistConfirmDeleteDialogFragment = childFragmentManager.findFragmentByTag(WatchlistConfirmDeleteDialogFragment.TAG)
-        if (watchlistConfirmDeleteDialogFragment is WatchlistConfirmDeleteDialogFragment) {
-            watchlistConfirmDeleteDialogFragment.setOnWatchlistConfirmDeleteDialogListener(this)
         }
     }
 
@@ -110,16 +104,19 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.watchlist_fragment_more_menu_removeAll -> {
-                val fragment = WatchlistConfirmDeleteDialogFragment.newInstance(this)
-                fragment.show(childFragmentManager, WatchlistConfirmDeleteDialogFragment.TAG)
+                // Display an alert dialog to confirm this action with the user before taking it
+                AlertDialog.Builder(requireContext())
+                        .setTitle(R.string.remove_all_from_watchlist)
+                        .setMessage(R.string.dialog_clear_watchlist_prompt)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes) { _, _ ->
+                            clearWatchlist()
+                        }
+                        .setNegativeButton(android.R.string.no, null).show()
                 return true
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onWatchlistConfirmDeleteDialogSubmit() {
-        clearWatchlist()
     }
 
     override fun markFilmWatched(film: FilmThumbnail) {
@@ -154,7 +151,7 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
             Toast.makeText(requireContext(), "Watchlist already empty", Toast.LENGTH_SHORT).show()
         } else {
             watchlistViewModel.clearWatchlist()
-            Toast.makeText(requireContext(), "Cleared watchlist", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Cleared Watchlist", Toast.LENGTH_SHORT).show()
         }
 
     }

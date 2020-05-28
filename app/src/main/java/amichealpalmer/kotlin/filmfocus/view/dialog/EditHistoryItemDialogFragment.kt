@@ -15,7 +15,7 @@ import androidx.fragment.app.DialogFragment
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_watchlist_watched_dialog.*
 
-// todo: code duplication with watchedDialogFragment - should they inherit from a parent class?
+// todo: code duplication with watchedDialogFragment - this fragment should inherit
 
 // This is the fragment that is displayed when a user edits an item in the history
 class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListener, CompoundButton.OnCheckedChangeListener, View.OnClickListener {

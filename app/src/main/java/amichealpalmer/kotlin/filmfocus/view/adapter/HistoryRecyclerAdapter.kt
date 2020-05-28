@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-// todo: time 'line' is broken when a new item is added to the history
+// todo: time 'line' is sometimes broken when a new item is added to the history
 class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.TimelineItemViewHolder>(DIFF_CALLBACK) {
 
     private var listener: FilmActionListener? = null
@@ -43,12 +43,10 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
     }
 
     override fun onBindViewHolder(holder: TimelineItemViewHolder, position: Int) {
-        Log.d(TAG, ".onbindviewholder called")
         val currentItem: TimelineItem = getItem(position)
         holder.displayPoster(currentItem.film.posterURL)
         holder.setViewsForHolder()
         holder.setLineSegments()
-
     }
 
     companion object {

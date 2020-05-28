@@ -5,12 +5,11 @@ import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.view.adapter.HistoryRecyclerAdapter
-import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmClearHistoryDialogFragment
-import amichealpalmer.kotlin.filmfocus.view.dialog.ConfirmRemoveFilmFromHistoryDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.EditHistoryItemDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.TimelineViewModel
 import amichealpalmer.kotlin.filmfocus.viewmodel.TimelineViewModelFactory
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -21,10 +20,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_history.*
 
-// todo: continue refactoring to use viewmodel
 // todo: sometimes the literal time 'line' breaks when a film is removed.
 
-class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.TimelineActionListener, ConfirmRemoveFilmFromHistoryDialogFragment.OnConfirmRemoveFilmDialogActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener, ConfirmClearHistoryDialogFragment.onConfirmClearHistoryDialogListener { // note code duplication with other fragments
+class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.TimelineActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener {
 
     private lateinit var timelineViewModel: TimelineViewModel
     private lateinit var adapter: HistoryRecyclerAdapter
@@ -58,13 +56,11 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
 
         // Observer
         timelineViewModel.getTimelineItemList().observe(viewLifecycleOwner, Observer {
-            //Log.d(TAG, ".observe starts: list size is " + timelineViewModel.getTimelineItemList().value?.size)
             adapter.submitList(it.reversed())
-            //adapter.notifyDataSetChanged()
             onTimelineItemListStateChange()
         })
 
-        adapter.notifyDataSetChanged()
+        //adapter.notifyDataSetChanged() todo: may be needed
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -75,8 +71,14 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.history_fragment_moreMenu_clearHistory -> {
-                val fragment = ConfirmClearHistoryDialogFragment.newInstance(this)
-                fragment.show(childFragmentManager, ConfirmClearHistoryDialogFragment.TAG)
+                AlertDialog.Builder(requireContext())
+                        .setTitle(R.string.history_menu_clear_history)
+                        .setMessage(R.string.dialog_clear_history_prompt)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes) { _, _ ->
+                            clearHistory()
+                        }
+                        .setNegativeButton(android.R.string.no, null).show()
                 return true
             }
         }
@@ -86,25 +88,11 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     // Reattach listener interfaces to dialog fragments associated with this fragment
     override fun onResume() {
         super.onResume()
-        val confirmClearHistoryDialogFragment = childFragmentManager.findFragmentByTag(ConfirmClearHistoryDialogFragment.TAG)
-        if (confirmClearHistoryDialogFragment is ConfirmClearHistoryDialogFragment) {
-            confirmClearHistoryDialogFragment.setOnConfirmClearHistoryDialogListener(this)
-        }
         val editHistoryItemDialogFragment = childFragmentManager.findFragmentByTag(EditHistoryItemDialogFragment.TAG)
         if (editHistoryItemDialogFragment is EditHistoryItemDialogFragment) {
             editHistoryItemDialogFragment.setHistoryEditDialogSubmissionListener(this)
         }
-        val confirmRemoveFilmFromHistoryDialogFragment = childFragmentManager.findFragmentByTag(ConfirmRemoveFilmFromHistoryDialogFragment.TAG)
-        if (confirmRemoveFilmFromHistoryDialogFragment is ConfirmRemoveFilmFromHistoryDialogFragment) {
-            confirmRemoveFilmFromHistoryDialogFragment.setOnConfirmRemoveFilmDialogActionListener(this)
-        }
     }
-
-    override fun onConfirmRemoveItemDialogAction(timelineItem: TimelineItem, position: Int) {
-        removeTimelineItem(timelineItem, position)
-        Toast.makeText(requireContext(), "Removed ${timelineItem.film.title} from History", Toast.LENGTH_SHORT).show()
-    }
-
     override fun addFilmToWatchlist(film: FilmThumbnail) {
         timelineViewModel.addItemToWatchlist(film)
     }
@@ -136,21 +124,23 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     }
 
     override fun removeTimelineItem(item: TimelineItem, position: Int) {
-        // todo: show confirm dialog
-        adapter.notifyItemRemoved(position)
-        // Update the items before and after the removed item (if they exist)
-        if (adapter.currentList[position + 1] != null) {
-            adapter.notifyItemChanged(position + 1)
-        }
-        if (adapter.currentList[position - 1] != null) {
-            adapter.notifyItemChanged(position - 1)
-        }
-        adapter.notifyDataSetChanged()
-        timelineViewModel.removeItem(item)
-    }
-
-    override fun onConfirmClearHistoryDialogSubmit() {
-        clearHistory()
+        AlertDialog.Builder(requireContext())
+                .setTitle(R.string.remove_item_from_history)
+                .setMessage(R.string.dialog_confirmRemovalFromHistory_prompt)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes) { _, _ ->
+                    adapter.notifyItemRemoved(position)
+                    // Update the items before and after the removed item (if they exist)
+                    if (adapter.currentList[position + 1] != null) {
+                        adapter.notifyItemChanged(position + 1)
+                    }
+                    if (adapter.currentList[position - 1] != null) {
+                        adapter.notifyItemChanged(position - 1)
+                    }
+                    adapter.notifyDataSetChanged()
+                    timelineViewModel.removeItem(item)
+                }
+                .setNegativeButton(android.R.string.no, null).show()
     }
 
     private fun clearHistory() {

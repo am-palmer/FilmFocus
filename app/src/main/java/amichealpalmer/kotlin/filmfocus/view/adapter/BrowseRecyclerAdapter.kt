@@ -3,7 +3,6 @@ package amichealpalmer.kotlin.filmfocus.view.adapter
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.view.FilmActionListener
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,7 +62,6 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
             }
 
             cardView.setOnCreateContextMenuListener { menu, v, menuInfo ->
-                Log.d(TAG, "createContextmenuListener triggered")
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
