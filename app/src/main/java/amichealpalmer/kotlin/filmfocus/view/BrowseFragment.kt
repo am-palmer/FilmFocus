@@ -2,19 +2,18 @@ package amichealpalmer.kotlin.filmfocus.view
 
 import amichealpalmer.kotlin.filmfocus.MainActivity
 import amichealpalmer.kotlin.filmfocus.R
-import amichealpalmer.kotlin.filmfocus.view.adapter.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
+import amichealpalmer.kotlin.filmfocus.util.hideKeyboard
 import amichealpalmer.kotlin.filmfocus.util.observeOnce
+import amichealpalmer.kotlin.filmfocus.view.adapter.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModel
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModelFactory
-import android.app.Activity
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -130,10 +129,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 val searchString = query.toLowerCase(Locale.US).trim()
-
-                // Close the keyboard
-                val inputMethodManager: InputMethodManager = activity!!.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.hideSoftInputFromWindow(activity!!.currentFocus!!.windowToken, 0)
+                this@BrowseFragment.hideKeyboard()
 
                 // Set up the UI
                 fragment_browse_empty_container.visibility = View.GONE
@@ -153,8 +149,8 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
         })
 
-        searchView.setOnClickListener { view -> // todo ??
-        }
+//        searchView.setOnClickListener { view -> // todo ??
+//        }
 
         super.onCreateOptionsMenu(menu, inflater)
 

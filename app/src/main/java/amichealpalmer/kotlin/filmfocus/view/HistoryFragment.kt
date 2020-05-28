@@ -60,7 +60,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
             onTimelineItemListStateChange()
         })
 
-        //adapter.notifyDataSetChanged() todo: may be needed
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -119,7 +118,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
 
     override fun onEditHistoryItemDialogSubmissionListener(timelineItem: TimelineItem, arrayPosition: Int) {
         timelineViewModel.addUpdateItem(timelineItem)
-        adapter.notifyItemChanged(arrayPosition) // todo: calls onbindviewholder, which calls viewholder inner class, but the changes aren't reflected immediately?
+        adapter.notifyItemChanged(arrayPosition)
         adapter.notifyDataSetChanged()
         Toast.makeText(requireContext(), "Updated details for ${timelineItem.film.title}", Toast.LENGTH_SHORT).show()
     }
@@ -132,6 +131,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
                 .setPositiveButton(android.R.string.yes) { _, _ ->
                     adapter.notifyItemRemoved(position)
                     // Update the items before and after the removed item (if they exist)
+                    // todo: this doesn't fix the line
                     if ((position + 1) <= adapter.currentList.size - 1 && adapter.currentList[position + 1] != null) {
                         adapter.notifyItemChanged(position + 1)
                     }

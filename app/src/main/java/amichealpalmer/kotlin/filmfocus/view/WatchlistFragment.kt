@@ -6,6 +6,7 @@ import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
+import amichealpalmer.kotlin.filmfocus.util.hideKeyboard
 import amichealpalmer.kotlin.filmfocus.view.adapter.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModel
@@ -86,17 +87,17 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                // todo: dismiss the keyboard
+                this@WatchlistFragment.hideKeyboard()
                 return true
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                // Use the adapter filter to update the recyclerview
+                // We use the adapter filter to update the RecyclerView
                 adapter.filter(newText)
                 return true
             }
         })
-        searchView.setOnClickListener { view -> } // ??
+        //searchView.setOnClickListener { view -> } // ??
 
         super.onCreateOptionsMenu(menu, inflater)
     }
