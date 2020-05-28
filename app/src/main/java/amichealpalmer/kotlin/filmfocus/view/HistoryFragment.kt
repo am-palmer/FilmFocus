@@ -93,6 +93,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
             editHistoryItemDialogFragment.setHistoryEditDialogSubmissionListener(this)
         }
     }
+
     override fun addFilmToWatchlist(film: FilmThumbnail) {
         timelineViewModel.addItemToWatchlist(film)
     }
@@ -131,10 +132,10 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
                 .setPositiveButton(android.R.string.yes) { _, _ ->
                     adapter.notifyItemRemoved(position)
                     // Update the items before and after the removed item (if they exist)
-                    if (adapter.currentList[position + 1] != null) {
+                    if ((position + 1) <= adapter.currentList.size - 1 && adapter.currentList[position + 1] != null) {
                         adapter.notifyItemChanged(position + 1)
                     }
-                    if (adapter.currentList[position - 1] != null) {
+                    if ((position - 1) >= 0 && adapter.currentList[position - 1] != null) {
                         adapter.notifyItemChanged(position - 1)
                     }
                     adapter.notifyDataSetChanged()
