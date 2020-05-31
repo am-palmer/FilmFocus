@@ -16,7 +16,6 @@ class WatchlistItem(title: String, year: String, imdbID: String, type: String, p
     var id: Int = 0
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        //super.writeToParcel(parcel, flags) todo: need super call?
         parcel.writeString(title)
         parcel.writeString(year)
         parcel.writeString(imdbID)

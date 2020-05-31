@@ -43,7 +43,7 @@ class FilmDetailDialogFragment : DialogFragment() {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // Use the IMDB ID to retrieve film object todo: move this logic out of view
+        // Use the IMDB ID to retrieve film object Todo: move this logic out of view - create a viewmodel for this fragment
         val imdbID = arguments?.getString(ARG_IMDBID) as String
         GetJSONFilm(WeakReference(this), getString(R.string.OMDB_API_KEY)).execute(imdbID)
 

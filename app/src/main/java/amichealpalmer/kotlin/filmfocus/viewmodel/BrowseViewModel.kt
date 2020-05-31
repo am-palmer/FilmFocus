@@ -37,7 +37,6 @@ class BrowseViewModel(application: Application) : AndroidViewModel(application) 
         return watchlist.getWatchlist
     }
 
-    // todo: reduce duplication with timeline view model
     fun addToWatchlist(filmThumbnail: FilmThumbnail) {
         watchlist.insert(filmThumbnail)
     }

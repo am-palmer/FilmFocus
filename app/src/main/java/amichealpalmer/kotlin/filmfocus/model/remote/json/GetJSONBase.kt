@@ -20,8 +20,7 @@ abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
 
     abstract override fun doInBackground(vararg params: String): T
 
-    fun getJSONDataObject(apikey: String, query: String): JSONObject? { // Helper method getting JSON data for a query todo improve handling of exceptions so we aren't just flinging null objects around
-        // Todo: handle errors better
+    fun getJSONDataObject(apikey: String, query: String): JSONObject? { // Helper method getting JSON data for a query Todo: Improve handling of exceptions
 
         val searchURL = OMDB_URL + query + "&apikey=${apikey}"
         val rawData: String?

@@ -40,14 +40,13 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
             }
 
             override fun areContentsTheSame(oldItem: FilmThumbnail, newItem: FilmThumbnail): Boolean {
-                return oldItem == newItem
+                return (oldItem == newItem)
             }
         }
     }
 
     inner class FilmThumbnailViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
-        // todo: synthetic imports
         private val poster: ImageView = view.findViewById(R.id.film_poster_id)
         private val cardView = view.findViewById<CardView>(R.id.film_item_cardview_id)
 

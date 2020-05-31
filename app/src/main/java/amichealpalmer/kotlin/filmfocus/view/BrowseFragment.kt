@@ -57,25 +57,27 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
                 searchView.setQuery(browseViewModel.getQuery().value, false) // Set the search field to query, if it exists
             }
         }
-
-        //val scrollPosition = savedInstanceState?.getInt(0) ?: 0
+        
 
         requireActivity().title = "Browse"
         setHasOptionsMenu(true)
-        //activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN) todo: needed?
 
         val recyclerView: RecyclerView = view.findViewById(R.id.browse_films_recyclerview_id)
         recyclerView.setHasFixedSize(true)
-        //recyclerView.post { browse_films_recyclerview_id.scrollToPosition(scrollPosition) } // todo // needed? probably not, but we need to save the scroll position if we want to do this
+        
+        // Restore scroll position (if it exists in the bundle)
+        //val scrollPosition = savedInstanceState?.getInt(0) ?: 0
+        //recyclerView.post { browse_films_recyclerview_id.scrollToPosition(scrollPosition) } // todo // reimplement scroll position save on config change
+        
         val adapter = BrowseRecyclerAdapter()
         adapter.setFilmActionListener(this)
         recyclerView.adapter = adapter
 
         browseViewModel.getResults().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             adapter.submitList(it)
-            adapter.notifyDataSetChanged() // todo: we shouldn't need to call this directly, fix
+            adapter.notifyDataSetChanged()
             onResultsStateChange()
-            browse_fragment_progressBar.visibility = View.GONE // todo: check this does what we expect
+            browse_fragment_progressBar.visibility = View.GONE
         })
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
