@@ -41,7 +41,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().title = "History"
-        //onTimelineItemListStateChange()
         setHasOptionsMenu(true)
 
         // Adapter
@@ -52,6 +51,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         adapter.setFilmActionListener(this)
         adapter.setTimelineActionListener(this)
         recyclerView.adapter = adapter
+        //recyclerView.adapter.stateRestorationPolicy
         this.adapter = adapter
 
         // Observer

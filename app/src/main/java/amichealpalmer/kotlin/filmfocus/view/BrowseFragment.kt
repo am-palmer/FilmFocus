@@ -25,9 +25,14 @@ import java.util.*
 class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
     private lateinit var browseViewModel: BrowseViewModel
+    private var query: String? = null
+    private lateinit var searchView: SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Get query (if it exists)
+        query = savedInstanceState?.getString(BUNDLE_QUERY)
 
         // Get our ViewModel
         browseViewModel = ViewModelProvider(requireActivity(), BrowseViewModelFactory(requireActivity().application))
@@ -42,33 +47,17 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Set the empty view as visible by default, turn it off once a query is entered // todo: move this to a method
-        if (browseViewModel.getResults().value!!.size > 0) {
-            fragment_browse_empty_container.visibility = View.GONE
-            fragment_browse_recycler_framelayout.visibility = View.VISIBLE
-        } else {
-            if (browseViewModel.getQuery().value == null) {
-                fragment_browse_empty_container.visibility = View.VISIBLE
-                fragment_browse_recycler_framelayout.visibility = View.GONE
-            } else {
-                fragment_browse_empty_container.visibility = View.GONE
-                val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext
-                        ?: context)
-                searchView.setQuery(browseViewModel.getQuery().value, false) // Set the search field to query, if it exists
-            }
-        }
-        
-
         requireActivity().title = "Browse"
         setHasOptionsMenu(true)
 
         val recyclerView: RecyclerView = view.findViewById(R.id.browse_films_recyclerview_id)
         recyclerView.setHasFixedSize(true)
-        
+
+        // todo: not working
         // Restore scroll position (if it exists in the bundle)
-        //val scrollPosition = savedInstanceState?.getInt(0) ?: 0
-        //recyclerView.post { browse_films_recyclerview_id.scrollToPosition(scrollPosition) } // todo // reimplement scroll position save on config change
-        
+//        val scrollPosition = savedInstanceState?.getInt(BUNDLE_SCROLL_POSITION) ?: 0
+//        recyclerView.post { browse_films_recyclerview_id.scrollToPosition(scrollPosition) }
+
         val adapter = BrowseRecyclerAdapter()
         adapter.setFilmActionListener(this)
         recyclerView.adapter = adapter
@@ -92,6 +81,8 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
                 }
             }
         })
+
+        onResultsStateChange()
     }
 
     override fun onSaveInstanceState(outState: Bundle) { // Called when i.e. screen orientation changes
@@ -99,11 +90,9 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
         var scrollPos: Int? = null
         if (browse_films_recyclerview_id?.adapter != null) {
-            //val adapter = browse_films_recyclerview_id?.adapter as BrowseRecyclerAdapter
-            //val scrollPos = adapter.getAdapterPosition
-            // todo: get the adapter(?) position and save it in bundle - do we need to do this?
+            scrollPos = browse_films_recyclerview_id?.verticalScrollbarPosition
         }
-        // outState.putInt(BUNDLE_SCROLL_POSITION, scrollPos ?: 0)
+        outState.putInt(BUNDLE_SCROLL_POSITION, scrollPos ?: 0)
     }
 
     // Reattaching listener interface to dialogs if they exist
@@ -119,7 +108,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         inflater.inflate(R.menu.browse_fragment_menu, menu)
 
         // Set up search bar
-        val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext
+        searchView = SearchView((context as MainActivity).supportActionBar?.themedContext
                 ?: context)
         searchView.isIconifiedByDefault = false
         searchView.requestFocus()
@@ -152,6 +141,16 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         })
 
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    // todo: not working?
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        // Restore query in search field if not null
+        if (query != null){
+            //Log.d(TAG, "query not null, setting field")
+            searchView.setQuery(query, false)
+        }
+        super.onPrepareOptionsMenu(menu)
     }
 
     override fun showFilmDetails(film: FilmThumbnail) {
@@ -210,7 +209,8 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
     companion object {
         private const val TAG = "BrowseFragment"
-        //private const val BUNDLE_SCROLL_POSITION = "scrollPosition"
+        private const val BUNDLE_SCROLL_POSITION = "scrollPosition"
+        private const val BUNDLE_QUERY = "query"
 
     }
 

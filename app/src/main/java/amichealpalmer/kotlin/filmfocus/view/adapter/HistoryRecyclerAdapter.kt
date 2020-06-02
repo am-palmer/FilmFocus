@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-// todo: time 'line' is sometimes broken when a new item is added to the history
+// todo: time 'line' is sometimes broken when a new item is added to the history -> works now but doesn't update when a change is made outside the fragment (marking a film watched)
 class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.TimelineItemViewHolder>(DIFF_CALLBACK) {
 
     private var listener: FilmActionListener? = null
@@ -155,17 +155,28 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
                     .placeholder(R.drawable.ic_image_loading_grey_48dp).into(poster)
         }
 
-        // Creates the actual 'line' shown in the timeline
+        // Controls the actual 'line' shown in the timeline
         fun setLineSegments() {
             val position = adapterPosition
+            //Log.d(TAG, "setLineSegements: adapterPosition is $position")
             if (position != RecyclerView.NO_POSITION) {
                 // Programmatically remove portion(s) of timeline if this is the first or last entry in the list
-                if (position == 0) {
+                if (position == 0 && position == itemCount - 1) {
                     timelineLineTop.visibility = View.INVISIBLE
-                }
-
-                if (position == (itemCount) - 1) {
                     timelineLineBottom.visibility = View.INVISIBLE
+                } else {
+                    when (position) {
+                        0 -> {
+                            timelineLineTop.visibility = View.INVISIBLE
+                        }
+                        itemCount - 1 -> {
+                            timelineLineBottom.visibility = View.INVISIBLE
+                        }
+                        else -> {
+                            timelineLineTop.visibility = View.VISIBLE
+                            timelineLineBottom.visibility = View.VISIBLE
+                        }
+                    }
                 }
             }
         }
