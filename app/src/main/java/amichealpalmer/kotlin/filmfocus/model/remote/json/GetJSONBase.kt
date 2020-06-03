@@ -8,6 +8,8 @@ import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL
 
+// todo: convert to coroutine
+
 abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
 
     private var downloadStatus = DownloadStatus.NOT_INITIALIZED
