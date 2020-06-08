@@ -11,13 +11,13 @@ import androidx.room.Query
 interface WatchlistItemDao {
 
     @Insert
-    fun insert(watchlistItem: WatchlistItem)
+    suspend fun insert(watchlistItem: WatchlistItem)
 
     @Delete
-    fun delete(watchlistItem: WatchlistItem)
+    suspend fun delete(watchlistItem: WatchlistItem)
 
     @Query("DELETE FROM watchlist")
-    fun deleteAllWatchlistItems()
+    suspend fun deleteAllWatchlistItems()
 
     // Get our LiveData object
     @Query("SELECT * FROM watchlist")

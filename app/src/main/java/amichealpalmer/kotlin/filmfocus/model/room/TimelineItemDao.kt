@@ -8,15 +8,15 @@ import androidx.room.*
 interface TimelineItemDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertUpdate(timelineItem: TimelineItem)
+    suspend fun insertUpdate(timelineItem: TimelineItem)
 
     @Delete
-    fun delete(timelineItem: TimelineItem)
+    suspend fun delete(timelineItem: TimelineItem)
 
     @Query("DELETE FROM timeline")
-    fun deleteAllTimelineItems()
+    suspend fun deleteAllTimelineItems()
 
-    // Get our LiveData object
+    // Get our LiveData object - note should NOT be a suspend function
     @Query("SELECT * FROM timeline")
     fun getAllTimelineItems(): LiveData<List<TimelineItem>>
 
