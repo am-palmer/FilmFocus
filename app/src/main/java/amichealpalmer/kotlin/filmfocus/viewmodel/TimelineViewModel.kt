@@ -2,21 +2,15 @@ package amichealpalmer.kotlin.filmfocus.viewmodel
 
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
-import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemDatabase
 import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemRepository
-import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemDatabase
 import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemRepository
-import android.app.Application
+import android.os.Bundle
 import androidx.lifecycle.*
+import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.launch
 
-class TimelineViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: TimelineItemRepository by lazy {
-        TimelineItemRepository.getInstance(TimelineItemDatabase.getInstance(application.applicationContext).timelineItemDao())
-    }
-    private val watchlist: WatchlistItemRepository by lazy {
-        WatchlistItemRepository.getInstance(WatchlistItemDatabase.getInstance(application.applicationContext).watchlistItemDao())
-    }
+class TimelineViewModel internal constructor(private val repository: TimelineItemRepository,
+                                             private val watchlistRepository: WatchlistItemRepository) : ViewModel() {
 
     fun addUpdateItem(timelineItem: TimelineItem) {
         viewModelScope.launch { repository.insertUpdate(timelineItem) }
@@ -35,13 +29,19 @@ class TimelineViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun addItemToWatchlist(filmThumbnail: FilmThumbnail) {
-        viewModelScope.launch { watchlist.insert(filmThumbnail) }
+        viewModelScope.launch { watchlistRepository.insert(filmThumbnail) }
     }
 
 }
 
-class TimelineViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return TimelineViewModel(application) as T
+class TimelineViewModelFactory(private val repository: TimelineItemRepository,
+                               private val watchlistRepository: WatchlistItemRepository,
+                               owner: SavedStateRegistryOwner,
+                               defaultArgs: Bundle? = null) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel?> create(key: String, modelClass: Class<T>, handle: SavedStateHandle): T {
+        return TimelineViewModel(repository, watchlistRepository) as T
+
     }
 }

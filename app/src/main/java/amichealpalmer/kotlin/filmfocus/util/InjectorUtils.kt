@@ -39,7 +39,9 @@ object InjectorUtils {
     }
 
     fun provideTimelineViewModelFactory(fragment: Fragment): TimelineViewModelFactory {
-        TODO()
+        val repository = getTimelineItemRepository(fragment.requireContext())
+        val watchlistRepository = getWatchlistItemRepository(fragment.requireContext())
+        return TimelineViewModelFactory(repository, watchlistRepository, fragment)
     }
 
 

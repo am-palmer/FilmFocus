@@ -29,16 +29,8 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         InjectorUtils.provideBrowseViewModelFactory(this)
     }
 
-    private var query: String? = null
+    private var query: String? = null // todo restore query
     private lateinit var searchView: SearchView
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // Get query (if it exists)
-        query = savedInstanceState?.getString(BUNDLE_QUERY)
-
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -54,8 +46,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         val recyclerView: RecyclerView = view.findViewById(R.id.browse_films_recyclerview_id)
         recyclerView.setHasFixedSize(true)
 
-        // todo: not working
-        // Restore scroll position (if it exists in the bundle)
+        // todo Restore scroll position (if it exists in the bundle) -> currently not working
 //        val scrollPosition = savedInstanceState?.getInt(BUNDLE_SCROLL_POSITION) ?: 0
 //        recyclerView.post { browse_films_recyclerview_id.scrollToPosition(scrollPosition) }
 

@@ -4,18 +4,18 @@ import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
+import amichealpalmer.kotlin.filmfocus.util.InjectorUtils
 import amichealpalmer.kotlin.filmfocus.view.adapter.HistoryRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.view.dialog.EditHistoryItemDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.TimelineViewModel
-import amichealpalmer.kotlin.filmfocus.viewmodel.TimelineViewModelFactory
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_history.*
@@ -24,14 +24,10 @@ import kotlinx.android.synthetic.main.fragment_history.*
 
 class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.TimelineActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener {
 
-    private lateinit var timelineViewModel: TimelineViewModel
-    private lateinit var adapter: HistoryRecyclerAdapter
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        timelineViewModel = ViewModelProvider(requireActivity(), TimelineViewModelFactory(requireActivity().application))
-                .get(TimelineViewModel::class.java)
+    private val timelineViewModel: TimelineViewModel by viewModels {
+        InjectorUtils.provideTimelineViewModelFactory(this)
     }
+    private lateinit var adapter: HistoryRecyclerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -57,8 +53,12 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         // Observer
         timelineViewModel.getTimelineItemList().observe(viewLifecycleOwner, Observer {
             adapter.submitList(it.reversed())
-            onTimelineItemListStateChange()
+            //onTimelineItemListStateChange() todo rewrite
         })
+
+        // todo remove and use data binding
+        fragment_history_empty_view_container.visibility = View.GONE
+        fragment_history_timeline_rv.visibility = View.VISIBLE
 
     }
 
@@ -151,6 +151,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     }
 
     // Called when we need to check if we should display the empty view for the Timeline fragment
+    // todo: not working with observer use data binding and xml
     private fun onTimelineItemListStateChange() {
         if (!timelineViewModel.getTimelineItemList().value.isNullOrEmpty()) {
             fragment_history_empty_view_container.visibility = View.GONE

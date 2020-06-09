@@ -51,17 +51,14 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
         recyclerView.adapter = adapter
         this.adapter = adapter
 
-        //Log.d(TAG, "watchlist item count: ${browseViewModel.getWatchlist().value?.size}")
-
          //Register observer for View model
         watchlistViewModel.getWatchlist().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            Log.d(TAG, ".observe: change in watchlist")
-            Log.d(TAG, "observe: watchlist contains ${watchlistViewModel.getWatchlist().value?.size} items") // todo: null
-            //adapter.modifyList(it) // todo: submitlist?
-            adapter.submitList(it)
-            adapter.notifyDataSetChanged()
-            onWatchlistStateChange()
+            adapter.modifyList(it)
         })
+
+        // todo: remove this and do it with databinding in xml
+        fragment_watchlist_empty_view_container.visibility = View.GONE
+        watchlist_recyclerview.visibility = View.VISIBLE
 
     }
 
@@ -145,7 +142,6 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
     override fun removeFilmFromWatchlist(watchlistItem: WatchlistItem) {
         watchlistViewModel.removeItem(watchlistItem)
-        Toast.makeText(requireContext(), "Removed ${watchlistItem.title} from Watchlist", Toast.LENGTH_SHORT).show()
     }
 
     private fun clearWatchlist() {
@@ -169,8 +165,12 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
     }
 
     // Called when any action which might result in an empty watchlist is taken, so we can show the empty view if need be -> used by the observer anonymous method
+    // todo: currently not working with asynchronous observer. use data binding and xml
+
     private fun onWatchlistStateChange() {
         // todo: could have animation
+        fragment_watchlist_empty_view_container.visibility = View.GONE
+        watchlist_recyclerview.visibility = View.VISIBLE
         if (!watchlistViewModel.getWatchlist().value.isNullOrEmpty()) {
             fragment_watchlist_empty_view_container.visibility = View.GONE
             watchlist_recyclerview.visibility = View.VISIBLE
