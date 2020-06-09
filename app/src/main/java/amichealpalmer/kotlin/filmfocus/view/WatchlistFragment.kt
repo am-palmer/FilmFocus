@@ -13,11 +13,11 @@ import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModel
 import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModelFactory
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_watchlist.*
@@ -43,6 +43,7 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d(TAG, ".onViewCreated starts")
         requireActivity().title = "Watchlist"
         setHasOptionsMenu(true)
 
@@ -54,9 +55,14 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
         recyclerView.adapter = adapter
         this.adapter = adapter
 
-        // Register observer for View model
-        watchlistViewModel.getWatchlist().observe(viewLifecycleOwner, Observer {
-            adapter.modifyList(it)
+        //Log.d(TAG, "watchlist item count: ${browseViewModel.getWatchlist().value?.size}")
+
+         //Register observer for View model
+        watchlistViewModel.getWatchlist().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            Log.d(TAG, ".observe: change in watchlist")
+            Log.d(TAG, "observe: watchlist contains ${watchlistViewModel.getWatchlist().value?.size} items") // todo: null
+            //adapter.modifyList(it) // todo: submitlist?
+            adapter.submitList(it)
             adapter.notifyDataSetChanged()
             onWatchlistStateChange()
         })
@@ -97,7 +103,6 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
                 return true
             }
         })
-        //searchView.setOnClickListener { view -> } // ??
 
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -164,11 +169,12 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
     override fun addFilmToWatchlist(film: FilmThumbnail) {
         // Has no function here
+        // Todo: rewrite so this isn't here
     }
 
     // Called when any action which might result in an empty watchlist is taken, so we can show the empty view if need be -> used by the observer anonymous method
     private fun onWatchlistStateChange() {
-        // todo: could have animation because right now change is abrupt
+        // todo: could have animation
         if (!watchlistViewModel.getWatchlist().value.isNullOrEmpty()) {
             fragment_watchlist_empty_view_container.visibility = View.GONE
             watchlist_recyclerview.visibility = View.VISIBLE

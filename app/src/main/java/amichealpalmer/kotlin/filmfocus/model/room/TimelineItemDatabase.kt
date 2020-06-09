@@ -19,21 +19,17 @@ abstract class TimelineItemDatabase : RoomDatabase() {
 
     companion object {
 
+        @Volatile
         private var instance: TimelineItemDatabase? = null
 
-        fun getInstance(context: Context): TimelineItemDatabase? {
-            if (instance == null) {
-                synchronized(TimelineItemDatabase::class) {
-                    instance = Room.databaseBuilder(context.applicationContext,
-                            TimelineItemDatabase::class.java,
-                            "timeline_database").fallbackToDestructiveMigration().build()
-                }
+        fun getInstance(context: Context): TimelineItemDatabase {
+            return instance ?: synchronized(this) {
+                instance ?: Room.databaseBuilder(
+                        context.applicationContext,
+                        TimelineItemDatabase::class.java, "timeline_database")
+                        .fallbackToDestructiveMigration()
+                        .build()
             }
-            return instance
-        }
-
-        fun destroyInstance() {
-            instance = null
         }
 
 

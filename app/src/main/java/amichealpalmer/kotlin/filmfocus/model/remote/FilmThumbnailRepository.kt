@@ -4,12 +4,10 @@ import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.remote.json.GetJSONSearch
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import java.lang.ref.WeakReference
 
 class FilmThumbnailRepository(val application: Application) {
-
     private val resultList: MutableLiveData<ArrayList<FilmThumbnail?>> by lazy { MutableLiveData<ArrayList<FilmThumbnail?>>(ArrayList()) }
 
     // LiveData objects holding search parameters
@@ -19,7 +17,7 @@ class FilmThumbnailRepository(val application: Application) {
 
     // Called by the API accessor to update the resultList
     fun updateResults(newResults: ArrayList<FilmThumbnail?>) {
-        Log.d(TAG, ".updateResults called by API accessor, get an ArrayList of size ${newResults.size}")
+        //Log.d(TAG, ".updateResults called by API accessor, get an ArrayList of size ${newResults.size}")
         if (newResults.isNullOrEmpty()) {
             haveMoreResults.value = false // We note that there are no more results for this query
             return
@@ -50,10 +48,6 @@ class FilmThumbnailRepository(val application: Application) {
             GetJSONSearch(WeakReference(this), application.getString(R.string.OMDB_API_KEY)).execute(searchString)
             currentPageNumber.value = currentPageNumber.value!! + 1
         }
-    }
-
-    companion object{
-        private const val TAG = "FilmThumbnailRepository"
     }
 
     val getResults get() = resultList

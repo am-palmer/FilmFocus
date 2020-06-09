@@ -13,6 +13,7 @@ import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModel
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModelFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
@@ -69,6 +70,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
             browse_fragment_progressBar.visibility = View.GONE
         })
 
+
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -84,6 +86,8 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
         onResultsStateChange()
     }
+
+
 
     override fun onSaveInstanceState(outState: Bundle) { // Called when i.e. screen orientation changes
         super.onSaveInstanceState(outState)
@@ -147,7 +151,6 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     override fun onPrepareOptionsMenu(menu: Menu) {
         // Restore query in search field if not null
         if (query != null){
-            //Log.d(TAG, "query not null, setting field")
             searchView.setQuery(query, false)
         }
         super.onPrepareOptionsMenu(menu)
@@ -163,6 +166,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         // Wait for thread to get the object, and then try to add the film to the watchlist, first checking if it exists
         currentWatchlist.observeOnce(viewLifecycleOwner, androidx.lifecycle.Observer {
             var exists = false
+            Log.d(TAG, "watchlist size is: ${currentWatchlist.value?.size}")
             for (f in currentWatchlist.value!!) {
                 if (f.imdbID == film.imdbID) {
                     exists = true

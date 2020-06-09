@@ -2,37 +2,40 @@ package amichealpalmer.kotlin.filmfocus.viewmodel
 
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
+import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemDatabase
 import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemRepository
+import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemDatabase
 import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemRepository
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
+import kotlinx.coroutines.launch
 
-class TimelineViewModel(application: Application): AndroidViewModel(application) {
-
-    private val repository: TimelineItemRepository by lazy { TimelineItemRepository(application) }
-    private val watchlist: WatchlistItemRepository by lazy { WatchlistItemRepository(application) }
+class TimelineViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository: TimelineItemRepository by lazy {
+        TimelineItemRepository.getInstance(TimelineItemDatabase.getInstance(application.applicationContext).timelineItemDao())
+    }
+    private val watchlist: WatchlistItemRepository by lazy {
+        WatchlistItemRepository.getInstance(WatchlistItemDatabase.getInstance(application.applicationContext).watchlistItemDao())
+    }
 
     fun addUpdateItem(timelineItem: TimelineItem) {
-        repository.insertUpdate(timelineItem)
+        viewModelScope.launch { repository.insertUpdate(timelineItem) }
     }
 
     fun removeItem(timelineItem: TimelineItem) {
-        repository.delete(timelineItem)
+        viewModelScope.launch { repository.delete(timelineItem) }
     }
 
     fun clearTimeline() {
-        repository.deleteAll()
+        viewModelScope.launch { repository.deleteAll() }
     }
 
     fun getTimelineItemList(): LiveData<List<TimelineItem>> {
-        return repository.getTimelineItems
+        return repository.getTimelineItems()
     }
 
-    fun addItemToWatchlist(filmThumbnail: FilmThumbnail){
-        watchlist.insert(filmThumbnail)
+    fun addItemToWatchlist(filmThumbnail: FilmThumbnail) {
+        viewModelScope.launch { watchlist.insert(filmThumbnail) }
     }
 
 }

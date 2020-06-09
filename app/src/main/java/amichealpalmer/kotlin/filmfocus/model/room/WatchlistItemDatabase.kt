@@ -12,25 +12,18 @@ abstract class WatchlistItemDatabase : RoomDatabase() {
     abstract fun watchlistItemDao(): WatchlistItemDao
 
     companion object {
+
+        @Volatile
         private var instance: WatchlistItemDatabase? = null
 
-        fun getInstance(context: Context): WatchlistItemDatabase? {
-            if (instance == null) {
-                synchronized(WatchlistItemDatabase::class) {
-                    instance = Room.databaseBuilder(context.applicationContext,
-                            WatchlistItemDatabase::class.java,
-                            "watchlist_database")
-                            .fallbackToDestructiveMigration()
-                            .build()
-                }
+        fun getInstance(context: Context): WatchlistItemDatabase {
+            return instance ?: synchronized(this) {
+                instance ?: Room.databaseBuilder(context.applicationContext,
+                        WatchlistItemDatabase::class.java, "watchlist_database")
+                        .fallbackToDestructiveMigration()
+                        .build()
             }
-            return instance
         }
-
-        fun destroyInstance() {
-            instance = null
-        }
-
 
     }
 

@@ -1,12 +1,10 @@
 package amichealpalmer.kotlin.filmfocus.model.room
 
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
-import android.app.Application
 import androidx.lifecycle.LiveData
 
 // The exposed API functions used by the ViewModel(s)
-class TimelineItemRepository(application: Application) {
-    private val timelineDao: TimelineItemDao by lazy { TimelineItemDatabase.getInstance(application)!!.timelineItemDao() }
+class TimelineItemRepository private constructor(private val timelineDao: TimelineItemDao) {
 
     suspend fun insertUpdate(timelineItem: TimelineItem) {
         timelineDao.insertUpdate(timelineItem)
@@ -22,6 +20,17 @@ class TimelineItemRepository(application: Application) {
 
     fun getTimelineItems(): LiveData<List<TimelineItem>> {
         return timelineDao.getAllTimelineItems()
+    }
+
+    companion object {
+
+        @Volatile
+        private var instance: TimelineItemRepository? = null
+
+        fun getInstance(timelineDao: TimelineItemDao) =
+                instance ?: synchronized(this) {
+                    instance ?: TimelineItemRepository(timelineDao).also { instance = it }
+                }
     }
 
 }

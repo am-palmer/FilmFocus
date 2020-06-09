@@ -4,18 +4,23 @@ import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.model.remote.FilmThumbnailRepository
+import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemDatabase
 import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemRepository
+import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemDatabase
 import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemRepository
 import android.app.Application
 import androidx.lifecycle.*
+import kotlinx.coroutines.launch
 
 // Holds data displayed in the Browse fragment
-
 class BrowseViewModel(application: Application) : AndroidViewModel(application) {
-
     private val repository: FilmThumbnailRepository by lazy { FilmThumbnailRepository(application) }
-    private val watchlist: WatchlistItemRepository by lazy { WatchlistItemRepository(application) }
-    private val timeline: TimelineItemRepository by lazy { TimelineItemRepository(application) }
+    private val watchlist: WatchlistItemRepository by lazy {
+        WatchlistItemRepository.getInstance(WatchlistItemDatabase.getInstance(application.applicationContext).watchlistItemDao())
+    }
+    private val timeline: TimelineItemRepository by lazy {
+        TimelineItemRepository.getInstance(TimelineItemDatabase.getInstance(application.applicationContext).timelineItemDao())
+    }
 
     fun newQuery(query: String) {
         repository.newQuery(query)
@@ -34,19 +39,15 @@ class BrowseViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun getWatchlist(): LiveData<List<WatchlistItem>> {
-        return watchlist.getWatchlist
+        return watchlist.getWatchlistItems()
     }
 
     fun addToWatchlist(filmThumbnail: FilmThumbnail) {
-        watchlist.insert(filmThumbnail)
+        viewModelScope.launch { watchlist.insert(filmThumbnail) }
     }
 
     fun markWatched(timelineItem: TimelineItem) {
-        timeline.insertUpdate(timelineItem)
-    }
-
-    companion object {
-        private const val TAG = "BrowseViewModel"
+        viewModelScope.launch { timeline.insertUpdate(timelineItem) }
     }
 
 }
