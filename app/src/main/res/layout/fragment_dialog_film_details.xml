@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="400dp"
+        android:layout_width="375dp"
         android:layout_height="wrap_content"
         tools:context=".view.FilmDetailDialogFragment">
 
@@ -104,7 +104,8 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_DIRECTEDBY"
-                tools:text="1987 " />
+                tools:text="1987"
+                android:textColor="@color/colorPrimaryDark"/>
 
             <TextView
                 android:id="@+id/textView2"
@@ -124,7 +125,8 @@
                 android:layout_marginStart="8dp"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textView2"
                 app:layout_constraintStart_toEndOf="@+id/textView2"
-                tools:text="99 mins" />
+                tools:text="99 mins"
+                android:textColor="@color/colorPrimaryDark"/>
 
             <ImageView
                 android:id="@+id/fragment_film_details_iv_poster"
@@ -195,13 +197,25 @@
                 tools:text="Adventure, Fantasy, Comedy, Family" />
 
             <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/interpunct_unicode"
+                android:textStyle="bold"
+                app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_runtime"
+                app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_runtime"
+                tools:text="@string/interpunct_unicode" />
+
+            <TextView
                 android:id="@+id/fragment_film_details_tv_IMDB"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
                 android:text="@string/IMDB"
-                app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_genre"
-                app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_genre"
+                app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_runtime"
+                app:layout_constraintStart_toEndOf="@+id/textView3"
                 tools:text="IMDB" />
 
             <TextView
@@ -215,13 +229,24 @@
                 tools:text="8.1" />
 
             <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/interpunct_unicode"
+                android:textStyle="bold"
+                app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_runtime"
+                app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_imdbScore"
+                tools:text="@string/interpunct_unicode" />
+
+            <TextView
                 android:id="@+id/fragment_film_details_tv_METACRITIC"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="@string/METACRITIC"
-                app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_imdbScore"
-                app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_imdbScore"
+                app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_runtime"
+                app:layout_constraintStart_toEndOf="@+id/textView4"
                 tools:text="METACRITIC" />
 
             <TextView
@@ -230,7 +255,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:textColor="@color/colorPrimaryDark"
-                app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_METACRITIC"
+                app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_runtime"
                 app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_METACRITIC"
                 tools:text="77" />
 
@@ -242,8 +267,8 @@
                 android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/fragment_film_details_tv_plot"
-                app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_IMDB"
-                app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_IMDB"
+                app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_genre"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_genre"
                 tools:text="English, Japanese, Arabic, Czech, Russian, British English, Mandarin, Korean" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
