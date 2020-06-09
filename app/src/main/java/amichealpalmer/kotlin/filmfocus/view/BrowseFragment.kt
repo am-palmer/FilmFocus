@@ -23,6 +23,9 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
 import java.util.*
 
+// todo: livedata is being cleared or lost somehow on fragment transitions: new in coroutine branch
+// todo: it's possible to search with "null" if you scroll down with nothing in the search field!
+
 class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
     private val browseViewModel: BrowseViewModel by viewModels {
@@ -57,10 +60,13 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         browseViewModel.getResults().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             adapter.submitList(it)
             adapter.notifyDataSetChanged()
-            onResultsStateChange()
+            //onResultsStateChange()
             browse_fragment_progressBar.visibility = View.GONE
         })
 
+        // todo use databinding and remove
+        fragment_browse_empty_container.visibility = View.GONE
+        fragment_browse_recycler_framelayout.visibility = View.VISIBLE
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -75,7 +81,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
             }
         })
 
-        onResultsStateChange()
+       // onResultsStateChange()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -190,6 +196,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     }
 
     // Check what view we should be displaying
+    //  todo use databinding
     private fun onResultsStateChange() {
         if (!browseViewModel.getResults().value!!.isNullOrEmpty()) {
             fragment_browse_empty_container.visibility = View.GONE
