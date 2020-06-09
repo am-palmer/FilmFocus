@@ -3,14 +3,15 @@ package amichealpalmer.kotlin.filmfocus.model.remote
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.remote.json.GetJSONSearch
-import android.app.Application
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import java.lang.ref.WeakReference
 
-class FilmThumbnailRepository(val application: Application) {
+class FilmThumbnailRepository(val context: Context) {
     private val resultList: MutableLiveData<ArrayList<FilmThumbnail?>> by lazy { MutableLiveData<ArrayList<FilmThumbnail?>>(ArrayList()) }
 
     // LiveData objects holding search parameters
+    // todo: do we need lazy here?
     private val query: MutableLiveData<String?> by lazy { MutableLiveData<String?>(null) }
     private val currentPageNumber: MutableLiveData<Int> by lazy { MutableLiveData<Int>(1) }
     private val haveMoreResults: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(true) }
@@ -45,7 +46,7 @@ class FilmThumbnailRepository(val application: Application) {
         // Create a new AsyncTask which will notify this object once it has finished
         if (haveMoreResults.value == true) {
             val searchString = "?s=${query.value}&page=${currentPageNumber.value}"
-            GetJSONSearch(WeakReference(this), application.getString(R.string.OMDB_API_KEY)).execute(searchString)
+            GetJSONSearch(WeakReference(this), context.getString(R.string.OMDB_API_KEY)).execute(searchString)
             currentPageNumber.value = currentPageNumber.value!! + 1
         }
     }

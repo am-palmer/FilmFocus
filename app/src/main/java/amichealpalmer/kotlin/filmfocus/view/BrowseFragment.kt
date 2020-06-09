@@ -6,26 +6,29 @@ import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
+import amichealpalmer.kotlin.filmfocus.util.InjectorUtils
 import amichealpalmer.kotlin.filmfocus.util.hideKeyboard
 import amichealpalmer.kotlin.filmfocus.util.observeOnce
 import amichealpalmer.kotlin.filmfocus.view.adapter.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModel
-import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModelFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
 import java.util.*
 
 class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
-    private lateinit var browseViewModel: BrowseViewModel
+    private val browseViewModel: BrowseViewModel by viewModels {
+        InjectorUtils.provideBrowseViewModelFactory(this)
+    }
+
     private var query: String? = null
     private lateinit var searchView: SearchView
 
@@ -35,9 +38,6 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         // Get query (if it exists)
         query = savedInstanceState?.getString(BUNDLE_QUERY)
 
-        // Get our ViewModel
-        browseViewModel = ViewModelProvider(requireActivity(), BrowseViewModelFactory(requireActivity().application))
-                .get(BrowseViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -87,9 +87,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         onResultsStateChange()
     }
 
-
-
-    override fun onSaveInstanceState(outState: Bundle) { // Called when i.e. screen orientation changes
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
         var scrollPos: Int? = null
