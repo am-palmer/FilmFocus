@@ -2,6 +2,7 @@ package amichealpalmer.kotlin.filmfocus.view
 
 import amichealpalmer.kotlin.filmfocus.MainActivity
 import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.databinding.FragmentBrowseBinding
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
@@ -23,14 +24,15 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
 import java.util.*
 
-// todo: livedata is being cleared or lost somehow on fragment transitions: new in coroutine branch
+// todo: livedata is being cleared or lost somehow on fragment transitions
 // todo: it's possible to search with "null" if you scroll down with nothing in the search field!
 
 class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
     private var recyclerView: RecyclerView? = null
     private var query: String? = null // todo restore query
-    private lateinit var searchView: SearchView
+    private var searchView: SearchView? = null
+    private lateinit var binding: FragmentBrowseBinding
 
     private val browseViewModel: BrowseViewModel by viewModels {
         InjectorUtils.provideBrowseViewModelFactory(this)
@@ -38,7 +40,23 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_browse, container, false)
+        binding = FragmentBrowseBinding.inflate(inflater, container, false)
+        val adapter = BrowseRecyclerAdapter()
+        adapter.setFilmActionListener(this)
+        recyclerView = view?.findViewById(R.id.browse_films_recyclerview_id)
+        recyclerView?.setHasFixedSize(true)
+        binding.browseFilmsRecyclerviewId.adapter = adapter
+        subscribeUi(adapter, binding)
+        return binding.root
+    }
+
+    private fun subscribeUi(adapter: BrowseRecyclerAdapter, binding: FragmentBrowseBinding){
+        browseViewModel.getResults().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            adapter.submitList(it)
+            adapter.notifyDataSetChanged() // todo: shouldn't need to call this directly
+            binding.hasResults = !it.isNullOrEmpty()
+            browse_fragment_progressBar.visibility = View.GONE
+        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,27 +65,9 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         requireActivity().title = "Browse"
         setHasOptionsMenu(true)
 
-        recyclerView = view.findViewById(R.id.browse_films_recyclerview_id)
-        recyclerView?.setHasFixedSize(true)
-
         // todo Restore scroll position (if it exists in the bundle) -> currently not working
 //        val scrollPosition = savedInstanceState?.getInt(BUNDLE_SCROLL_POSITION) ?: 0
 //        recyclerView.post { browse_films_recyclerview_id.scrollToPosition(scrollPosition) }
-
-        val adapter = BrowseRecyclerAdapter()
-        adapter.setFilmActionListener(this)
-        recyclerView?.adapter = adapter
-
-        browseViewModel.getResults().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            adapter.submitList(it)
-            adapter.notifyDataSetChanged()
-            //onResultsStateChange()
-            browse_fragment_progressBar.visibility = View.GONE
-        })
-
-        // todo use databinding and remove
-        fragment_browse_empty_container.visibility = View.GONE
-        fragment_browse_recycler_framelayout.visibility = View.VISIBLE
 
         recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -82,7 +82,6 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
             }
         })
 
-       // onResultsStateChange()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -104,20 +103,26 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        recyclerView = null // Preventing memory leak
+        searchView = null
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.browse_fragment_menu, menu)
 
         // Set up search bar
         searchView = SearchView((context as MainActivity).supportActionBar?.themedContext
                 ?: context)
-        searchView.isIconifiedByDefault = false
-        searchView.requestFocus()
+        searchView?.isIconifiedByDefault = false
+        searchView?.requestFocus()
         menu.findItem(R.id.browse_fragment_search).apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)
             actionView = searchView
         }
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 val searchString = query.toLowerCase(Locale.US).trim()
                 this@BrowseFragment.hideKeyboard()
@@ -147,7 +152,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     override fun onPrepareOptionsMenu(menu: Menu) {
         // Restore query in search field if not null
         if (query != null){
-            searchView.setQuery(query, false)
+            searchView?.setQuery(query, false)
         }
         super.onPrepareOptionsMenu(menu)
     }
@@ -194,23 +199,6 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
     override fun removeFilmFromWatchlist(watchlistItem: WatchlistItem) {
         // Does nothing in this context
-    }
-
-    // Check what view we should be displaying
-    //  todo use databinding
-    private fun onResultsStateChange() {
-        if (!browseViewModel.getResults().value!!.isNullOrEmpty()) {
-            fragment_browse_empty_container.visibility = View.GONE
-            fragment_browse_recycler_framelayout.visibility = View.VISIBLE
-        } else {
-            fragment_browse_empty_container.visibility = View.VISIBLE
-            fragment_browse_recycler_framelayout.visibility = View.GONE
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        recyclerView = null // Preventing memory leak
     }
 
     companion object {

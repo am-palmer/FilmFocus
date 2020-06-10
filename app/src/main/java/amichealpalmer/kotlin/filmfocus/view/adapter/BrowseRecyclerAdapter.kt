@@ -36,11 +36,11 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
 
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<FilmThumbnail>() {
             override fun areItemsTheSame(oldItem: FilmThumbnail, newItem: FilmThumbnail): Boolean {
-                return areContentsTheSame(oldItem, newItem)
+                return oldItem.imdbID == newItem.imdbID
             }
 
             override fun areContentsTheSame(oldItem: FilmThumbnail, newItem: FilmThumbnail): Boolean {
-                return (oldItem == newItem)
+                return oldItem == newItem
             }
         }
     }
