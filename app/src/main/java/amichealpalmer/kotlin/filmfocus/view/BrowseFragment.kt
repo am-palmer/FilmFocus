@@ -20,7 +20,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
-import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.android.synthetic.main.fragment_browse.*
 import java.util.*
 
@@ -30,13 +29,12 @@ import java.util.*
 class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
     private var recyclerView: RecyclerView? = null
-
-    private val browseViewModel: BrowseViewModel by viewModels {
-        InjectorUtils.provideBrowseViewModelFactory(///???)
-    }
-
     private var query: String? = null // todo restore query
     private lateinit var searchView: SearchView
+
+    private val browseViewModel: BrowseViewModel by viewModels {
+        InjectorUtils.provideBrowseViewModelFactory(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

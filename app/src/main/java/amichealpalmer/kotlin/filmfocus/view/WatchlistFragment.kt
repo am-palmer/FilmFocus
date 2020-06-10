@@ -27,12 +27,11 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
     // todo: store search string (if it exists) as well as scroll position and restore them on rotation
 
     private var recyclerView: RecyclerView? = null
+    private var adapter: WatchlistRecyclerAdapter? = null
 
     private val watchlistViewModel: WatchlistViewModel by viewModels {
-        InjectorUtils.provideWatchlistViewModelFactory(this)
+        InjectorUtils.provideWatchlistViewModelFactory(this) // todo: we lose the state when switching between fragments. fix
     }
-
-    private lateinit var adapter: WatchlistRecyclerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -48,14 +47,14 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
         // Set up adapter
         recyclerView = view.findViewById(R.id.watchlist_recyclerview)
         recyclerView?.setHasFixedSize(true)
-        val adapter = WatchlistRecyclerAdapter()
-        adapter.setFilmActionListener(this)
+        adapter = WatchlistRecyclerAdapter()
+        adapter?.setFilmActionListener(this)
         recyclerView?.adapter = adapter
         this.adapter = adapter
 
          //Register observer for View model
         watchlistViewModel.getWatchlist().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            adapter.modifyList(it)
+            adapter?.submitList(it)
         })
 
         // todo: remove this and do it with databinding in xml
@@ -94,7 +93,7 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
             override fun onQueryTextChange(newText: String): Boolean {
                 // We use the adapter filter to update the RecyclerView
-                adapter.filter(newText)
+                adapter?.filter(newText)
                 return true
             }
         })
@@ -105,6 +104,7 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
     override fun onDestroyView() {
         super.onDestroyView()
         recyclerView = null
+        adapter = null
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
