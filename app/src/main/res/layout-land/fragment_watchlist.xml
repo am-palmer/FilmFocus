@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="hasWatchlistItems"
+            type = "boolean"/>
+
+    </data>
+
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.WatchlistFragment">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/watchlist_recyclerview"
@@ -18,14 +23,14 @@
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="5"
         tools:listitem="@layout/browse_films_item"
-        tools:visibility="visible"/>
+        app:isGone="@{!hasWatchlistItems}"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fragment_watchlist_empty_view_container"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:visibility="gone">
+        app:isGone="@{hasWatchlistItems}">
 
         <ImageView
             android:id="@+id/imageView"
@@ -68,3 +73,5 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
+
+</layout>

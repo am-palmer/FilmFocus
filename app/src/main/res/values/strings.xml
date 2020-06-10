@@ -40,7 +40,7 @@
     <string name="dialog_clear_history_prompt">Are you sure you want to clear your History?</string>
 
     <string name="message_no_search_results">Sorry, we couldn\'t find any matching films.</string>
-    <string name="message_watchlist_empty">There\'s nothing in your Watchlist yet</string>
+    <string name="message_watchlist_empty">There\'s nothing in your Watchlist right now</string>
     <string name="message_watchlist_empty_more">Use Browse to find films and add them to your Watchlist.</string>
 
     <string name="message_history_empty">Your history is empty right now</string>

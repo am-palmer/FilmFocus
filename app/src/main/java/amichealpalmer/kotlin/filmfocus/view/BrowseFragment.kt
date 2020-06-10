@@ -44,25 +44,17 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         return binding.root
     }
 
-    private fun subscribeUi(adapter: BrowseRecyclerAdapter, binding: FragmentBrowseBinding){
-        browseViewModel.getResults().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            adapter.submitList(it)
-            adapter.notifyDataSetChanged() // todo: shouldn't need to call this directly
-            binding.hasResults = !it.isNullOrEmpty()
-            browse_fragment_progressBar.visibility = View.GONE
-        })
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().title = "Browse"
+        setHasOptionsMenu(true)
+
         val adapter = BrowseRecyclerAdapter()
         adapter.setFilmActionListener(this)
         recyclerView = view?.findViewById(R.id.browse_films_recyclerview_id)
         recyclerView?.setHasFixedSize(true)
         binding.browseFilmsRecyclerviewId.adapter = adapter
         subscribeUi(adapter, binding)
-        requireActivity().title = "Browse"
-        setHasOptionsMenu(true)
 
         // todo Restore scroll position (if it exists in the bundle) -> currently not working
 //        val scrollPosition = savedInstanceState?.getInt(BUNDLE_SCROLL_POSITION) ?: 0
@@ -81,6 +73,15 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
             }
         })
 
+    }
+
+    private fun subscribeUi(adapter: BrowseRecyclerAdapter, binding: FragmentBrowseBinding){
+        browseViewModel.getResults().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            adapter.submitList(it)
+            adapter.notifyDataSetChanged() // todo: shouldn't need to call this directly
+            binding.hasResults = !it.isNullOrEmpty()
+            browse_fragment_progressBar.visibility = View.GONE
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -2,6 +2,7 @@ package amichealpalmer.kotlin.filmfocus.view
 
 import amichealpalmer.kotlin.filmfocus.MainActivity
 import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.databinding.FragmentWatchlistBinding
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
@@ -13,14 +14,12 @@ import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModel
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_watchlist.*
 
 // todo: filter doesn't work properly
 
@@ -30,6 +29,7 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
     private var recyclerView: RecyclerView? = null
     private var adapter: WatchlistRecyclerAdapter? = null
+    private lateinit var binding: FragmentWatchlistBinding
 
     private val watchlistViewModel: WatchlistViewModel by viewModels {
         InjectorUtils.provideWatchlistViewModelFactory(this) // todo: we lose the state when switching between fragments. fix
@@ -37,12 +37,12 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_watchlist, container, false)
+        binding = FragmentWatchlistBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, ".onViewCreated starts")
         requireActivity().title = "Watchlist"
         setHasOptionsMenu(true)
 
@@ -51,17 +51,16 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
         recyclerView?.setHasFixedSize(true)
         adapter = WatchlistRecyclerAdapter()
         adapter?.setFilmActionListener(this)
-        recyclerView?.adapter = adapter
-        this.adapter = adapter
+        binding.watchlistRecyclerview.adapter = adapter
+        subscribeUi(adapter!!, binding)
+    }
 
-         //Register observer for View model
+    private fun subscribeUi(adapter: WatchlistRecyclerAdapter, binding: FragmentWatchlistBinding){
+        //Register observer for View model
         watchlistViewModel.getWatchlist().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             adapter?.submitList(it)
+            binding.hasWatchlistItems = !it.isNullOrEmpty()
         })
-
-        // todo: remove this and do it with databinding in xml
-        fragment_watchlist_empty_view_container.visibility = View.GONE
-        watchlist_recyclerview.visibility = View.VISIBLE
 
     }
 
@@ -171,22 +170,6 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
     override fun addFilmToWatchlist(film: FilmThumbnail) {
         // Has no function here
         // Todo: rewrite so this isn't here
-    }
-
-    // Called when any action which might result in an empty watchlist is taken, so we can show the empty view if need be -> used by the observer anonymous method
-    // todo: currently not working with asynchronous observer. use data binding and xml
-
-    private fun onWatchlistStateChange() {
-        // todo: could have animation
-        fragment_watchlist_empty_view_container.visibility = View.GONE
-        watchlist_recyclerview.visibility = View.VISIBLE
-        if (!watchlistViewModel.getWatchlist().value.isNullOrEmpty()) {
-            fragment_watchlist_empty_view_container.visibility = View.GONE
-            watchlist_recyclerview.visibility = View.VISIBLE
-        } else {
-            watchlist_recyclerview.visibility = View.GONE
-            fragment_watchlist_empty_view_container.visibility = View.VISIBLE
-        }
     }
 
     companion object {
