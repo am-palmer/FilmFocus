@@ -41,12 +41,6 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = FragmentBrowseBinding.inflate(inflater, container, false)
-        val adapter = BrowseRecyclerAdapter()
-        adapter.setFilmActionListener(this)
-        recyclerView = view?.findViewById(R.id.browse_films_recyclerview_id)
-        recyclerView?.setHasFixedSize(true)
-        binding.browseFilmsRecyclerviewId.adapter = adapter
-        subscribeUi(adapter, binding)
         return binding.root
     }
 
@@ -61,7 +55,12 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val adapter = BrowseRecyclerAdapter()
+        adapter.setFilmActionListener(this)
+        recyclerView = view?.findViewById(R.id.browse_films_recyclerview_id)
+        recyclerView?.setHasFixedSize(true)
+        binding.browseFilmsRecyclerviewId.adapter = adapter
+        subscribeUi(adapter, binding)
         requireActivity().title = "Browse"
         setHasOptionsMenu(true)
 
