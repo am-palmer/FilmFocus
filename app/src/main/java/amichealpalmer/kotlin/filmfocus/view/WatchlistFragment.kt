@@ -22,6 +22,8 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_watchlist.*
 
+// todo: filter doesn't work properly
+
 class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
     // todo: store search string (if it exists) as well as scroll position and restore them on rotation
