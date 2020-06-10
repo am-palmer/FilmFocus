@@ -26,6 +26,8 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
     // todo: store search string (if it exists) as well as scroll position and restore them on rotation
 
+    private var recyclerView: RecyclerView? = null
+
     private val watchlistViewModel: WatchlistViewModel by viewModels {
         InjectorUtils.provideWatchlistViewModelFactory(this)
     }
@@ -44,11 +46,11 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
         setHasOptionsMenu(true)
 
         // Set up adapter
-        val recyclerView: RecyclerView = view.findViewById(R.id.watchlist_recyclerview)
-        recyclerView.setHasFixedSize(true)
+        recyclerView = view.findViewById(R.id.watchlist_recyclerview)
+        recyclerView?.setHasFixedSize(true)
         val adapter = WatchlistRecyclerAdapter()
         adapter.setFilmActionListener(this)
-        recyclerView.adapter = adapter
+        recyclerView?.adapter = adapter
         this.adapter = adapter
 
          //Register observer for View model
@@ -98,6 +100,11 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
         })
 
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        recyclerView = null
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

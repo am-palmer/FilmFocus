@@ -24,6 +24,8 @@ import kotlinx.android.synthetic.main.fragment_history.*
 
 class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.TimelineActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener {
 
+    private var recyclerView: RecyclerView? = null
+
     private val timelineViewModel: TimelineViewModel by viewModels {
         InjectorUtils.provideTimelineViewModelFactory(this)
     }
@@ -40,13 +42,13 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         setHasOptionsMenu(true)
 
         // Adapter
-        val recyclerView: RecyclerView = view.findViewById(R.id.fragment_history_timeline_rv)
-        recyclerView.setHasFixedSize(true)
+        recyclerView = view.findViewById(R.id.fragment_history_timeline_rv)
+        recyclerView?.setHasFixedSize(true)
         val adapter = HistoryRecyclerAdapter()
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView?.layoutManager = LinearLayoutManager(requireContext())
         adapter.setFilmActionListener(this)
         adapter.setTimelineActionListener(this)
-        recyclerView.adapter = adapter
+        recyclerView?.adapter = adapter
         //recyclerView.adapter.stateRestorationPolicy
         this.adapter = adapter
 
@@ -91,6 +93,11 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         if (editHistoryItemDialogFragment is EditHistoryItemDialogFragment) {
             editHistoryItemDialogFragment.setHistoryEditDialogSubmissionListener(this)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        recyclerView = null
     }
 
     override fun addFilmToWatchlist(film: FilmThumbnail) {

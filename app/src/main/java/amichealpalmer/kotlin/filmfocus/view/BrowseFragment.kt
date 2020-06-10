@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
+import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.android.synthetic.main.fragment_browse.*
 import java.util.*
 
@@ -28,8 +29,10 @@ import java.util.*
 
 class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
+    private var recyclerView: RecyclerView? = null
+
     private val browseViewModel: BrowseViewModel by viewModels {
-        InjectorUtils.provideBrowseViewModelFactory(this)
+        InjectorUtils.provideBrowseViewModelFactory(///???)
     }
 
     private var query: String? = null // todo restore query
@@ -46,8 +49,8 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         requireActivity().title = "Browse"
         setHasOptionsMenu(true)
 
-        val recyclerView: RecyclerView = view.findViewById(R.id.browse_films_recyclerview_id)
-        recyclerView.setHasFixedSize(true)
+        recyclerView = view.findViewById(R.id.browse_films_recyclerview_id)
+        recyclerView?.setHasFixedSize(true)
 
         // todo Restore scroll position (if it exists in the bundle) -> currently not working
 //        val scrollPosition = savedInstanceState?.getInt(BUNDLE_SCROLL_POSITION) ?: 0
@@ -55,7 +58,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
         val adapter = BrowseRecyclerAdapter()
         adapter.setFilmActionListener(this)
-        recyclerView.adapter = adapter
+        recyclerView?.adapter = adapter
 
         browseViewModel.getResults().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             adapter.submitList(it)
@@ -68,7 +71,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         fragment_browse_empty_container.visibility = View.GONE
         fragment_browse_recycler_framelayout.visibility = View.VISIBLE
 
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 when {
@@ -205,6 +208,11 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
             fragment_browse_empty_container.visibility = View.VISIBLE
             fragment_browse_recycler_framelayout.visibility = View.GONE
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        recyclerView = null // Preventing memory leak
     }
 
     companion object {
