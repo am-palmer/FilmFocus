@@ -3,6 +3,7 @@ package amichealpalmer.kotlin.filmfocus.view.dialog
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
+import amichealpalmer.kotlin.filmfocus.view.adapter.HistoryRecyclerAdapter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,10 +16,8 @@ import androidx.fragment.app.DialogFragment
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_watchlist_watched_dialog.*
 
-// todo: code duplication with watchedDialogFragment - this fragment should inherit
-
 // This is the fragment that is displayed when a user edits an item in the history
-class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListener, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
+class EditHistoryItemDialogFragment(val adapter: HistoryRecyclerAdapter) : DialogFragment(), RatingBar.OnRatingBarChangeListener, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
     private val TAG = "EditHistoryItemDiaFrag"
     private lateinit var callback: onHistoryEditDialogSubmissionListener
@@ -29,7 +28,7 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
     private var arrayPosition = 0
 
     interface onHistoryEditDialogSubmissionListener {
-        fun onEditHistoryItemDialogSubmissionListener(timelineItem: TimelineItem, arrayPosition: Int)
+        fun onEditHistoryItemDialogSubmissionListener(adapter: HistoryRecyclerAdapter, timelineItem: TimelineItem, arrayPosition: Int)
     }
 
     fun setHistoryEditDialogSubmissionListener(callback: onHistoryEditDialogSubmissionListener) {
@@ -96,7 +95,7 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
                 val item = TimelineItem(timelineItem.film, rating ?: 0f, date, text, status)
                 // Set the id (primary key) so Room knows to replace the existing entry
                 item.id = timelineItem.id
-                callback.onEditHistoryItemDialogSubmissionListener(item, arrayPosition)
+                callback.onEditHistoryItemDialogSubmissionListener(adapter, item, arrayPosition)
                 this.dismiss()
             }
             else -> true
@@ -118,8 +117,8 @@ class EditHistoryItemDialogFragment : DialogFragment(), RatingBar.OnRatingBarCha
 
         const val TAG = "EditHistoryItemDiaFrag"
 
-        fun newInstance(timelineItem: TimelineItem, arrayPosition: Int): EditHistoryItemDialogFragment {
-            val fragment = EditHistoryItemDialogFragment()
+        fun newInstance(adapter: HistoryRecyclerAdapter, timelineItem: TimelineItem, arrayPosition: Int): EditHistoryItemDialogFragment {
+            val fragment = EditHistoryItemDialogFragment(adapter)
             val bundle = Bundle()
             bundle.putParcelable("timelineItem", timelineItem)
             bundle.putInt("arrayPosition", arrayPosition)

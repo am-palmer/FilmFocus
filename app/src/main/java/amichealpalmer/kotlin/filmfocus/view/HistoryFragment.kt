@@ -1,6 +1,7 @@
 package amichealpalmer.kotlin.filmfocus.view
 
 import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.databinding.FragmentHistoryBinding
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
@@ -25,15 +26,17 @@ import kotlinx.android.synthetic.main.fragment_history.*
 class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.TimelineActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener {
 
     private var recyclerView: RecyclerView? = null
+    private lateinit var binding: FragmentHistoryBinding
+    //private lateinit var adapter: HistoryRecyclerAdapter
 
     private val timelineViewModel: TimelineViewModel by viewModels {
         InjectorUtils.provideTimelineViewModelFactory(this)
     }
-    private lateinit var adapter: HistoryRecyclerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_history, container, false)
+        binding = FragmentHistoryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,20 +51,20 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
         adapter.setFilmActionListener(this)
         adapter.setTimelineActionListener(this)
-        recyclerView?.adapter = adapter
-        //recyclerView.adapter.stateRestorationPolicy
-        this.adapter = adapter
+        //recyclerView?.adapter = adapter
+        binding.fragmentHistoryTimelineRv.adapter = adapter
 
+        subscribeUi(adapter, binding)
+
+
+    }
+
+    private fun subscribeUi(adapter: HistoryRecyclerAdapter, binding: FragmentHistoryBinding) {
         // Observer
         timelineViewModel.getTimelineItemList().observe(viewLifecycleOwner, Observer {
             adapter.submitList(it.reversed())
-            //onTimelineItemListStateChange() todo rewrite
+            binding.hasItems = !it.isNullOrEmpty()
         })
-
-        // todo remove and use data binding
-        fragment_history_empty_view_container.visibility = View.GONE
-        fragment_history_timeline_rv.visibility = View.VISIBLE
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -117,20 +120,20 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         fragment.show(childFragmentManager, FilmDetailDialogFragment.TAG)
     }
 
-    override fun editTimelineItem(item: TimelineItem, position: Int) {
-        val dialogFragment = EditHistoryItemDialogFragment.newInstance(item, position)
+    override fun editTimelineItem(adapter: HistoryRecyclerAdapter, item: TimelineItem, position: Int) {
+        val dialogFragment = EditHistoryItemDialogFragment.newInstance(adapter, item, position)
         dialogFragment.setHistoryEditDialogSubmissionListener(this)
         dialogFragment.show(childFragmentManager, WatchedDialogFragment.TAG)
     }
 
-    override fun onEditHistoryItemDialogSubmissionListener(timelineItem: TimelineItem, arrayPosition: Int) {
+    override fun onEditHistoryItemDialogSubmissionListener(adapter: HistoryRecyclerAdapter, timelineItem: TimelineItem, arrayPosition: Int) {
         timelineViewModel.addUpdateItem(timelineItem)
         adapter.notifyItemChanged(arrayPosition)
         adapter.notifyDataSetChanged()
         Toast.makeText(requireContext(), "Updated details for ${timelineItem.film.title}", Toast.LENGTH_SHORT).show()
     }
 
-    override fun removeTimelineItem(item: TimelineItem, position: Int) {
+    override fun removeTimelineItem(adapter: HistoryRecyclerAdapter, item: TimelineItem, position: Int) {
         AlertDialog.Builder(requireContext())
                 .setTitle(R.string.remove_item_from_history)
                 .setMessage(R.string.dialog_confirmRemovalFromHistory_prompt)

@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
-    // todo: store search string (if it exists) as well as scroll position and restore them on rotation
+    // todo: store search string (if it exists) and restore
 
     private var recyclerView: RecyclerView? = null
     private var adapter: WatchlistRecyclerAdapter? = null
@@ -64,9 +64,10 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
     }
 
-    // Checking if any of the dialogs associated with this fragment exist and reattaching the listeners
+
     override fun onResume() {
         super.onResume()
+        // Reattaching listener
         val watchedDialogFragment = childFragmentManager.findFragmentByTag(WatchedDialogFragment.TAG)
         if (watchedDialogFragment is WatchedDialogFragment) { // May be null
             watchedDialogFragment.setOnWatchedDialogSubmissionListener(this)

@@ -32,8 +32,8 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
     }
 
     interface TimelineActionListener {
-        fun editTimelineItem(item: TimelineItem, position: Int)
-        fun removeTimelineItem(item: TimelineItem, position: Int)
+        fun editTimelineItem(adapter: HistoryRecyclerAdapter, item: TimelineItem, position: Int)
+        fun removeTimelineItem(adapter: HistoryRecyclerAdapter, item: TimelineItem, position: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimelineItemViewHolder {
@@ -87,7 +87,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
 
                 poster.setOnCreateContextMenuListener { menu, v, menuInfo ->
                     menu?.add(R.string.edit)?.setOnMenuItemClickListener {
-                        timelineListener?.editTimelineItem(item, position)
+                        timelineListener?.editTimelineItem(this@HistoryRecyclerAdapter, item, position)
                         true
                     }
                     menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
@@ -95,7 +95,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
                         true
                     }
                     menu?.add(R.string.remove_item_from_history)?.setOnMenuItemClickListener {
-                        timelineListener?.removeTimelineItem(item, position)
+                        timelineListener?.removeTimelineItem(this@HistoryRecyclerAdapter, item, position)
                         true
                     }
                 }

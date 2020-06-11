@@ -25,7 +25,6 @@ import kotlinx.android.synthetic.main.fragment_browse.*
 import java.util.*
 
 // todo: livedata is being cleared or lost somehow on fragment transitions
-// todo: it's possible to search with "null" if you scroll down with nothing in the search field!
 
 class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
