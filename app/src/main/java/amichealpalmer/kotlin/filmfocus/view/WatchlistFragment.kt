@@ -14,6 +14,7 @@ import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModel
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
@@ -55,10 +56,10 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
         subscribeUi(adapter!!, binding)
     }
 
-    private fun subscribeUi(adapter: WatchlistRecyclerAdapter, binding: FragmentWatchlistBinding){
+    private fun subscribeUi(adapter: WatchlistRecyclerAdapter, binding: FragmentWatchlistBinding) {
         //Register observer for View model
         watchlistViewModel.getWatchlist().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            adapter?.submitList(it)
+            adapter.modifyList(it) // Use modifyList rather than submitList for purposes of filtering
             binding.hasWatchlistItems = !it.isNullOrEmpty()
         })
 
@@ -95,6 +96,7 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
             override fun onQueryTextChange(newText: String): Boolean {
                 // We use the adapter filter to update the RecyclerView
+                Log.d(TAG, "onQueryTextChange: triggers")
                 adapter?.filter(newText)
                 return true
             }
