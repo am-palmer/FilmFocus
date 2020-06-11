@@ -14,7 +14,6 @@ import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModel
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
@@ -22,14 +21,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 
-// todo: filter doesn't work properly
-
 class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
-
-    // todo: store search string (if it exists) and restore
 
     private var recyclerView: RecyclerView? = null
     private var adapter: WatchlistRecyclerAdapter? = null
+    private var searchView: SearchView? = null
+    private var query: String? = null
     private lateinit var binding: FragmentWatchlistBinding
 
     private val watchlistViewModel: WatchlistViewModel by viewModels {
@@ -65,7 +62,6 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
     }
 
-
     override fun onResume() {
         super.onResume()
         // Reattaching listener
@@ -78,16 +74,20 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.watchlist_fragment_menu, menu)
 
-        val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext
+        searchView = SearchView((context as MainActivity).supportActionBar?.themedContext
                 ?: context)
-        searchView.isIconifiedByDefault = false
-        searchView.requestFocus()
+        searchView?.isIconifiedByDefault = false
+        searchView?.requestFocus()
         menu.findItem(R.id.watchlist_fragment_search).apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)
             actionView = searchView
+            // Check if a query exists (i.e. after orientation change), if so expand search view
+            if (query != null) {
+                expandActionView()
+            }
         }
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
                 this@WatchlistFragment.hideKeyboard()
@@ -96,19 +96,35 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
             override fun onQueryTextChange(newText: String): Boolean {
                 // We use the adapter filter to update the RecyclerView
-                Log.d(TAG, "onQueryTextChange: triggers")
                 adapter?.filter(newText)
                 return true
             }
         })
 
+        searchView?.post { searchView?.setQuery(query, true) }
+
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (!searchView?.query.isNullOrEmpty()) {
+            outState.putString(BUNDLE_QUERY, searchView?.query.toString())
+        }
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null) {
+            query = savedInstanceState.getString(BUNDLE_QUERY)
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         recyclerView = null
         adapter = null
+        searchView = null
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -176,7 +192,8 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
     }
 
     companion object {
-        private const val TAG = "WatchlistFragment"
+        private const val BUNDLE_QUERY = "bundle_query"
+
     }
 
 }

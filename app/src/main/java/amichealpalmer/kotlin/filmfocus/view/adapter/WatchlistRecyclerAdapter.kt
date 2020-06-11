@@ -18,8 +18,6 @@ import java.util.*
 class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAdapter.WatchlistItemViewHolder>(DIFF_CALLBACK) {
 
     private var filmActionListener: FilmActionListener? = null
-    //var position = 0
-
     private var fullList = listOf<WatchlistItem>()
 
     fun setFilmActionListener(listener: FilmActionListener) {
