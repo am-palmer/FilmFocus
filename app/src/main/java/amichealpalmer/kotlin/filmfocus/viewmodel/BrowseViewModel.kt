@@ -28,10 +28,6 @@ class BrowseViewModel internal constructor(private val repository: FilmThumbnail
         return repository.getResults
     }
 
-    fun getQuery(): MutableLiveData<String?> {
-        return repository.getQuery
-    }
-
     fun getWatchlist(): LiveData<List<WatchlistItem>> {
         return watchlistRepository.getWatchlistItems()
     }
@@ -43,9 +39,20 @@ class BrowseViewModel internal constructor(private val repository: FilmThumbnail
     }
 
     fun markWatched(timelineItem: TimelineItem) {
+
+        // Remove the film from the watchlist if it is present
         viewModelScope.launch {
+            watchlistRepository.deleteByImdbId(timelineItem.film.imdbID)
+        }
+
+        viewModelScope.launch {
+            // Add the film to the history
             timelineRepository.insertUpdate(timelineItem)
         }
+    }
+
+    companion object{
+        private const val TAG = "BrowseViewModel"
     }
 
 }

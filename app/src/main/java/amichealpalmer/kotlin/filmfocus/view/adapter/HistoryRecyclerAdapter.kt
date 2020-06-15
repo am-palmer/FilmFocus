@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
-// todo: time 'line' is sometimes broken when a new item is added to the history -> works now but doesn't update when a change is made outside the fragment (marking a film watched)
 class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.TimelineItemViewHolder>(DIFF_CALLBACK) {
 
     private var listener: FilmActionListener? = null
@@ -49,7 +48,6 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
     }
 
     companion object {
-        private const val TAG = "HistoryRecyclerAdapter"
 
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TimelineItem>() {
             override fun areItemsTheSame(oldItem: TimelineItem, newItem: TimelineItem): Boolean {

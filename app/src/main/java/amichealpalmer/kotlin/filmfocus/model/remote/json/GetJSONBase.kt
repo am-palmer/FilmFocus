@@ -8,7 +8,7 @@ import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL
 
-// todo: convert to coroutine
+// todo: convert to coroutine or workmanager?
 
 abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
 

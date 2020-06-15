@@ -16,6 +16,9 @@ interface WatchlistItemDao {
     @Delete
     suspend fun delete(watchlistItem: WatchlistItem)
 
+    @Query("DELETE FROM watchlist WHERE imdbID = :imdbID")
+    suspend fun deleteByImdbId(imdbID: String)
+
     @Query("DELETE FROM watchlist")
     suspend fun deleteAllWatchlistItems()
 

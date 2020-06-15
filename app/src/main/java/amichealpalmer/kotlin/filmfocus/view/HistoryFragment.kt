@@ -19,9 +19,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_history.*
-
-// todo: sometimes the literal time 'line' breaks when a film is removed.
 
 class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.TimelineActionListener, EditHistoryItemDialogFragment.onHistoryEditDialogSubmissionListener {
 
@@ -158,18 +155,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
     private fun clearHistory() {
         timelineViewModel.clearTimeline()
         Toast.makeText(context, "Cleared History", Toast.LENGTH_SHORT).show()
-    }
-
-    // Called when we need to check if we should display the empty view for the Timeline fragment
-    // todo: not working with observer use data binding and xml
-    private fun onTimelineItemListStateChange() {
-        if (!timelineViewModel.getTimelineItemList().value.isNullOrEmpty()) {
-            fragment_history_empty_view_container.visibility = View.GONE
-            fragment_history_timeline_rv.visibility = View.VISIBLE
-        } else {
-            fragment_history_empty_view_container.visibility = View.VISIBLE
-            fragment_history_timeline_rv.visibility = View.GONE
-        }
     }
 
     companion object {

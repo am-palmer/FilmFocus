@@ -18,6 +18,10 @@ class WatchlistItemRepository private constructor(private val watchlistDao: Watc
         watchlistDao.deleteAllWatchlistItems()
     }
 
+    suspend fun deleteByImdbId(imdbID: String){
+        watchlistDao.deleteByImdbId(imdbID)
+    }
+
     fun getWatchlistItems() = watchlistDao.getAllWatchlistItems()
 
     companion object {

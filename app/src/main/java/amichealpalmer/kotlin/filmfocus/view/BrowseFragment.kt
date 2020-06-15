@@ -77,21 +77,21 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     private fun subscribeUi(adapter: BrowseRecyclerAdapter, binding: FragmentBrowseBinding){
         browseViewModel.getResults().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             adapter.submitList(it)
-            adapter.notifyDataSetChanged() // todo: shouldn't need to call this directly
+            adapter.notifyDataSetChanged()
             binding.hasResults = !it.isNullOrEmpty()
             browse_fragment_progressBar.visibility = View.GONE
         })
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        var scrollPos: Int? = null
-        if (browse_films_recyclerview_id?.adapter != null) {
-            scrollPos = browse_films_recyclerview_id?.verticalScrollbarPosition
-        }
-        outState.putInt(BUNDLE_SCROLL_POSITION, scrollPos ?: 0)
-    }
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//
+//        var scrollPos: Int? = null
+//        if (browse_films_recyclerview_id?.adapter != null) {
+//            scrollPos = browse_films_recyclerview_id?.verticalScrollbarPosition
+//        }
+//        outState.putInt(BUNDLE_SCROLL_POSITION, scrollPos ?: 0)
+//    }
 
     // Reattaching listener interface to dialogs if they exist
     override fun onResume() {
@@ -198,6 +198,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
     override fun removeFilmFromWatchlist(watchlistItem: WatchlistItem) {
         // Does nothing in this context
+        // todo: rewrite so not present
     }
 
     companion object {

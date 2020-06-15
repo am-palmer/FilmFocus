@@ -30,7 +30,7 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
     private lateinit var binding: FragmentWatchlistBinding
 
     private val watchlistViewModel: WatchlistViewModel by viewModels {
-        InjectorUtils.provideWatchlistViewModelFactory(this) // todo: we lose the state when switching between fragments. fix
+        InjectorUtils.provideWatchlistViewModelFactory(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
