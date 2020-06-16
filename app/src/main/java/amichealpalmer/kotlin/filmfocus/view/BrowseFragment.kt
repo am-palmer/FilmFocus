@@ -83,16 +83,6 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         })
     }
 
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//
-//        var scrollPos: Int? = null
-//        if (browse_films_recyclerview_id?.adapter != null) {
-//            scrollPos = browse_films_recyclerview_id?.verticalScrollbarPosition
-//        }
-//        outState.putInt(BUNDLE_SCROLL_POSITION, scrollPos ?: 0)
-//    }
-
     // Reattaching listener interface to dialogs if they exist
     override fun onResume() {
         super.onResume()
