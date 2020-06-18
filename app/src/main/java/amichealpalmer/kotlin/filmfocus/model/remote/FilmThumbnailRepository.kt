@@ -20,11 +20,11 @@ class FilmThumbnailRepository(private val context: Context) {
     // Called by the API accessor to update the resultList
     fun updateResults(newResults: ArrayList<FilmThumbnail?>) {
         if (newResults.isNullOrEmpty()) {
-            haveMoreResults.value = false // We note that there are no more results for this query
+            haveMoreResults.value = false // We note that there are no more results for this query, listener for haveMoreResults in fragment updates view (hide spinner)
             return
         }
         for (result in newResults) {
-            if (result != null) { // This check might not be needed
+            if (result != null) {
                 val currentList = resultList.value
                 currentList?.add(result)
                 resultList.value = currentList
@@ -51,6 +51,6 @@ class FilmThumbnailRepository(private val context: Context) {
     }
 
     val getResults get() = resultList
-    val getQuery get() = query
+    val getHaveMoreResults get() = haveMoreResults
 
 }

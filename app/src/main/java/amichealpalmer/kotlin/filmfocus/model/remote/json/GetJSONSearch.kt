@@ -12,7 +12,6 @@ class GetJSONSearch(private val listener: WeakReference<FilmThumbnailRepository>
         GetJSONBase<ArrayList<FilmThumbnail?>>() { // Example input query is "?s=ghost". We then append the website and API key to form a valid URL (in the super class helper method)
 
     override fun onPostExecute(result: ArrayList<FilmThumbnail?>) { // Notify FilmThumbnailRepository, update LiveData object
-
         listener.get()?.updateResults(result)
     }
 
@@ -32,8 +31,12 @@ class GetJSONSearch(private val listener: WeakReference<FilmThumbnailRepository>
     }
 
     private fun createResultsFromJSON(result: JSONObject): ArrayList<FilmThumbnail?> { // Parse JSON object and create an ArrayList of FilmThumbnails (if possible)
-        Log.d(TAG, ".createResultsFromJSON starting with raw input JSON data")
         val resultList = ArrayList<FilmThumbnail?>()
+
+        // A bit magic number-ish, but result.length is 2 when there are no more results, from observation, 3 otherwise (due to the way the JSON is structured)
+        if (result.length() == 2){
+            return resultList // Empty, so the receiver knows the end of the results has been reached
+        }
 
         try {
             val itemsArray = result.getJSONArray("Search")
@@ -47,7 +50,7 @@ class GetJSONSearch(private val listener: WeakReference<FilmThumbnailRepository>
                 val searchResult = FilmThumbnail(title, year, imdbID, type, posterURL)
                 resultList.add(searchResult)
             }
-        } catch (e: JSONException) { // Todo: this exception is currently always thrown when we reach the end of the results (when we hit a page number that contains no film items). Is this idiomatic use of exceptions?
+        } catch (e: JSONException) { // Thrown when there are no or malformed results (i.e. thrown when we reach the end of the result list)
             Log.d(TAG, ".createResultsFromJSON: Error processing JSON data. ${e.message}")
         }
         return resultList

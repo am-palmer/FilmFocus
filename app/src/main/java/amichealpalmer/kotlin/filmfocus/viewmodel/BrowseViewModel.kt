@@ -28,6 +28,10 @@ class BrowseViewModel internal constructor(private val repository: FilmThumbnail
         return repository.getResults
     }
 
+    fun getHaveMoreResults(): MutableLiveData<Boolean>{
+        return repository.getHaveMoreResults
+    }
+
     fun getWatchlist(): LiveData<List<WatchlistItem>> {
         return watchlistRepository.getWatchlistItems()
     }

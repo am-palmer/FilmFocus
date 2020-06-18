@@ -32,7 +32,6 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
     }
 
     companion object {
-        private const val TAG = "BrowseRecyclerAdapter"
 
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<FilmThumbnail>() {
             override fun areItemsTheSame(oldItem: FilmThumbnail, newItem: FilmThumbnail): Boolean {

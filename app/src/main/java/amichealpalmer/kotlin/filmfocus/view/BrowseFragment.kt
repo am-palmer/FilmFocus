@@ -64,9 +64,11 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
                 super.onScrollStateChanged(recyclerView, newState)
                 when {
                     !recyclerView.canScrollVertically(1) -> {
-                        // Request next page from repo
-                        browseViewModel.nextPage()
-                        browse_fragment_progressBar.visibility = View.VISIBLE
+                        if (browseViewModel.getHaveMoreResults().value == true) {
+                            // Request next page from repo
+                            browseViewModel.nextPage()
+                            browse_fragment_progressBar.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
@@ -74,13 +76,19 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
     }
 
-    private fun subscribeUi(adapter: BrowseRecyclerAdapter, binding: FragmentBrowseBinding){
+    private fun subscribeUi(adapter: BrowseRecyclerAdapter, binding: FragmentBrowseBinding) {
         browseViewModel.getResults().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             adapter.submitList(it)
             adapter.notifyDataSetChanged()
             binding.hasResults = !it.isNullOrEmpty()
             browse_fragment_progressBar.visibility = View.GONE
         })
+
+        // Changes to false when we reach the bottom of the result list. Hide the progress bar to indicate there are no more results. Could display a toast message
+        browseViewModel.getHaveMoreResults().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            browse_fragment_progressBar.visibility = View.GONE
+        })
+
     }
 
     // Reattaching listener interface to dialogs if they exist
@@ -140,7 +148,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     // todo: not working?
     override fun onPrepareOptionsMenu(menu: Menu) {
         // Restore query in search field if not null
-        if (query != null){
+        if (query != null) {
             searchView?.setQuery(query, false)
         }
         super.onPrepareOptionsMenu(menu)
@@ -156,7 +164,6 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         // Wait for thread to get the object, and then try to add the film to the watchlist, first checking if it exists
         currentWatchlist.observeOnce(viewLifecycleOwner, androidx.lifecycle.Observer {
             var exists = false
-            Log.d(TAG, "watchlist size is: ${currentWatchlist.value?.size}")
             for (f in currentWatchlist.value!!) {
                 if (f.imdbID == film.imdbID) {
                     exists = true
