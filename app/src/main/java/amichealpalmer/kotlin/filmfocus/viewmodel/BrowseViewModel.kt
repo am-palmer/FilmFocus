@@ -6,9 +6,7 @@ import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.model.remote.FilmThumbnailRepository
 import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemRepository
 import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemRepository
-import android.os.Bundle
 import androidx.lifecycle.*
-import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.launch
 
 // Holds data displayed in the Browse fragment
@@ -55,21 +53,18 @@ class BrowseViewModel internal constructor(private val repository: FilmThumbnail
         }
     }
 
-    companion object{
-        private const val TAG = "BrowseViewModel"
-    }
-
 }
-
+// todo: not actually using this to its potential
 class BrowseViewModelFactory(private val repository: FilmThumbnailRepository,
                              private val watchlistRepository: WatchlistItemRepository,
-                             private val timelineRepository: TimelineItemRepository,
-                             owner: SavedStateRegistryOwner,
-                             defaultArgs: Bundle? = null) : AbstractSavedStateViewModelFactory(owner, defaultArgs) {
+                             private val timelineRepository: TimelineItemRepository) : ViewModelProvider.Factory {
+
+//    override fun <T : ViewModel?> create(key: String, modelClass: Class<T>, handle: SavedStateHandle): T {
+//        return BrowseViewModel(repository, watchlistRepository, timelineRepository) as T
+//    }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(key: String, modelClass: Class<T>, handle: SavedStateHandle): T {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return BrowseViewModel(repository, watchlistRepository, timelineRepository) as T
     }
-
 }

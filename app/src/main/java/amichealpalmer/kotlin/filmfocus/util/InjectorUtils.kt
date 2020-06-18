@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 object InjectorUtils {
 
     private fun getFilmThumbnailRepository(context: Context): FilmThumbnailRepository {
-        return FilmThumbnailRepository(context)
+        return FilmThumbnailRepository.getInstance(context.applicationContext)
     }
 
     private fun getWatchlistItemRepository(context: Context): WatchlistItemRepository {
@@ -25,11 +25,11 @@ object InjectorUtils {
         return TimelineItemRepository.getInstance(TimelineItemDatabase.getInstance(context.applicationContext).timelineItemDao())
     }
 
-    fun provideBrowseViewModelFactory(fragment: Fragment): BrowseViewModelFactory {
-        val repository = getFilmThumbnailRepository(fragment.requireContext())
-        val watchlistRepository = getWatchlistItemRepository(fragment.requireContext())
-        val timelineRepository = getTimelineItemRepository(fragment.requireContext())
-        return BrowseViewModelFactory(repository, watchlistRepository, timelineRepository, fragment)
+    fun provideBrowseViewModelFactory(context: Context): BrowseViewModelFactory {
+        val repository = getFilmThumbnailRepository(context)
+        val watchlistRepository = getWatchlistItemRepository(context)
+        val timelineRepository = getTimelineItemRepository(context)
+        return BrowseViewModelFactory(repository, watchlistRepository, timelineRepository)
     }
 
     fun provideWatchlistViewModelFactory(fragment: Fragment): WatchlistViewModelFactory {

@@ -14,7 +14,6 @@ import amichealpalmer.kotlin.filmfocus.view.adapter.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModel
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
@@ -24,8 +23,6 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
 import java.util.*
 
-// todo: livedata is being cleared or lost somehow on fragment transitions
-
 class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
     private var recyclerView: RecyclerView? = null
@@ -34,7 +31,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     private lateinit var binding: FragmentBrowseBinding
 
     private val browseViewModel: BrowseViewModel by viewModels {
-        InjectorUtils.provideBrowseViewModelFactory(this)
+        InjectorUtils.provideBrowseViewModelFactory(requireContext())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

@@ -53,4 +53,16 @@ class FilmThumbnailRepository(private val context: Context) {
     val getResults get() = resultList
     val getHaveMoreResults get() = haveMoreResults
 
+
+    companion object {
+
+        @Volatile
+        private var instance: FilmThumbnailRepository? = null
+
+        fun getInstance(context: Context) =
+                instance ?: synchronized(this) {
+                    instance ?: FilmThumbnailRepository(context).also { instance = it }
+                }
+    }
+
 }
