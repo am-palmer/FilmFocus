@@ -47,8 +47,9 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
         val adapter = BrowseRecyclerAdapter()
         adapter.setFilmActionListener(this)
-        recyclerView = view?.findViewById(R.id.browse_films_recyclerview_id)
+        recyclerView = view.findViewById(R.id.browse_films_recyclerview_id)
         recyclerView?.setHasFixedSize(true)
+
         binding.browseFilmsRecyclerviewId.adapter = adapter
         subscribeUi(adapter, binding)
 
