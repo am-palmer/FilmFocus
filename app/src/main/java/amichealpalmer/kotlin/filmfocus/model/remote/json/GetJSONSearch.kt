@@ -7,7 +7,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.lang.ref.WeakReference
 
-// Retrieve JSON Search Data and return it to the calling class.
+// Retrieve JSON SearchResponse Data and return it to the calling class.
 class GetJSONSearch(private val listener: WeakReference<FilmThumbnailRepository>, private val apikey: String) :
         GetJSONBase<ArrayList<FilmThumbnail?>>() { // Example input query is "?s=ghost". We then append the website and API key to form a valid URL (in the super class helper method)
 
@@ -39,7 +39,7 @@ class GetJSONSearch(private val listener: WeakReference<FilmThumbnailRepository>
         }
 
         try {
-            val itemsArray = result.getJSONArray("Search")
+            val itemsArray = result.getJSONArray("SearchResponse")
             for (i in 0 until itemsArray.length()) {
                 val jsonItem = itemsArray.getJSONObject(i)
                 val title = jsonItem.getString("Title")

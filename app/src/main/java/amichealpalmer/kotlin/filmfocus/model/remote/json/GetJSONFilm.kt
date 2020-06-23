@@ -22,7 +22,7 @@ class GetJSONFilm(private var listener: WeakReference<FilmDetailDialogFragment>,
     }
 
     override fun doInBackground(vararg params: String): Film? { // params[0] should be imdbID
-        val query = "?i=${params[0]}" // i= Search by IMDB id.
+        val query = "?i=${params[0]}" // i= SearchResponse by IMDB id.
         Log.d(TAG, ".doInBackground started")
 
         // Get our JSON object from the parent class

@@ -26,7 +26,6 @@ import java.util.*
 class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
 
     private var recyclerView: RecyclerView? = null
-    private var query: String? = null // todo restore query
     private var searchView: SearchView? = null
     private lateinit var binding: FragmentBrowseBinding
 
@@ -49,13 +48,9 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         adapter.setFilmActionListener(this)
         recyclerView = view.findViewById(R.id.browse_films_recyclerview_id)
         recyclerView?.setHasFixedSize(true)
-
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.browseFilmsRecyclerviewId.adapter = adapter
         subscribeUi(adapter, binding)
-
-        // todo Restore scroll position (if it exists in the bundle) -> currently not working
-//        val scrollPosition = savedInstanceState?.getInt(BUNDLE_SCROLL_POSITION) ?: 0
-//        recyclerView.post { browse_films_recyclerview_id.scrollToPosition(scrollPosition) }
 
         recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -71,6 +66,10 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
                 }
             }
         })
+
+        //val sharedPrefs = requireActivity().getSharedPreferences(BROWSE_SHAREDPREF_KEY, Context.MODE_PRIVATE)
+        // todo: none of this works - values are saved, but restoring doesn't work
+        //recyclerView?.post { recyclerViewscrollToPosition(sharedPrefs.getInt(SHAREDPREF_SCROLL_POSITION, 0)) }
 
     }
 
@@ -96,7 +95,9 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         if (watchedDialogFragment is WatchedDialogFragment) {
             watchedDialogFragment.setOnWatchedDialogSubmissionListener(this)
         }
+        //searchView?.setQuery(sharedPrefs.getString(SHAREDPREF_QUERY, ""), false)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -141,15 +142,6 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
         })
 
         super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    // todo: not working?
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        // Restore query in search field if not null
-        if (query != null) {
-            searchView?.setQuery(query, false)
-        }
-        super.onPrepareOptionsMenu(menu)
     }
 
     override fun showFilmDetails(film: FilmThumbnail) {
@@ -198,8 +190,9 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
 
     companion object {
         private const val TAG = "BrowseFragment"
-        private const val BUNDLE_SCROLL_POSITION = "scrollPosition"
-        private const val BUNDLE_QUERY = "query"
+        private const val SHAREDPREF_SCROLL_POSITION = "scrollPosition"
+        private const val SHAREDPREF_QUERY = "query"
+        private const val BROWSE_SHAREDPREF_KEY = "filmFocusBrowseSharedPreferences"
 
     }
 

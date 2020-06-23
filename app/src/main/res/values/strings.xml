@@ -4,6 +4,8 @@
     <string name="more">More</string>
     <string name="search_hint">Search films…</string>
 
+    <string name="omdb_url">https://www.omdbapi.com/</string>
+
     <string name="fragment_browse_title">Browse</string>
     <string name="fragment_watchlist_title">Watchlist</string>
     <string name="fragment_history_title">History</string>

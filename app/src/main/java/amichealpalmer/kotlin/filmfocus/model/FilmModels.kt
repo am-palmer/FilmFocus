@@ -2,6 +2,7 @@ package amichealpalmer.kotlin.filmfocus.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 
 // Class holding all the models relating to film objects.
 
@@ -90,11 +91,11 @@ class Film(
    These are displayed in the RecyclerViews throughout the app.
  */
 
-open class FilmThumbnail(val title: String,
-                         val year: String,
-                         val imdbID: String,
-                         val type: String,
-                         val posterURL: String) : Parcelable {
+open class FilmThumbnail(@SerializedName("Title") val title: String,
+                         @SerializedName("Year") val year: String,
+                         @SerializedName("imdbID") val imdbID: String,
+                         @SerializedName("Type") val type: String,
+                         @SerializedName("Poster") val posterURL: String) : Parcelable {
     override fun toString(): String {
         return "FilmThumbnail(title='$title', year='$year', imdbID='$imdbID', type='$type', posterURL='$posterURL')"
     }
@@ -140,3 +141,17 @@ open class FilmThumbnail(val title: String,
         }
     }
 }
+
+// The JSON object returned by a search query to OMDB.
+
+class SearchResponse(@SerializedName("Response")
+             var response: String,
+
+                     @SerializedName("Error")
+             var error: String,
+
+                     @SerializedName("totalResults")
+             var totalResults: String,
+
+                     @SerializedName("Search")
+             var search: ArrayList<FilmThumbnail?>)
