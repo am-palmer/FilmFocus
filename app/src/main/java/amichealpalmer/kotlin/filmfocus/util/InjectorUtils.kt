@@ -1,6 +1,6 @@
 package amichealpalmer.kotlin.filmfocus.util
 
-import amichealpalmer.kotlin.filmfocus.model.remote.FilmThumbnailRepository
+import amichealpalmer.kotlin.filmfocus.model.remote.OMDBRepository
 import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemDatabase
 import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemRepository
 import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemDatabase
@@ -13,8 +13,8 @@ import androidx.fragment.app.Fragment
 
 object InjectorUtils {
 
-    private fun getFilmThumbnailRepository(context: Context): FilmThumbnailRepository {
-        return FilmThumbnailRepository.getInstance(context.applicationContext)
+    private fun getFilmThumbnailRepository(context: Context): OMDBRepository {
+        return OMDBRepository.getInstance(context.applicationContext)
     }
 
     private fun getWatchlistItemRepository(context: Context): WatchlistItemRepository {

@@ -3,14 +3,14 @@ package amichealpalmer.kotlin.filmfocus.viewmodel
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
-import amichealpalmer.kotlin.filmfocus.model.remote.FilmThumbnailRepository
+import amichealpalmer.kotlin.filmfocus.model.remote.OMDBRepository
 import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemRepository
 import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemRepository
 import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 
 // Holds data displayed in the Browse fragment
-class BrowseViewModel internal constructor(private val repository: FilmThumbnailRepository,
+class BrowseViewModel internal constructor(private val repository: OMDBRepository,
                                            private val watchlistRepository: WatchlistItemRepository,
                                            private val timelineRepository: TimelineItemRepository) : ViewModel() {
 
@@ -55,7 +55,7 @@ class BrowseViewModel internal constructor(private val repository: FilmThumbnail
 
 }
 // todo: not actually using this to its potential
-class BrowseViewModelFactory(private val repository: FilmThumbnailRepository,
+class BrowseViewModelFactory(private val repository: OMDBRepository,
                              private val watchlistRepository: WatchlistItemRepository,
                              private val timelineRepository: TimelineItemRepository) : ViewModelProvider.Factory {
 

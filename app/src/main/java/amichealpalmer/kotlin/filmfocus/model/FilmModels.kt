@@ -8,23 +8,24 @@ import com.google.gson.annotations.SerializedName
 
 // The most verbose Film model, containing all relevant details about a film, which is fetched when we load a FilmDetailDialogFragment
 class Film(
-        val title: String, // e.g. Guardians of the Galaxy Vol. 2
-        val imdbID: String,
-        val year: String, // e.g. 2017
-        val rated: String, // PG-13
-        val released: String, // 05 May 2017
-        val runtime: String, // 136 min
-        val genre: String, // Action, Adventure, Comedy, Sci-Fi
-        val director: String, // James Gunn
-        val actors: String, // Chris Pratt, Zoe Saldana, Dave Bautista, Vin Diesel
-        val plot: String,  // The Guardians struggle to keep together as a team while dealing with [...]
-        val language: String, // English
-        val country: String, // USA
-        val awards: String, // Nominated for 1 Oscar. Another 14 wins & 52 nominations.
-        val posterURL: String, // https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg
-        val metascore: String, // 67
-        val imdbRating: String, // 7.6
-        val type: String // movie
+        @SerializedName("Title") val title: String, // e.g. Guardians of the Galaxy Vol. 2
+        @SerializedName("imdbID") val imdbID: String,
+        @SerializedName("Year") val year: String, // e.g. 2017
+        @SerializedName("Rated") val rated: String, // PG-13
+        @SerializedName("Released") val released: String, // 05 May 2017
+        @SerializedName("Runtime") val runtime: String, // 136 min
+        @SerializedName("Genre") val genre: String, // Action, Adventure, Comedy, Sci-Fi
+        @SerializedName("Director") val director: String, // James Gunn
+        @SerializedName("Actors") val actors: String, // Chris Pratt, Zoe Saldana, Dave Bautista, Vin Diesel
+        @SerializedName("Plot") val plot: String,  // The Guardians struggle to keep together as a team while dealing with [...]
+        @SerializedName("Language") val language: String, // English
+        @SerializedName("Country") val country: String, // USA
+        @SerializedName("Awards") val awards: String, // Nominated for 1 Oscar. Another 14 wins & 52 nominations.
+        @SerializedName("Poster") val posterURL: String, // https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg
+        //@SerializedName("Ratings") val ratings: List<Ratings>, todo may not be needed
+        @SerializedName("Metascore") val metascore: String, // 67
+        @SerializedName("imdbRating") val imdbRating: String, // 7.6
+        @SerializedName("Type") val type: String // movie
 
 ) : Parcelable {
 
@@ -86,6 +87,14 @@ class Film(
         }
     }
 }
+
+    data class Ratings(
+            @SerializedName("Value")
+            var value: String,
+            @SerializedName("Source")
+            var source: String
+    )
+
 
 /* A simpler model which stores basic information about a film, created from the JSON information we retrieve from OMDB.
    These are displayed in the RecyclerViews throughout the app.

@@ -1,17 +1,17 @@
 package amichealpalmer.kotlin.filmfocus.model.remote.json
 
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.model.remote.FilmThumbnailRepository
+import amichealpalmer.kotlin.filmfocus.model.remote.OMDBRepository
 import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
 import java.lang.ref.WeakReference
 
 // Retrieve JSON SearchResponse Data and return it to the calling class.
-class GetJSONSearch(private val listener: WeakReference<FilmThumbnailRepository>, private val apikey: String) :
+class GetJSONSearch(private val listener: WeakReference<OMDBRepository>, private val apikey: String) :
         GetJSONBase<ArrayList<FilmThumbnail?>>() { // Example input query is "?s=ghost". We then append the website and API key to form a valid URL (in the super class helper method)
 
-    override fun onPostExecute(result: ArrayList<FilmThumbnail?>) { // Notify FilmThumbnailRepository, update LiveData object
+    override fun onPostExecute(result: ArrayList<FilmThumbnail?>) { // Notify OMDBRepository, update LiveData object
         listener.get()?.updateResults(result)
     }
 

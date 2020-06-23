@@ -15,14 +15,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 // todo: null safety
 
-class FilmThumbnailRepository(private val context: Context) {
+class OMDBRepository(private val context: Context) {
 
     // We use lazy for these objects as they may not be accessed, and in that case we avoid the cost of initializing them - e.g. if the user opens the app but does not make any search queries that session
     private val resultList: MutableLiveData<ArrayList<FilmThumbnail?>> by lazy { MutableLiveData<ArrayList<FilmThumbnail?>>(ArrayList()) }
 
     // LiveData objects holding search parameters
     private val query: MutableLiveData<String?> by lazy { MutableLiveData<String?>(null) }
-    private val currentPageNumber: MutableLiveData<Int> by lazy { MutableLiveData<Int>(1) }
+    private val currentPageNumber: MutableLiveData<Int> by lazy { MutableLiveData(1) }
     private val haveMoreResults: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(true) }
 
     // Called by the API accessor to update the resultList
@@ -102,11 +102,11 @@ class FilmThumbnailRepository(private val context: Context) {
         private const val baseUrl = "https://www.omdbapi.com/"
 
         @Volatile
-        private var instance: FilmThumbnailRepository? = null
+        private var instance: OMDBRepository? = null
 
         fun getInstance(context: Context) =
                 instance ?: synchronized(this) {
-                    instance ?: FilmThumbnailRepository(context).also { instance = it }
+                    instance ?: OMDBRepository(context).also { instance = it }
                 }
     }
 
