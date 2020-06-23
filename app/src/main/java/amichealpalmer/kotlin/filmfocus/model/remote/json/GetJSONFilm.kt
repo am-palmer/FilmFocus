@@ -15,7 +15,7 @@ class GetJSONFilm(private var listener: WeakReference<FilmDetailDialogFragment>,
     override fun onPostExecute(result: Film?) {
         Log.d(TAG, ".onPostExecute starts")
         if (result != null) {
-            listener.get()?.onFilmInfoDownload(result)
+           // listener.get()?.onFilmInfoDownload(result)
         } else {
             Log.e(TAG, ".onPostExecute: result object is null.")
         }

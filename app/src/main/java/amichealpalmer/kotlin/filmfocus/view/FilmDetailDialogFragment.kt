@@ -2,7 +2,7 @@ package amichealpalmer.kotlin.filmfocus.view
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.Film
-import amichealpalmer.kotlin.filmfocus.model.remote.json.GetJSONFilm
+import amichealpalmer.kotlin.filmfocus.model.remote.OMDBRepository
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,9 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_dialog_film_details.*
-import java.lang.ref.WeakReference
 
-class FilmDetailDialogFragment : DialogFragment() {
+class FilmDetailDialogFragment : DialogFragment(), OMDBRepository.FilmDetailListener {
 
     private val ARG_IMDBID = "imdbID"
 
@@ -45,16 +44,21 @@ class FilmDetailDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // Use the IMDB ID to retrieve film object Todo: move this logic out of view - create a viewmodel for this fragment
         val imdbID = arguments?.getString(ARG_IMDBID) as String
-        GetJSONFilm(WeakReference(this), getString(R.string.OMDB_API_KEY)).execute(imdbID)
+        val repository = OMDBRepository.getInstance(this.requireContext())
+
+        repository.getFilmDetails(this, imdbID)
+
+        //GetJSONFilm(WeakReference(this), getString(R.string.OMDB_API_KEY)).execute(imdbID)
+
 
         fragment_film_details_back_button.setOnClickListener { this.dismiss() }
 
         super.onViewCreated(view, savedInstanceState)
     }
 
-    // Called by GetJSONFilm to pass the film object
-    fun onFilmInfoDownload(film: Film) {
-        Log.d(TAG, ".onFilmInfoDownload starts")
+    // Called by OMDBRepository when Retrofit has retrieved the film information
+    override fun onFilmDetailsRetrieved(film: Film) {
+        //Log.d(TAG, ".onFilmInfoDownload starts")
 
         // Hide the ProgressBar
         film_details_progressBar?.visibility = View.GONE

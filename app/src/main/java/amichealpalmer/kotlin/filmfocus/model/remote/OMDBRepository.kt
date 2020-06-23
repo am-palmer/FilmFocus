@@ -1,6 +1,7 @@
 package amichealpalmer.kotlin.filmfocus.model.remote
 
 import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.model.Film
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.SearchResponse
 import amichealpalmer.kotlin.filmfocus.model.remote.json.OMDBSearchApi
@@ -62,6 +63,7 @@ class OMDBRepository(private val context: Context) {
 
             val searchApi = retrofit.create(OMDBSearchApi::class.java)
 
+            // todo null safety
             val call = searchApi.getSearchResults(context.getString(R.string.OMDB_API_KEY), query.value!!, currentPageNumber.value!!)
 
             call.enqueue(object : Callback<SearchResponse> {
@@ -75,10 +77,14 @@ class OMDBRepository(private val context: Context) {
                         return
                     }
 
-                    Log.d(TAG, ".onResponse: total results is ${response.body()?.totalResults}")
-                    Log.d(TAG, "onResponse: search object null? ${response.body()?.search == null}")
-                    Log.d(TAG, "onResponse: search object tostring? ${response.body()?.search.toString()}")
-                    Log.d(TAG, ".onResponse: this results arraylist is size ${response.body()?.search?.size}")
+                    //  Log.d(TAG, ".onResponse: total results is ${response.body()?.totalResults}")
+                    //Log.d(TAG, "onResponse: search object null? ${response.body()?.search == null}")
+                    // Log.d(TAG, "onResponse: search object tostring? ${response.body()?.search.toString()}")
+                    //Log.d(TAG, ".onResponse: this results arraylist is size ${response.body()?.search?.size}")
+
+                    // todo: if this is the first query with this term, check totalResults value, use it to derive page count ->
+                    //  10 results per page, then totalResults / 10 (rounded up to next positive integer) gives page count
+
 
                     // Add results to our LiveData
                     if (response.body() != null) {
@@ -90,6 +96,43 @@ class OMDBRepository(private val context: Context) {
 
             currentPageNumber.value = currentPageNumber.value!! + 1
         }
+    }
+
+    // todo: above and below methods have redundant calls, wasteful, save these variables instead
+
+    fun getFilmDetails(callback: FilmDetailListener, imdbID: String) {
+        val retrofit = Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+        val searchApi = retrofit.create(OMDBSearchApi::class.java)
+
+        val call = searchApi.getMovieDetails(context.getString(R.string.OMDB_API_KEY), imdbID)
+
+        call.enqueue(object : Callback<Film> {
+
+            override fun onFailure(call: Call<Film>, t: Throwable) {
+                Log.e(TAG, "retrofit callback error (film details): ${t?.message}")
+            }
+
+            override fun onResponse(call: Call<Film>, response: Response<Film>) {
+                if (!response.isSuccessful) {
+                    Log.e(TAG, "response: unsuccessful -> code ${response.code()}")
+                    return
+                }
+                if (response.body() != null && response.body()!!::class.java != Film::class.java) {
+                    Log.e(TAG, "response: no information for this film")
+                } else {
+                    callback.onFilmDetailsRetrieved(response.body()!!)
+                }
+
+            }
+        })
+    }
+
+    interface FilmDetailListener {
+        fun onFilmDetailsRetrieved(film: Film)
     }
 
     val getResults get() = resultList
