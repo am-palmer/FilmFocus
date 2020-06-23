@@ -7,8 +7,7 @@ import org.json.JSONObject
 import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL
-
-// todo: convert to coroutine or workmanager?
+// todo delete
 
 abstract class GetJSONBase<T> : AsyncTask<String, Void, T>() {
 

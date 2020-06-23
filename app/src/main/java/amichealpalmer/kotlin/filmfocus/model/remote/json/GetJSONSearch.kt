@@ -6,7 +6,7 @@ import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
 import java.lang.ref.WeakReference
-
+// todo delete
 // Retrieve JSON SearchResponse Data and return it to the calling class.
 class GetJSONSearch(private val listener: WeakReference<OMDBRepository>, private val apikey: String) :
         GetJSONBase<ArrayList<FilmThumbnail?>>() { // Example input query is "?s=ghost". We then append the website and API key to form a valid URL (in the super class helper method)

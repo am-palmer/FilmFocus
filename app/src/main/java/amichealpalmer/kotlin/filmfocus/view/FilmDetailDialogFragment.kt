@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_dialog_film_details.*
-
+// todo: create viewmodel for this class which handles the repository
 class FilmDetailDialogFragment : DialogFragment(), OMDBRepository.FilmDetailListener {
 
     private val ARG_IMDBID = "imdbID"
