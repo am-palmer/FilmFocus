@@ -6,6 +6,7 @@ import amichealpalmer.kotlin.filmfocus.model.room.TimelineItemRepository
 import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemDatabase
 import amichealpalmer.kotlin.filmfocus.model.room.WatchlistItemRepository
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModelFactory
+import amichealpalmer.kotlin.filmfocus.viewmodel.FilmDetailDialogViewModel
 import amichealpalmer.kotlin.filmfocus.viewmodel.TimelineViewModelFactory
 import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModelFactory
 import android.content.Context
@@ -42,6 +43,11 @@ object InjectorUtils {
         val repository = getTimelineItemRepository(fragment.requireContext())
         val watchlistRepository = getWatchlistItemRepository(fragment.requireContext())
         return TimelineViewModelFactory(repository, watchlistRepository, fragment)
+    }
+
+    fun provideFilmDetailDialogViewModelFactory(fragment: Fragment): FilmDetailDialogViewModel.FilmDetailDialogViewModelFactory {
+        val repository = getFilmThumbnailRepository(fragment.requireContext())
+        return FilmDetailDialogViewModel.FilmDetailDialogViewModelFactory(repository, fragment)
     }
 
 

@@ -186,8 +186,8 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     }
 
     override fun removeFilmFromWatchlist(watchlistItem: WatchlistItem) {
-        // Does nothing in this context
-        // todo: rewrite so not present
+        // Does nothing in this context -> TODO: Expand functionality so films can be deleted from the watchlist from the browse/history view
+        // Films that are in the watchlist should have an indicator in the browse/history views
     }
 
     companion object {

@@ -137,7 +137,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
                     timelineViewModel.removeItem(item)
                     adapter.notifyItemRemoved(position)
                     // Update the items before and after the removed item (if they exist)
-                    // todo: this doesn't fix the line
+                    // todo: Check this actually fixes the line
                     if ((position + 1) <= adapter.currentList.size - 1 && adapter.currentList[position + 1] != null) {
                         adapter.notifyItemChanged(position + 1)
                     }

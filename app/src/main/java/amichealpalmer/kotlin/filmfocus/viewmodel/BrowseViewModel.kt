@@ -58,14 +58,10 @@ class BrowseViewModel internal constructor(private val repository: OMDBRepositor
     }
 
 }
-// todo: not actually using this to its potential
+
 class BrowseViewModelFactory(private val repository: OMDBRepository,
                              private val watchlistRepository: WatchlistItemRepository,
                              private val timelineRepository: TimelineItemRepository) : ViewModelProvider.Factory {
-
-//    override fun <T : ViewModel?> create(key: String, modelClass: Class<T>, handle: SavedStateHandle): T {
-//        return BrowseViewModel(repository, watchlistRepository, timelineRepository) as T
-//    }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

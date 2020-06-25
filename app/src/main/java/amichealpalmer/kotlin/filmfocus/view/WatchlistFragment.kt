@@ -182,7 +182,6 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
 
     override fun addFilmToWatchlist(film: FilmThumbnail) {
         // Has no function here
-        // Todo: rewrite so this isn't here
     }
 
     companion object {

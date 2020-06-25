@@ -22,7 +22,6 @@ class Film(
         @SerializedName("Country") val country: String, // USA
         @SerializedName("Awards") val awards: String, // Nominated for 1 Oscar. Another 14 wins & 52 nominations.
         @SerializedName("Poster") val posterURL: String, // https://m.media-amazon.com/images/M/MV5BNjM0NTc0NzItM2FlYS00YzEwLWE0YmUtNTA2ZWIzODc2OTgxXkEyXkFqcGdeQXVyNTgwNzIyNzg@._V1_SX300.jpg
-        //@SerializedName("Ratings") val ratings: List<Ratings>, todo may not be needed
         @SerializedName("Metascore") val metascore: String, // 67
         @SerializedName("imdbRating") val imdbRating: String, // 7.6
         @SerializedName("Type") val type: String // movie
@@ -87,13 +86,6 @@ class Film(
         }
     }
 }
-
-    data class Ratings(
-            @SerializedName("Value")
-            var value: String,
-            @SerializedName("Source")
-            var source: String
-    )
 
 
 /* A simpler model which stores basic information about a film, created from the JSON information we retrieve from OMDB.
