@@ -24,7 +24,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
 
     private var recyclerView: RecyclerView? = null
     private lateinit var binding: FragmentHistoryBinding
-    //private lateinit var adapter: HistoryRecyclerAdapter
 
     private val timelineViewModel: TimelineViewModel by viewModels {
         InjectorUtils.provideTimelineViewModelFactory(this)
@@ -48,7 +47,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
         adapter.setFilmActionListener(this)
         adapter.setTimelineActionListener(this)
-        //recyclerView?.adapter = adapter
         binding.fragmentHistoryTimelineRv.adapter = adapter
 
         subscribeUi(adapter, binding)
@@ -154,7 +152,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
 
     private fun clearHistory() {
         timelineViewModel.clearTimeline()
-        Toast.makeText(context, "Cleared History", Toast.LENGTH_SHORT).show()
     }
 
     companion object {

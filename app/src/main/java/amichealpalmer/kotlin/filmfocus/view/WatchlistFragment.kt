@@ -172,13 +172,7 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
     }
 
     private fun clearWatchlist() {
-        if (watchlistViewModel.getWatchlist().value.isNullOrEmpty()) {
-            Toast.makeText(requireContext(), "Watchlist already empty", Toast.LENGTH_SHORT).show()
-        } else {
             watchlistViewModel.clearWatchlist()
-            Toast.makeText(requireContext(), "Cleared Watchlist", Toast.LENGTH_SHORT).show()
-        }
-
     }
 
     private fun addFilmToHistory(timelineItem: TimelineItem) {
