@@ -13,6 +13,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.math.ceil
 
 // todo: null safety
 
@@ -20,18 +21,18 @@ class OMDBRepository(private val context: Context) {
 
     // We use lazy for these objects as they may not be accessed, and in that case we avoid the cost of initializing them - e.g. if the user opens the app but does not make any search queries that session
     private val resultList: MutableLiveData<ArrayList<FilmThumbnail?>> by lazy { MutableLiveData<ArrayList<FilmThumbnail?>>(ArrayList()) }
+    private val searchApi: OMDBSearchApi by lazy { Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create()).build().create(OMDBSearchApi::class.java) }
+
 
     // LiveData objects holding search parameters
     private val query: MutableLiveData<String?> by lazy { MutableLiveData<String?>(null) }
-    private val currentPageNumber: MutableLiveData<Int> by lazy { MutableLiveData(1) }
+    private val nextPageNumber: MutableLiveData<Int> by lazy { MutableLiveData(1) }
+    private var maxPageNumber: Int? = null
     private val haveMoreResults: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(true) }
+    private val currentlyLoadingResults: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) } // Mutex lock to stop the UI making multiple requests. Todo: somewhat gimmicky
 
     // Called by the API accessor to update the resultList
     fun updateResults(newResults: List<FilmThumbnail?>) {
-        if (newResults.isNullOrEmpty()) {
-            haveMoreResults.value = false // We note that there are no more results for this query, listener for haveMoreResults in fragment updates view (hide spinner)
-            return
-        }
         for (result in newResults) {
             if (result != null) {
                 val currentList = resultList.value
@@ -44,27 +45,23 @@ class OMDBRepository(private val context: Context) {
     fun newQuery(query: String) {
         // Clear the resultList
         resultList.value?.clear()
+
         // Reset the parameter objects
         this.query.value = query
-        currentPageNumber.value = 1
+        nextPageNumber.value = 1
+        maxPageNumber = null
         haveMoreResults.value = true
+        currentlyLoadingResults.value = false
     }
 
     fun getNextPage() {
-        // Create a new AsyncTask which will notify this object once it has finished
-        if (haveMoreResults.value == true) {
-            //val searchString = "?s=${query.value}&page=${currentPageNumber.value}"
-            //GetJSONSearch(WeakReference(this), context.getString(R.string.OMDB_API_KEY)).execute(searchString)
-
-            val retrofit = Retrofit.Builder()
-                    .baseUrl(baseUrl)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-
-            val searchApi = retrofit.create(OMDBSearchApi::class.java)
+        // todo null safety
+        // maxPageNumber is null on the first call to this method, on subsequent calls we check to see if there are any more pages of results to query for. Pages contain 10 results each
+        currentlyLoadingResults.value = true
+        if (maxPageNumber == null || nextPageNumber.value!! <= maxPageNumber!!) {
 
             // todo null safety
-            val call = searchApi.getSearchResults(context.getString(R.string.OMDB_API_KEY), query.value!!, currentPageNumber.value!!)
+            val call = searchApi.getSearchResults(context.getString(R.string.OMDB_API_KEY), query.value!!, nextPageNumber.value!!)
 
             call.enqueue(object : Callback<SearchResponse> {
                 override fun onFailure(call: Call<SearchResponse>?, t: Throwable?) {
@@ -77,6 +74,12 @@ class OMDBRepository(private val context: Context) {
                         return
                     }
 
+                    if (maxPageNumber == null) {
+                        // Compute the max page number for further queries
+                        maxPageNumber = ceil((response.body()!!.totalResults / 10.0).toDouble()).toInt()
+                        Log.d(TAG, ".onResponse: max page number computed. Max page number: $maxPageNumber")
+                    }
+
                     // todo: if this is the first query with this term, check totalResults value, use it to derive page count ->
                     //  10 results per page, then totalResults / 10 (rounded up to next positive integer) gives page count
 
@@ -85,22 +88,24 @@ class OMDBRepository(private val context: Context) {
                         updateResults(response.body()?.search ?: return)
                     }
 
+                    // Increment page number for next call
+                    Log.d(TAG, ".onResponse: incrementing next page number from $nextPageNumber to ${nextPageNumber.value!! + 1}")
+                    nextPageNumber.value = nextPageNumber.value!! + 1
+                    if (nextPageNumber.value!! > maxPageNumber!!) {
+                        Log.d(TAG, ".onResponse: nextpageNumber ${nextPageNumber.value}  is higher than maxPageNumber ${maxPageNumber}. setting haveMoreResults to false")
+                        haveMoreResults.value = false // We prevent further calls from being made as we have retrieved all pages
+                    }
+
+                    currentlyLoadingResults.value = false
+
                 }
             })
 
-            currentPageNumber.value = currentPageNumber.value!! + 1
         }
     }
 
-    // todo: above and below methods have redundant calls, wasteful, save these variables instead
 
     fun getFilmDetails(callback: FilmDetailListener, imdbID: String) {
-        val retrofit = Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-        val searchApi = retrofit.create(OMDBSearchApi::class.java)
 
         val call = searchApi.getMovieDetails(context.getString(R.string.OMDB_API_KEY), imdbID)
 
@@ -131,6 +136,7 @@ class OMDBRepository(private val context: Context) {
 
     val getResults get() = resultList
     val getHaveMoreResults get() = haveMoreResults
+    val getCurrentlyLoadingResults get() = currentlyLoadingResults.value
 
 
     companion object {

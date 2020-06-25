@@ -160,7 +160,7 @@ class SearchResponse(@SerializedName("Response")
              var error: String,
 
                      @SerializedName("totalResults")
-             var totalResults: String,
+             var totalResults: Int,
 
                      @SerializedName("Search")
              var search: ArrayList<FilmThumbnail?>)

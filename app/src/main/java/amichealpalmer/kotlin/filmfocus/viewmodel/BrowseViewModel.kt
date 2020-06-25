@@ -30,6 +30,10 @@ class BrowseViewModel internal constructor(private val repository: OMDBRepositor
         return repository.getHaveMoreResults
     }
 
+    fun getCurrentlyLoadingResults(): Boolean{
+        return repository.getCurrentlyLoadingResults ?: false
+    }
+
     fun getWatchlist(): LiveData<List<WatchlistItem>> {
         return watchlistRepository.getWatchlistItems()
     }

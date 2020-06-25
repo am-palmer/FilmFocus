@@ -14,6 +14,7 @@ import amichealpalmer.kotlin.filmfocus.view.adapter.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModel
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
@@ -57,7 +58,8 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
                 super.onScrollStateChanged(recyclerView, newState)
                 when {
                     !recyclerView.canScrollVertically(1) -> {
-                        if (browseViewModel.getHaveMoreResults().value == true) {
+                        if (browseViewModel.getHaveMoreResults().value == true && !browseViewModel.getCurrentlyLoadingResults()) {
+                            Log.d(TAG, "recyclerview: can't scroll vertically down, and not currently loading results: loading more results")
                             // Request next page from repo
                             browseViewModel.nextPage()
                             browse_fragment_progressBar.visibility = View.VISIBLE
