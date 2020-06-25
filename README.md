@@ -27,7 +27,7 @@ Technical Details
     * Observable [LiveData](https://developer.android.com/topic/libraries/architecture/livedata) objects are used, meaning that data is retained even through lifecycle events (for instance fragment recreation on rotation of the device).
 * Jetpack [Navigation](https://developer.android.com/guide/navigation?hl=en) graphs dictate transitions between fragments 
     * The [SafeArgs](https://developer.android.com/guide/navigation/navigation-pass-data?hl=en#Safe-args) plugin allows for defined arguments to be passed between fragments - for example the name and year of a film, or information pertaining to a user's review and rating of a film.
-* Film details are loaded from the OMDB API, and stored as objects which are collected in ArrayLists for display in the UI. The app makes calls to the API to load given information such as a film's poster or plot, and views are programmatically modified to display details about a given film.\
+* Film details are loaded from the OMDB API via [RetroFit](https://square.github.io/retrofit/), and stored in LiveData objects for display in the UI. The app makes calls to the API to load given information such as a film's poster or plot, and views are programmatically modified to display details about a given film.\
 * Each of the three main views - Browse, Watchlist and History - use [RecyclerViews](https://developer.android.com/guide/topics/ui/layout/recyclerview) to show content, for resource efficiency. 
     * The Browse Fragment uses a [listener interface](https://developer.android.com/training/basics/fragments/communicating) to detect when the user has scrolled to the end of the RecyclerView, at which point more search results are loaded from the API (if they are available).\
 * Care has been taken to ensure a user-friendly experience, with [Toast messages](https://developer.android.com/guide/topics/ui/notifiers/toasts) to indicate when an action is performed (for example, informing a user that a film has been added to their Watchlist, or, alternatively, that a film is already in their Watchlist), and Dialogs are displayed to prompt the user to confirm any major actions (such as clearing the Watchlist)\
@@ -35,5 +35,5 @@ Technical Details
 
 Issues / Upcoming Features
 ------------
-The API adapter relies on ASyncTask, which has since been depreciated; it should be replaced with [Coroutines](https://kotlinlang.org/docs/reference/coroutines-overview.html).\
-The user's Watchlist and History are stored locally in Room, meaning they are locally stored on the device. While this does not use much space, it means that the data could be lost if the device is reset, damaged, or itself lost. A more robust system would rely on or extend the storage with a cloud solution.
+The user's Watchlist and History are stored locally in Room, meaning they are stored solely on the device. While this does not use much space, it means that the data could be lost if the device is reset, damaged, or itself lost. A more robust system would rely on or extend the storage with a cloud solution, such as Firebase
+A more secure setup could be implemented which does not store the API key in plaintext within XML.
