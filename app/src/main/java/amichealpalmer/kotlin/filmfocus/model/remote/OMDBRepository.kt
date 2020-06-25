@@ -77,14 +77,8 @@ class OMDBRepository(private val context: Context) {
                         return
                     }
 
-                    //  Log.d(TAG, ".onResponse: total results is ${response.body()?.totalResults}")
-                    //Log.d(TAG, "onResponse: search object null? ${response.body()?.search == null}")
-                    // Log.d(TAG, "onResponse: search object tostring? ${response.body()?.search.toString()}")
-                    //Log.d(TAG, ".onResponse: this results arraylist is size ${response.body()?.search?.size}")
-
                     // todo: if this is the first query with this term, check totalResults value, use it to derive page count ->
                     //  10 results per page, then totalResults / 10 (rounded up to next positive integer) gives page count
-
 
                     // Add results to our LiveData
                     if (response.body() != null) {
