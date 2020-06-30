@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -9,25 +11,23 @@
 
     </data>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.WatchlistFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/watchlist_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="8dp"
+        app:isGone="@{!hasWatchlistItems}"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="3"
-        tools:listitem="@layout/browse_films_item"
-        app:isGone="@{!hasWatchlistItems}"/>
+        tools:listitem="@layout/browse_films_item" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fragment_watchlist_empty_view_container"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible"
