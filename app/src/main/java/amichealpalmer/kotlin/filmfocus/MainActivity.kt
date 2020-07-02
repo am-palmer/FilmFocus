@@ -4,32 +4,25 @@ package amichealpalmer.kotlin.filmfocus
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.toolbar.view.*
+import androidx.navigation.ui.NavigationUI
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.android.synthetic.main.toolbar.*
+
+// todo: constraint or other relative layout in the activity xml
+// todo: landscape layout for activity (?)
 
 class MainActivity : AppCompatActivity() {
-
-    private var appBarConfiguration: AppBarConfiguration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(drawer_layout.toolbar)
+        setSupportActionBar(toolbar)
+
+        // Navigation with BottomNavigationView
+        val botNavView = findViewById<BottomNavigationView>(R.id.bottom_nav_view)
         var navController = findNavController(R.id.activity_nav_host_fragment)
-        appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.nav_browse_fragment, R.id.nav_watchlist_fragment, R.id.nav_history_fragment
-        ), drawer_layout)
+        NavigationUI.setupWithNavController(botNavView, navController)
 
-        nav_view.setupWithNavController(navController)
-        setupActionBarWithNavController(navController, appBarConfiguration!!)
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        return findNavController(R.id.activity_nav_host_fragment).navigateUp(appBarConfiguration!!) || super.onSupportNavigateUp()
     }
 
 }
