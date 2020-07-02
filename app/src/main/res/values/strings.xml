@@ -1,10 +1,8 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="app_name">FilmFocus</string>
     <string name="search_title">Search</string>
     <string name="more">More</string>
     <string name="search_hint">Search films…</string>
-
-    <string name="omdb_url">https://www.omdbapi.com/</string>
 
     <string name="fragment_browse_title">Browse</string>
     <string name="fragment_watchlist_title">Watchlist</string>
@@ -32,11 +30,7 @@
     <string name="dialog_toggleButton_dropped">DROPPED</string>
 
     <string name="dialog_confirmRemovalFromHistory_prompt">Are you sure you want to remove this item from your History?</string>
-    <string name="dialog_remove">Remove</string>
-
-
     <string name="dialog_clear_watchlist_prompt">Are you sure you want to clear the Watchlist?</string>
-    <string name="button_clear">Clear</string>
 
     <string name="history_menu_clear_history">Clear History</string>
     <string name="dialog_clear_history_prompt">Are you sure you want to clear your History?</string>
@@ -53,8 +47,4 @@
 
     <string name="interpunct_unicode">\u00b7</string>
     <string name="film_poster">Film Poster</string>
-    <string name="title_activity_main2">MainActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
 </resources>

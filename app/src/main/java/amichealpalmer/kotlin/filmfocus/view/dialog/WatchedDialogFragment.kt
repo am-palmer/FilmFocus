@@ -21,17 +21,17 @@ import org.joda.time.LocalDate
 class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListener, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
     private val TAG = "WatchedDialogFragment"
-    private lateinit var callback: onWatchedDialogSubmissionListener
+    private lateinit var callback: OnWatchedDialogSubmissionListener
     private lateinit var film: FilmThumbnail
     private var rating: Float? = null
     private var hasRating = false
     private var status: TIMELINE_ITEM_STATUS = TIMELINE_ITEM_STATUS.WATCHED
 
-    interface onWatchedDialogSubmissionListener {
+    interface OnWatchedDialogSubmissionListener {
         fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem)
     }
 
-    fun setOnWatchedDialogSubmissionListener(callback: onWatchedDialogSubmissionListener) {
+    fun setOnWatchedDialogSubmissionListener(callback: OnWatchedDialogSubmissionListener) {
         this.callback = callback
     }
 

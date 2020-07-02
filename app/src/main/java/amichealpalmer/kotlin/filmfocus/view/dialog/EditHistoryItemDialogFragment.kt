@@ -20,18 +20,18 @@ import kotlinx.android.synthetic.main.fragment_watchlist_watched_dialog.*
 class EditHistoryItemDialogFragment(val adapter: HistoryRecyclerAdapter) : DialogFragment(), RatingBar.OnRatingBarChangeListener, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
     private val TAG = "EditHistoryItemDiaFrag"
-    private lateinit var callback: onHistoryEditDialogSubmissionListener
+    private lateinit var callback: OnHistoryEditDialogSubmissionListener
     private var rating: Float? = null
 
     private lateinit var timelineItem: TimelineItem
     private lateinit var status: TIMELINE_ITEM_STATUS
     private var arrayPosition = 0
 
-    interface onHistoryEditDialogSubmissionListener {
+    interface OnHistoryEditDialogSubmissionListener {
         fun onEditHistoryItemDialogSubmissionListener(adapter: HistoryRecyclerAdapter, timelineItem: TimelineItem, arrayPosition: Int)
     }
 
-    fun setHistoryEditDialogSubmissionListener(callback: onHistoryEditDialogSubmissionListener) {
+    fun setHistoryEditDialogSubmissionListener(callback: OnHistoryEditDialogSubmissionListener) {
         this.callback = callback
     }
 

@@ -21,7 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 
-class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
+class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.OnWatchedDialogSubmissionListener {
 
     private var recyclerView: RecyclerView? = null
     private var adapter: WatchlistRecyclerAdapter? = null

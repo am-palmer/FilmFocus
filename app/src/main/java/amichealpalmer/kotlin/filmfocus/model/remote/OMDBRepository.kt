@@ -13,9 +13,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.ref.WeakReference
 import kotlin.math.ceil
 
-class OMDBRepository(private val context: Context) {
+class OMDBRepository(private val context: WeakReference<Context>) {
 
     // We use lazy for these objects as they may not be accessed, and in that case we avoid the cost of initializing them - e.g. if the user opens the app but does not make any search queries that session
     private val resultList: MutableLiveData<ArrayList<FilmThumbnail?>> by lazy { MutableLiveData<ArrayList<FilmThumbnail?>>(ArrayList()) }
@@ -56,8 +57,8 @@ class OMDBRepository(private val context: Context) {
         // maxPageNumber is null on the first call to this method, on subsequent calls we check to see if there are any more pages of results to query for. Pages contain 10 results each
         currentlyLoadingResults.value = true
         if (maxPageNumber == null || nextPageNumber.value!! <= maxPageNumber!!) {
-
-            val call = searchApi.getSearchResults(context.getString(R.string.OMDB_API_KEY), query.value!!, nextPageNumber.value!!)
+            // Todo: check this assertion can't fail
+            val call = searchApi.getSearchResults(context.get()!!.getString(R.string.OMDB_API_KEY), query.value!!, nextPageNumber.value!!)
 
             call.enqueue(object : Callback<SearchResponse> {
                 override fun onFailure(call: Call<SearchResponse>?, t: Throwable?) {
@@ -72,7 +73,7 @@ class OMDBRepository(private val context: Context) {
 
                     if (maxPageNumber == null) {
                         // Compute the max page number for further queries
-                        maxPageNumber = ceil((response.body()!!.totalResults / 10.0).toDouble()).toInt()
+                        maxPageNumber = ceil((response.body()!!.totalResults / 10.0)).toInt()
                         Log.d(TAG, ".onResponse: max page number computed. Max page number: $maxPageNumber")
                     }
 
@@ -99,13 +100,13 @@ class OMDBRepository(private val context: Context) {
 
     // Get details about a film. Used by FilmDetailDialog to display more information when a film is tapped
     fun requestFilmDetails(imdbID: String) {
-
-        val call = searchApi.getMovieDetails(context.getString(R.string.OMDB_API_KEY), imdbID)
+        // todo: test assertion
+        val call = searchApi.getMovieDetails(context.get()!!.getString(R.string.OMDB_API_KEY), imdbID)
 
         call.enqueue(object : Callback<Film> {
 
             override fun onFailure(call: Call<Film>, t: Throwable) {
-                Log.e(TAG, "retrofit callback error (film details): ${t?.message}")
+                Log.e(TAG, "retrofit callback error (film details): ${t.message}")
             }
 
             override fun onResponse(call: Call<Film>, response: Response<Film>) {
@@ -146,7 +147,7 @@ class OMDBRepository(private val context: Context) {
 
         fun getInstance(context: Context) =
                 instance ?: synchronized(this) {
-                    instance ?: OMDBRepository(context).also { instance = it }
+                    instance ?: OMDBRepository(WeakReference(context)).also { instance = it }
                 }
     }
 

@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
 import java.util.*
 
-class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onWatchedDialogSubmissionListener {
+class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.OnWatchedDialogSubmissionListener {
 
     private var recyclerView: RecyclerView? = null
     private var searchView: SearchView? = null
@@ -169,7 +169,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.onW
     }
 
     override fun markFilmWatched(film: FilmThumbnail) {
-        // Show the Watched dialog, which will call .onWatchedDialogSubmissionListener when submitted
+        // Show the Watched dialog, which will call .OnWatchedDialogSubmissionListener when submitted
         val dialogFragment = WatchedDialogFragment.newInstance(film)
         dialogFragment.setOnWatchedDialogSubmissionListener(this)
         dialogFragment.show(childFragmentManager, WatchedDialogFragment.TAG)
