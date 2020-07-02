@@ -53,4 +53,8 @@
 
     <string name="interpunct_unicode">\u00b7</string>
     <string name="film_poster">Film Poster</string>
+    <string name="title_activity_main2">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>
