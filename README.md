@@ -3,7 +3,7 @@ FilmFocus
 
 An Android App written in Kotlin, which helps users to manage a film watchlist, as well as track the films they have watched.
 
-Key technologies: Single-activity pattern with fragments, MVVM architechure. Uses Jetpack components including Room, LiveData, and Navigation.
+Key technologies: Single-activity pattern with fragments, MVVM architecture. Uses Jetpack components including Room, LiveData, and Navigation.
 
 ![searching for films](https://github.com/am-palmer/FilmFocus/blob/master/screenshots/searching.png)
 ![film details](https://github.com/am-palmer/FilmFocus/blob/master/screenshots/film_details.png)
@@ -23,7 +23,7 @@ Technical Details
 * FilmFocus uses a [single activity pattern](https://www.youtube.com/watch?v=2k8x8V77CrU), with UI information contained within fragments. Users switch between fragments using a [bottom navigation bar](https://material.io/develop/android/components/bottom-navigation/).
 * Data is stored using [Room](https://developer.android.com/topic/libraries/architecture/room), the Jetpack abstraction layer over SQLite, meaning that information such as the user's Watchlist is updated on the fly and stored locally when the app is closed.
 * FilmFocus employs a MVVM design pattern. 
-    * Jetpack [ViewModels](https://developer.android.com/topic/libraries/architecture/viewmodel) interact with remote data and Room data access objects to retreive information for display to the user. 
+    * Jetpack [ViewModels](https://developer.android.com/topic/libraries/architecture/viewmodel) interact with remote data and Room data access objects to retrieve information for display to the user. 
     * Observable [LiveData](https://developer.android.com/topic/libraries/architecture/livedata) objects are used, meaning that data is retained even through lifecycle events (for instance fragment recreation on rotation of the device).
 * Jetpack [Navigation](https://developer.android.com/guide/navigation?hl=en) graphs dictate transitions between fragments 
     * The [SafeArgs](https://developer.android.com/guide/navigation/navigation-pass-data?hl=en#Safe-args) plugin allows for defined arguments to be passed between fragments - for example the name and year of a film, or information pertaining to a user's review and rating of a film.
