@@ -69,7 +69,7 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.OnW
         })
 
         //val sharedPrefs = requireActivity().getSharedPreferences(BROWSE_SHAREDPREF_KEY, Context.MODE_PRIVATE)
-        // todo: none of this works - values are saved, but restoring doesn't work
+        // todo: values are saved, but restoring doesn't work
         //recyclerView?.post { recyclerViewscrollToPosition(sharedPrefs.getInt(SHAREDPREF_SCROLL_POSITION, 0)) }
 
     }

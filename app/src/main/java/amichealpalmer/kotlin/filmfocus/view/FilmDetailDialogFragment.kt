@@ -64,7 +64,7 @@ class FilmDetailDialogFragment : DialogFragment() {
         // Register observer to update fields when the film information is loaded
         detailDialogViewModel.getFilm().observe(viewLifecycleOwner) {
             // Hide the ProgressBar // todo: no longer shows at all, due to observe. use data binding?
-            film_details_progressBar?.visibility = View.GONE
+            //film_details_progressBar?.visibility = View.GONE
 
             // Set view fields
             fragment_film_details_tv_title?.text = it?.title

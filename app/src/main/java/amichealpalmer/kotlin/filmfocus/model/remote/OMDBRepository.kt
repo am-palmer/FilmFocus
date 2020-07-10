@@ -57,7 +57,6 @@ class OMDBRepository(private val context: WeakReference<Context>) {
         // maxPageNumber is null on the first call to this method, on subsequent calls we check to see if there are any more pages of results to query for. Pages contain 10 results each
         currentlyLoadingResults.value = true
         if (maxPageNumber == null || nextPageNumber.value!! <= maxPageNumber!!) {
-            // Todo: check this assertion can't fail
             val call = searchApi.getSearchResults(context.get()!!.getString(R.string.OMDB_API_KEY), query.value!!, nextPageNumber.value!!)
 
             call.enqueue(object : Callback<SearchResponse> {
@@ -74,7 +73,6 @@ class OMDBRepository(private val context: WeakReference<Context>) {
                     if (maxPageNumber == null) {
                         // Compute the max page number for further queries
                         maxPageNumber = ceil((response.body()!!.totalResults / 10.0)).toInt()
-                        Log.d(TAG, ".onResponse: max page number computed. Max page number: $maxPageNumber")
                     }
 
                     // Add results to our LiveData
@@ -83,10 +81,8 @@ class OMDBRepository(private val context: WeakReference<Context>) {
                     }
 
                     // Increment page number for next call
-                    Log.d(TAG, ".onResponse: incrementing next page number from $nextPageNumber to ${nextPageNumber.value!! + 1}")
                     nextPageNumber.value = nextPageNumber.value!! + 1
                     if (nextPageNumber.value!! > maxPageNumber!!) {
-                        Log.d(TAG, ".onResponse: nextpageNumber ${nextPageNumber.value}  is higher than maxPageNumber ${maxPageNumber}. setting haveMoreResults to false")
                         haveMoreResults.value = false // We prevent further calls from being made as we have retrieved all pages
                     }
 
@@ -100,7 +96,6 @@ class OMDBRepository(private val context: WeakReference<Context>) {
 
     // Get details about a film. Used by FilmDetailDialog to display more information when a film is tapped
     fun requestFilmDetails(imdbID: String) {
-        // todo: test assertion
         val call = searchApi.getMovieDetails(context.get()!!.getString(R.string.OMDB_API_KEY), imdbID)
 
         call.enqueue(object : Callback<Film> {
@@ -134,7 +129,6 @@ class OMDBRepository(private val context: WeakReference<Context>) {
     val getHaveMoreResults get() = haveMoreResults
     val getCurrentlyLoadingResults get() = currentlyLoadingResults.value
     val getFilm get() = film
-
 
     companion object {
 
