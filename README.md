@@ -15,12 +15,12 @@ Please note that to run the app you will need a res/values/keys.xml file contain
 Features
 ------------
 FilmFocus allows users to browse films and TV shows and view information about them, such as their poster, genre, plot description, and IMDB rating. Users can long tap films to perform actions, such as adding them to their Watchlist, or marking them as watched (or dropped)\
-Users can leave a short review and rating for films as they please, and these will be shown in the History view. A Navigation drawer allows users to switch between the views easily. Users can also search their Watchlist (which filters the watchlist to match by title)
+Users can leave a short review and rating for films as they please, and these will be shown in the History view. A bottom navigation bar allows users to switch between the views easily. Users can also search their Watchlist (which filters the watchlist to match by title)
 
 Technical Details
 ------------
 
-* FilmFocus uses a [single activity pattern](https://www.youtube.com/watch?v=2k8x8V77CrU), with UI information contained within fragments. Users switch between fragments using a navigation drawer.
+* FilmFocus uses a [single activity pattern](https://www.youtube.com/watch?v=2k8x8V77CrU), with UI information contained within fragments. Users switch between fragments using a [bottom navigation bar](https://material.io/develop/android/components/bottom-navigation/).
 * Data is stored using [Room](https://developer.android.com/topic/libraries/architecture/room), the Jetpack abstraction layer over SQLite, meaning that information such as the user's Watchlist is updated on the fly and stored locally when the app is closed.
 * FilmFocus employs a MVVM design pattern. 
     * Jetpack [ViewModels](https://developer.android.com/topic/libraries/architecture/viewmodel) interact with remote data and Room data access objects to retreive information for display to the user. 
