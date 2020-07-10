@@ -120,7 +120,6 @@ class OMDBRepository(private val context: WeakReference<Context>) {
                     // Update the MutableLiveData film item
                     film.value = response.body()
 
-                    //callback.onFilmDetailsRetrieved(response.body()!!)
                 }
 
             }
