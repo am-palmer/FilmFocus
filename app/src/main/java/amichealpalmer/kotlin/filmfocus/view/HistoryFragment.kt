@@ -137,13 +137,13 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
                     timelineViewModel.removeItem(item)
                     adapter.notifyItemRemoved(position)
                     // Update the items before and after the removed item (if they exist)
-                    // todo: Check this actually fixes the line
-                    if ((position + 1) <= adapter.currentList.size - 1 && adapter.currentList[position + 1] != null) {
-                        adapter.notifyItemChanged(position + 1)
-                    }
-                    if ((position - 1) >= 0 && adapter.currentList[position - 1] != null) {
-                        adapter.notifyItemChanged(position - 1)
-                    }
+//                    // todo: not working - use databinding
+//                    if ((position + 1) <= adapter.currentList.size - 1 && adapter.currentList[position + 1] != null) {
+//                        adapter.notifyItemChanged(position + 1)
+//                    }
+//                    if ((position - 1) >= 0 && adapter.currentList[position - 1] != null) {
+//                        adapter.notifyItemChanged(position - 1)
+//                    }
                     Toast.makeText(requireContext(), "Removed ${item.film.title} from History", Toast.LENGTH_SHORT).show()
                 }
                 .setNegativeButton(android.R.string.no, null).show()
@@ -151,10 +151,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
 
     private fun clearHistory() {
         timelineViewModel.clearTimeline()
-    }
-
-    companion object {
-        private const val TAG = "HistoryFragment"
     }
 
 }

@@ -155,8 +155,8 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
     // Called when user submits Watched dialog
     override fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem) {
         var status = when (timelineItem.status) {
-            TIMELINE_ITEM_STATUS.DROPPED -> "Dropped"
-            TIMELINE_ITEM_STATUS.WATCHED -> "Watched"
+            TIMELINE_ITEM_STATUS.Dropped -> "Dropped"
+            TIMELINE_ITEM_STATUS.Watched -> "Watched"
         }
         Toast.makeText(requireContext(), "Marked ${timelineItem.film.title} as $status", Toast.LENGTH_SHORT).show()
         addFilmToHistory(timelineItem)

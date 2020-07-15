@@ -25,7 +25,7 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
     private lateinit var film: FilmThumbnail
     private var rating: Float? = null
     private var hasRating = false
-    private var status: TIMELINE_ITEM_STATUS = TIMELINE_ITEM_STATUS.WATCHED
+    private var status: TIMELINE_ITEM_STATUS = TIMELINE_ITEM_STATUS.Watched
 
     interface OnWatchedDialogSubmissionListener {
         fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem)
@@ -90,10 +90,10 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         if (buttonView == fragment_watchlist_watched_dialog_toggleWatched) {
-            var value = TIMELINE_ITEM_STATUS.WATCHED
+            var value = TIMELINE_ITEM_STATUS.Watched
             when (isChecked) {
-                true -> value = TIMELINE_ITEM_STATUS.WATCHED
-                false -> value = TIMELINE_ITEM_STATUS.DROPPED
+                true -> value = TIMELINE_ITEM_STATUS.Watched
+                false -> value = TIMELINE_ITEM_STATUS.Dropped
             }
             status = value
         }

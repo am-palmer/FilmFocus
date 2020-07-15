@@ -60,8 +60,8 @@ class EditHistoryItemDialogFragment(val adapter: HistoryRecyclerAdapter) : Dialo
         // Load content from the timeline item
         fragment_watchlist_watched_dialog_ratingBar.rating = rating!!
         when (status) {
-            TIMELINE_ITEM_STATUS.DROPPED -> fragment_watchlist_watched_dialog_toggleWatched.isChecked = false
-            TIMELINE_ITEM_STATUS.WATCHED -> fragment_watchlist_watched_dialog_toggleWatched.isChecked = true
+            TIMELINE_ITEM_STATUS.Dropped -> fragment_watchlist_watched_dialog_toggleWatched.isChecked = false
+            TIMELINE_ITEM_STATUS.Watched -> fragment_watchlist_watched_dialog_toggleWatched.isChecked = true
         }
         fragment_watchlist_watched_dialog_review_et.setText(timelineItem.getReview())
 
@@ -104,10 +104,10 @@ class EditHistoryItemDialogFragment(val adapter: HistoryRecyclerAdapter) : Dialo
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         if (buttonView == fragment_watchlist_watched_dialog_toggleWatched) {
-            //var value = TIMELINE_ITEM_STATUS.WATCHED
+            //var value = TIMELINE_ITEM_STATUS.Watched
             val value = when (isChecked) {
-                true -> TIMELINE_ITEM_STATUS.WATCHED
-                false -> TIMELINE_ITEM_STATUS.DROPPED
+                true -> TIMELINE_ITEM_STATUS.Watched
+                false -> TIMELINE_ITEM_STATUS.Dropped
             }
             status = value
         }
