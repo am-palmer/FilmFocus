@@ -54,12 +54,6 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
 
     inner class TimelineItemViewHolder(private val binding: HistoryListItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        init {
-            // todo: set onclick listener
-        }
-
-
-
         fun bind(item: TimelineItem){
             binding.apply {
                 timelineItem = item
@@ -67,6 +61,10 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
                     TIMELINE_ITEM_STATUS.Watched -> true
                     TIMELINE_ITEM_STATUS.Dropped -> false
                 }
+                timelineItemFilmPoster.setOnClickListener {
+                    listener?.showFilmDetails(item.film)
+                }
+
                 executePendingBindings()
             }
         }
