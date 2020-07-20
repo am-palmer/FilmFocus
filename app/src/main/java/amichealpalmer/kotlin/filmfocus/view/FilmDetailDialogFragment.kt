@@ -15,8 +15,6 @@ import androidx.lifecycle.observe
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_dialog_film_details.*
 
-// todo: prevent this fragment from hiding the toolbar when it opens
-
 class FilmDetailDialogFragment : DialogFragment() {
 
     private val ARG_IMDBID = "imdbID"

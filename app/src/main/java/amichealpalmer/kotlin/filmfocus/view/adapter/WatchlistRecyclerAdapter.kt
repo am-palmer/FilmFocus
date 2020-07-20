@@ -2,7 +2,7 @@ package amichealpalmer.kotlin.filmfocus.view.adapter
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
-import amichealpalmer.kotlin.filmfocus.view.FilmActionListener
+import amichealpalmer.kotlin.filmfocus.view.listener.WatchlistActionListener
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,11 +19,11 @@ import java.util.*
 
 class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAdapter.WatchlistItemViewHolder>(DIFF_CALLBACK) {
 
-    private var filmActionListener: FilmActionListener? = null
+    private var watchlistActionListener: WatchlistActionListener? = null
     private var fullList = listOf<WatchlistItem>()
 
-    fun setFilmActionListener(listener: FilmActionListener) {
-        this.filmActionListener = listener
+    fun setFilmActionListener(listener: WatchlistActionListener) {
+        this.watchlistActionListener = listener
     }
 
     // We notify the adapter when the Watchlist changes, for the purposes of filtering
@@ -78,7 +78,7 @@ class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAda
                 // Display FilmDetailsDialogFragment
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    filmActionListener?.showFilmDetails(getItem(position))
+                    watchlistActionListener?.showFilmDetails(getItem(position))
                 }
             }
 
@@ -87,11 +87,11 @@ class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAda
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
-                        filmActionListener?.markFilmWatched(getItem(position))
+                        watchlistActionListener?.markFilmWatched(getItem(position))
                         true
                     }
                     menu?.add(R.string.remove_from_watchlist)?.setOnMenuItemClickListener {
-                        filmActionListener?.removeFilmFromWatchlist(getItem(position))
+                        watchlistActionListener?.removeFilmFromWatchlist(getItem(position))
                         true
                     }
                 }

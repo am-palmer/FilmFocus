@@ -6,12 +6,12 @@ import amichealpalmer.kotlin.filmfocus.databinding.FragmentBrowseBinding
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
-import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.util.InjectorUtils
 import amichealpalmer.kotlin.filmfocus.util.hideKeyboard
 import amichealpalmer.kotlin.filmfocus.util.observeOnce
 import amichealpalmer.kotlin.filmfocus.view.adapter.BrowseRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
+import amichealpalmer.kotlin.filmfocus.view.listener.BrowseActionListener
 import amichealpalmer.kotlin.filmfocus.viewmodel.BrowseViewModel
 import android.os.Bundle
 import android.view.*
@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_browse.*
 import java.util.*
 
-class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.OnWatchedDialogSubmissionListener {
+class BrowseFragment : Fragment(), BrowseActionListener, WatchedDialogFragment.OnWatchedDialogSubmissionListener {
 
     private var recyclerView: RecyclerView? = null
     private var searchView: SearchView? = null
@@ -182,11 +182,6 @@ class BrowseFragment : Fragment(), FilmActionListener, WatchedDialogFragment.OnW
         }
         Toast.makeText(requireContext(), "Marked ${timelineItem.film.title} as $status", Toast.LENGTH_SHORT).show()
         browseViewModel.markWatched(timelineItem)
-    }
-
-    override fun removeFilmFromWatchlist(watchlistItem: WatchlistItem) {
-        // Does nothing in this context -> TODO: Expand functionality so films can be deleted from the watchlist from the browse/history view
-        // Films that are in the watchlist should have an indicator in the browse/history views
     }
 
     companion object {

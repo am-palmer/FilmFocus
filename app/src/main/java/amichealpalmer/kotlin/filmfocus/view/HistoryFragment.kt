@@ -4,11 +4,11 @@ import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.databinding.FragmentHistoryBinding
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
-import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.util.InjectorUtils
 import amichealpalmer.kotlin.filmfocus.view.adapter.HistoryRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.view.dialog.EditHistoryItemDialogFragment
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
+import amichealpalmer.kotlin.filmfocus.view.listener.HistoryActionListener
 import amichealpalmer.kotlin.filmfocus.viewmodel.TimelineViewModel
 import android.app.AlertDialog
 import android.os.Bundle
@@ -20,7 +20,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.TimelineActionListener, EditHistoryItemDialogFragment.OnHistoryEditDialogSubmissionListener {
+class HistoryFragment : Fragment(), HistoryActionListener, HistoryRecyclerAdapter.TimelineActionListener, EditHistoryItemDialogFragment.OnHistoryEditDialogSubmissionListener {
 
     private var recyclerView: RecyclerView? = null
     private lateinit var binding: FragmentHistoryBinding
@@ -98,15 +98,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
 
     override fun addFilmToWatchlist(film: FilmThumbnail) {
         timelineViewModel.addItemToWatchlist(film)
-    }
-
-    override fun markFilmWatched(film: FilmThumbnail) {
-        // Does nothing here
-        // Todo: switch interfaces to remove this
-    }
-
-    override fun removeFilmFromWatchlist(watchlistItem: WatchlistItem) {
-        // todo: ability to remove film from watchlist from other fragments
     }
 
     override fun showFilmDetails(film: FilmThumbnail) {

@@ -11,6 +11,7 @@ import amichealpalmer.kotlin.filmfocus.util.InjectorUtils
 import amichealpalmer.kotlin.filmfocus.util.hideKeyboard
 import amichealpalmer.kotlin.filmfocus.view.adapter.WatchlistRecyclerAdapter
 import amichealpalmer.kotlin.filmfocus.view.dialog.WatchedDialogFragment
+import amichealpalmer.kotlin.filmfocus.view.listener.WatchlistActionListener
 import amichealpalmer.kotlin.filmfocus.viewmodel.WatchlistViewModel
 import android.app.AlertDialog
 import android.os.Bundle
@@ -21,7 +22,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 
-class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.OnWatchedDialogSubmissionListener {
+// todo: databinding
+
+class WatchlistFragment : Fragment(), WatchlistActionListener, WatchedDialogFragment.OnWatchedDialogSubmissionListener {
 
     private var recyclerView: RecyclerView? = null
     private var adapter: WatchlistRecyclerAdapter? = null
@@ -172,16 +175,12 @@ class WatchlistFragment : Fragment(), FilmActionListener, WatchedDialogFragment.
     }
 
     private fun clearWatchlist() {
-            watchlistViewModel.clearWatchlist()
+        watchlistViewModel.clearWatchlist()
     }
 
     private fun addFilmToHistory(timelineItem: TimelineItem) {
         watchlistViewModel.addItemToHistory(timelineItem)
         removeFilmFromWatchlist(timelineItem.film as WatchlistItem)
-    }
-
-    override fun addFilmToWatchlist(film: FilmThumbnail) {
-        // Has no function here
     }
 
     companion object {

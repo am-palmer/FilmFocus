@@ -2,7 +2,7 @@ package amichealpalmer.kotlin.filmfocus.view.adapter
 
 import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
-import amichealpalmer.kotlin.filmfocus.view.FilmActionListener
+import amichealpalmer.kotlin.filmfocus.view.listener.BrowseActionListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,10 +17,10 @@ import com.squareup.picasso.Picasso
 
 class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.FilmThumbnailViewHolder>(DIFF_CALLBACK) {
 
-    private var filmActionListener: FilmActionListener? = null
+    private var browseActionListener: BrowseActionListener? = null
 
-    fun setFilmActionListener(listener: FilmActionListener) {
-        this.filmActionListener = listener
+    fun setFilmActionListener(listener: BrowseActionListener) {
+        this.browseActionListener = listener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmThumbnailViewHolder {
@@ -57,7 +57,7 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
                 // Display FilmDetailsDialogFragment
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    filmActionListener?.showFilmDetails(getItem(position))
+                    browseActionListener?.showFilmDetails(getItem(position))
                 }
             }
 
@@ -65,11 +65,11 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
-                        filmActionListener?.addFilmToWatchlist(getItem(position))
+                        browseActionListener?.addFilmToWatchlist(getItem(position))
                         true
                     }
                     menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
-                        filmActionListener?.markFilmWatched(getItem(position))
+                        browseActionListener?.markFilmWatched(getItem(position))
                         true
                     }
                 }

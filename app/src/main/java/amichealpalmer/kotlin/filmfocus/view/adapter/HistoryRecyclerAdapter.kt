@@ -4,21 +4,19 @@ import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.databinding.HistoryListItemBinding
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
-import amichealpalmer.kotlin.filmfocus.view.FilmActionListener
+import amichealpalmer.kotlin.filmfocus.view.listener.HistoryActionListener
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-//todo: timeline line - disable line segments either through databinding or programmatically
-
 class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.TimelineItemViewHolder>(DIFF_CALLBACK) {
 
-    private var listener: FilmActionListener? = null
+    private var listener: HistoryActionListener? = null
     private var timelineListener: TimelineActionListener? = null
 
-    fun setFilmActionListener(listener: FilmActionListener) {
+    fun setFilmActionListener(listener: HistoryActionListener) {
         this.listener = listener
     }
 
