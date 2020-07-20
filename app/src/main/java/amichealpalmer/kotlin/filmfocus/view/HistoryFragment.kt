@@ -50,8 +50,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
         binding.fragmentHistoryTimelineRv.adapter = adapter
 
         subscribeUi(adapter, binding)
-
-
     }
 
     private fun subscribeUi(adapter: HistoryRecyclerAdapter, binding: FragmentHistoryBinding) {
@@ -104,6 +102,7 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
 
     override fun markFilmWatched(film: FilmThumbnail) {
         // Does nothing here
+        // Todo: switch interfaces to remove this
     }
 
     override fun removeFilmFromWatchlist(watchlistItem: WatchlistItem) {
@@ -136,15 +135,6 @@ class HistoryFragment : Fragment(), FilmActionListener, HistoryRecyclerAdapter.T
                 .setPositiveButton(android.R.string.yes) { _, _ ->
                     timelineViewModel.removeItem(item)
                     adapter.notifyItemRemoved(position)
-                    // Update the items before and after the removed item (if they exist)
-//                    // todo: not working - use databinding
-//                    if ((position + 1) <= adapter.currentList.size - 1 && adapter.currentList[position + 1] != null) {
-//                        adapter.notifyItemChanged(position + 1)
-//                    }
-//                    if ((position - 1) >= 0 && adapter.currentList[position - 1] != null) {
-//                        adapter.notifyItemChanged(position - 1)
-//                    }
-                    Toast.makeText(requireContext(), "Removed ${item.film.title} from History", Toast.LENGTH_SHORT).show()
                 }
                 .setNegativeButton(android.R.string.no, null).show()
     }

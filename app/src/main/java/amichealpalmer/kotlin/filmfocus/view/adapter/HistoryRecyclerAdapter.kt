@@ -37,10 +37,12 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
 
     override fun onBindViewHolder(holder: TimelineItemViewHolder, position: Int) {
         val currentItem: TimelineItem = getItem(position)
-        holder.bind(currentItem)
+        holder.bind(currentItem, position)
     }
 
     companion object {
+
+        private const val TAG = "HistoryRecyclerAdapter"
 
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TimelineItem>() {
             override fun areItemsTheSame(oldItem: TimelineItem, newItem: TimelineItem): Boolean {
@@ -55,15 +57,23 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
 
     inner class TimelineItemViewHolder(private val binding: HistoryListItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: TimelineItem) {
+        fun bind(item: TimelineItem, position: Int) {
             binding.apply {
-
                 // Set binding values specified in the xml
                 timelineItem = item
                 isWatched = when (item.status) {
                     TIMELINE_ITEM_STATUS.Watched -> true
                     TIMELINE_ITEM_STATUS.Dropped -> false
                 }
+
+
+                // Todo: if user removes an item these won't be updated. Need to find a way to reexecute / update bindings
+                // Bind values for timeline segments
+                isFirst = when (position) {
+                    0 -> true
+                    else -> false
+                }
+                isLast = position == itemCount - 1
 
                 // Setup tap listener
                 timelineItemFilmPoster.setOnClickListener {
