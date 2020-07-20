@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import java.util.*
 
+// todo: databinding
+
 class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAdapter.WatchlistItemViewHolder>(DIFF_CALLBACK) {
 
     private var filmActionListener: FilmActionListener? = null

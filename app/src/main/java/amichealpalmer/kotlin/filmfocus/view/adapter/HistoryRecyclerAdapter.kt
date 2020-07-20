@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-//todo: data binding https://androidwave.com/android-data-binding-recyclerview/
+//todo: timeline line - disable line segments either through databinding or programmatically
 
 class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.TimelineItemViewHolder>(DIFF_CALLBACK) {
 
@@ -55,10 +55,12 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
 
     inner class TimelineItemViewHolder(private val binding: HistoryListItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: TimelineItem){
+        fun bind(item: TimelineItem) {
             binding.apply {
+
+                // Set binding values specified in the xml
                 timelineItem = item
-                isWatched = when (item.status){
+                isWatched = when (item.status) {
                     TIMELINE_ITEM_STATUS.Watched -> true
                     TIMELINE_ITEM_STATUS.Dropped -> false
                 }
