@@ -72,11 +72,9 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
     }
 
     override fun onClick(v: View?) {
-        Log.d(TAG, ".onClick triggered")
         when (v?.id) {
             fragment_watchlist_watched_dialog_cancelButton.id -> this.dismiss()
             fragment_watchlist_watched_dialog_doneButton.id -> {
-                Log.d(TAG, "Done button clicked")
                 // We send all the info to the Watchlist Fragment as a timeline item
                 val date = LocalDate.now()
                 val text = fragment_watchlist_watched_dialog_review_et.text.toString()
@@ -84,7 +82,6 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
                 callback.onWatchedDialogSubmissionListener(item)
                 this.dismiss()
             }
-            else -> true
         }
     }
 

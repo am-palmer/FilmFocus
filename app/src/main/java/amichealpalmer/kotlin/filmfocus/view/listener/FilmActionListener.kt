@@ -3,7 +3,7 @@ package amichealpalmer.kotlin.filmfocus.view.listener
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 
-// Todo: Remove these entirely if possible
+// Todo: Refactor / streamline
 
 interface BrowseActionListener{
     fun addFilmToWatchlist(film: FilmThumbnail)

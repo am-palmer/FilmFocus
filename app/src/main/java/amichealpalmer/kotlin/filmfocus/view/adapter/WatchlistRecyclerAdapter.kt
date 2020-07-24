@@ -1,21 +1,16 @@
 package amichealpalmer.kotlin.filmfocus.view.adapter
 
 import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.databinding.WatchlistListItemBinding
+import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.model.entity.WatchlistItem
 import amichealpalmer.kotlin.filmfocus.view.listener.WatchlistActionListener
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
 import java.util.*
-
-// todo: databinding
 
 class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAdapter.WatchlistItemViewHolder>(DIFF_CALLBACK) {
 
@@ -45,18 +40,16 @@ class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAda
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WatchlistItemViewHolder {
-        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.browse_films_item, parent, false)
-        return WatchlistItemViewHolder(view)
+        return WatchlistItemViewHolder(WatchlistListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: WatchlistItemViewHolder, position: Int) {
-        val currentItem: WatchlistItem = getItem(position)
-        holder.displayPoster(currentItem.posterURL)
+        val currentItem = getItem(position)
+        holder.bind(currentItem)
+
     }
 
     companion object {
-        private const val TAG = "WatchlistRecyclerAdapt"
-
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<WatchlistItem>() {
             override fun areItemsTheSame(oldItem: WatchlistItem, newItem: WatchlistItem): Boolean {
                 return areContentsTheSame(oldItem, newItem)
@@ -68,41 +61,35 @@ class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAda
         }
     }
 
-    inner class WatchlistItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        private val poster: ImageView = view.findViewById(R.id.browse_film_poster)
-        private val cardView: CardView = view.findViewById(R.id.film_item_cardview_id)
+    inner class WatchlistItemViewHolder(private val binding: WatchlistListItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        init {
+        fun bind(item: FilmThumbnail) {
+            binding.apply {
+                film = item
 
-            cardView.setOnClickListener {
-                // Display FilmDetailsDialogFragment
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    watchlistActionListener?.showFilmDetails(getItem(position))
-                }
-            }
-
-            cardView.setOnCreateContextMenuListener { menu, v, menuInfo ->
-                Log.d(TAG, "long clicked context menu")
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
-                        watchlistActionListener?.markFilmWatched(getItem(position))
-                        true
-                    }
-                    menu?.add(R.string.remove_from_watchlist)?.setOnMenuItemClickListener {
-                        watchlistActionListener?.removeFilmFromWatchlist(getItem(position))
-                        true
+                watchlistFilmPoster.setOnClickListener {
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        watchlistActionListener?.showFilmDetails(getItem(position))
                     }
                 }
 
+                watchlistFilmPoster.setOnCreateContextMenuListener { menu, _, _ ->
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
+                            watchlistActionListener?.markFilmWatched(getItem(position))
+                            true
+                        }
+                        menu?.add(R.string.remove_from_watchlist)?.setOnMenuItemClickListener {
+                            watchlistActionListener?.removeFilmFromWatchlist(getItem(position))
+                            true
+                        }
+                    }
+                }
+
+                executePendingBindings()
             }
-
-        }
-
-        fun displayPoster(posterURL: String) {
-            Picasso.get().load(posterURL).error(R.drawable.ic_image_loading_grey_48dp)
-                    .placeholder(R.drawable.ic_image_loading_grey_48dp).into(poster)
         }
 
     }

@@ -33,8 +33,8 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
     }
 
     override fun onBindViewHolder(holder: TimelineItemViewHolder, position: Int) {
-        val currentItem: TimelineItem = getItem(position)
-        holder.bind(currentItem, position)
+        //val currentItem: TimelineItem = getItem(position)
+        holder.bind(getItem(position), position)
     }
 
     companion object {

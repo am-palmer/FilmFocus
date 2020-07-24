@@ -10,7 +10,7 @@
 
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/browse_item_cardview_id"
+    android:id="@+id/watchlist_item_cardview_id"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:layout_width="120dp"
@@ -23,7 +23,7 @@
     android:background="@android:color/transparent">
 
     <ImageView
-        android:id="@+id/browse_film_poster"
+        android:id="@+id/watchlist_film_poster"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/film_poster"

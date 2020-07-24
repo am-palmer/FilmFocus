@@ -84,11 +84,9 @@ class EditHistoryItemDialogFragment(val adapter: HistoryRecyclerAdapter) : Dialo
     }
 
     override fun onClick(v: View?) {
-        Log.d(TAG, ".onClick triggered")
         when (v?.id) {
             fragment_watchlist_watched_dialog_cancelButton.id -> this.dismiss()
             fragment_watchlist_watched_dialog_doneButton.id -> {
-                Log.d(TAG, "Done button clicked")
                 // We send all the info to the Watchlist Fragment as a timeline item
                 val date = timelineItem.date
                 val text = fragment_watchlist_watched_dialog_review_et.text.toString()
@@ -98,7 +96,6 @@ class EditHistoryItemDialogFragment(val adapter: HistoryRecyclerAdapter) : Dialo
                 callback.onEditHistoryItemDialogSubmissionListener(adapter, item, arrayPosition)
                 this.dismiss()
             }
-            else -> true
         }
     }
 
