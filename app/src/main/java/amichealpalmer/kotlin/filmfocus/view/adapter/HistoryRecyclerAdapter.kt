@@ -4,7 +4,6 @@ import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.databinding.HistoryListItemBinding
 import amichealpalmer.kotlin.filmfocus.model.entity.TIMELINE_ITEM_STATUS
 import amichealpalmer.kotlin.filmfocus.model.entity.TimelineItem
-import amichealpalmer.kotlin.filmfocus.view.listener.HistoryActionListener
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -13,18 +12,18 @@ import androidx.recyclerview.widget.RecyclerView
 
 class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.TimelineItemViewHolder>(DIFF_CALLBACK) {
 
-    private var listener: HistoryActionListener? = null
-    private var timelineListener: TimelineActionListener? = null
+    private var listener: amichealpalmer.kotlin.filmfocus.view.listener.HistoryActionListener? = null
+    private var historyListener: HistoryActionListener? = null
 
-    fun setFilmActionListener(listener: HistoryActionListener) {
+    fun setFilmActionListener(listener: amichealpalmer.kotlin.filmfocus.view.listener.HistoryActionListener) {
         this.listener = listener
     }
 
-    fun setTimelineActionListener(timelineListener: TimelineActionListener) {
-        this.timelineListener = timelineListener
+    fun setHistoryActionListener(historyListener: HistoryActionListener) {
+        this.historyListener = historyListener
     }
 
-    interface TimelineActionListener {
+    interface HistoryActionListener {
         fun editTimelineItem(adapter: HistoryRecyclerAdapter, item: TimelineItem, position: Int)
         fun removeTimelineItem(adapter: HistoryRecyclerAdapter, item: TimelineItem, position: Int)
     }
@@ -65,7 +64,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
                 }
 
 
-                // Todo: if user removes an item these won't be updated. Need to find a way to reexecute / update bindings
+                // Todo: if user removes an item these won't be updated. Must reexecute / update bindings
                 // Bind values for timeline segments
                 isFirst = when (position) {
                     0 -> true
@@ -81,7 +80,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
                 // Context menu for options
                 timelineItemFilmPoster.setOnCreateContextMenuListener { menu, _, _ ->
                     menu?.add(R.string.edit)?.setOnMenuItemClickListener {
-                        timelineListener?.editTimelineItem(this@HistoryRecyclerAdapter, item, position)
+                        historyListener?.editTimelineItem(this@HistoryRecyclerAdapter, item, position)
                         true
                     }
                     menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
@@ -89,7 +88,7 @@ class HistoryRecyclerAdapter : ListAdapter<TimelineItem, HistoryRecyclerAdapter.
                         true
                     }
                     menu?.add(R.string.remove_item_from_history)?.setOnMenuItemClickListener {
-                        timelineListener?.removeTimelineItem(this@HistoryRecyclerAdapter, item, position)
+                        historyListener?.removeTimelineItem(this@HistoryRecyclerAdapter, item, position)
                         true
                     }
                 }

@@ -1,19 +1,14 @@
 package amichealpalmer.kotlin.filmfocus.view.adapter
 
 import amichealpalmer.kotlin.filmfocus.R
+import amichealpalmer.kotlin.filmfocus.databinding.BrowseFilmsItemBinding
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import amichealpalmer.kotlin.filmfocus.view.listener.BrowseActionListener
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
-
-// todo: databinding
 
 class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.FilmThumbnailViewHolder>(DIFF_CALLBACK) {
 
@@ -24,13 +19,12 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilmThumbnailViewHolder {
-        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.browse_films_item, parent, false)
-        return FilmThumbnailViewHolder(view)
+        return FilmThumbnailViewHolder(BrowseFilmsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: FilmThumbnailViewHolder, position: Int) {
         val currentItem: FilmThumbnail = getItem(position)
-        holder.displayPoster(currentItem.posterURL)
+        holder.bind(currentItem)
     }
 
     companion object {
@@ -46,42 +40,36 @@ class BrowseRecyclerAdapter : ListAdapter<FilmThumbnail, BrowseRecyclerAdapter.F
         }
     }
 
-    inner class FilmThumbnailViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class FilmThumbnailViewHolder(private val binding: BrowseFilmsItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        private val poster: ImageView = view.findViewById(R.id.film_poster_id)
-        private val cardView = view.findViewById<CardView>(R.id.film_item_cardview_id)
+        fun bind(item: FilmThumbnail) {
+            binding.apply {
+                film = item
 
-        init {
-
-            cardView.setOnClickListener {
-                // Display FilmDetailsDialogFragment
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    browseActionListener?.showFilmDetails(getItem(position))
-                }
-            }
-
-            cardView.setOnCreateContextMenuListener { menu, v, menuInfo ->
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
-                        browseActionListener?.addFilmToWatchlist(getItem(position))
-                        true
-                    }
-                    menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
-                        browseActionListener?.markFilmWatched(getItem(position))
-                        true
+                browseFilmPoster.setOnClickListener {
+                    // Display FilmDetailsDialogFragment
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        browseActionListener?.showFilmDetails(getItem(position))
                     }
                 }
+
+                browseFilmPoster.setOnCreateContextMenuListener { menu, _, _ ->
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        menu?.add(R.string.add_to_watchlist)?.setOnMenuItemClickListener {
+                            browseActionListener?.addFilmToWatchlist(getItem(position))
+                            true
+                        }
+                        menu?.add(R.string.mark_watched)?.setOnMenuItemClickListener {
+                            browseActionListener?.markFilmWatched(getItem(position))
+                            true
+                        }
+                    }
+                }
+
+                executePendingBindings()
             }
-
-
-        }
-
-
-        fun displayPoster(posterURL: String) {
-            Picasso.get().load(posterURL).error(R.drawable.ic_image_loading_grey_48dp)
-                    .placeholder(R.drawable.ic_image_loading_grey_48dp).into(poster)
         }
 
     }

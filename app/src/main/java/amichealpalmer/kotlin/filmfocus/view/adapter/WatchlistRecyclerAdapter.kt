@@ -69,7 +69,7 @@ class WatchlistRecyclerAdapter : ListAdapter<WatchlistItem, WatchlistRecyclerAda
     }
 
     inner class WatchlistItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        private val poster: ImageView = view.findViewById(R.id.film_poster_id)
+        private val poster: ImageView = view.findViewById(R.id.browse_film_poster)
         private val cardView: CardView = view.findViewById(R.id.film_item_cardview_id)
 
         init {

@@ -20,7 +20,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class HistoryFragment : Fragment(), HistoryActionListener, HistoryRecyclerAdapter.TimelineActionListener, EditHistoryItemDialogFragment.OnHistoryEditDialogSubmissionListener {
+class HistoryFragment : Fragment(), HistoryActionListener, HistoryRecyclerAdapter.HistoryActionListener, EditHistoryItemDialogFragment.OnHistoryEditDialogSubmissionListener {
 
     private var recyclerView: RecyclerView? = null
     private lateinit var binding: FragmentHistoryBinding
@@ -46,7 +46,7 @@ class HistoryFragment : Fragment(), HistoryActionListener, HistoryRecyclerAdapte
         val adapter = HistoryRecyclerAdapter()
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
         adapter.setFilmActionListener(this)
-        adapter.setTimelineActionListener(this)
+        adapter.setHistoryActionListener(this)
         binding.fragmentHistoryTimelineRv.adapter = adapter
 
         subscribeUi(adapter, binding)
