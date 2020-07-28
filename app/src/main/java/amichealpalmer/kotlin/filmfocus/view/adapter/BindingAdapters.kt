@@ -35,7 +35,7 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
 
 // Figure out the ordinal indicator to display for the date and append it, i.e. 4 becomes 4th
 @BindingAdapter("dayWithOrdinal")
-fun getDayWithOridinal(view: TextView, day: Int) {
+fun getDayWithOrdinal(view: TextView, day: Int) {
     val j = day % 10
     val k = day % 100
     when {

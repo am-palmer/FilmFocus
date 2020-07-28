@@ -28,7 +28,6 @@ class WatchlistViewModel(private val repository: WatchlistItemRepository,
         return repository.getWatchlistItems()
     }
 
-    val TAG = "WatchlistViewModel"
 }
 
 class WatchlistViewModelFactory(private val repository: WatchlistItemRepository,

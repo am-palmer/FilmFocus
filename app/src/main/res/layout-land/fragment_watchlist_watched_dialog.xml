@@ -84,7 +84,6 @@
             android:layout_height="wrap_content"
             android:background="@drawable/toggle_selector"
             android:checked="true"
-            android:text="ToggleButton"
             android:textColor="@android:color/black"
             android:textOff="@string/dialog_toggleButton_dropped"
             android:textOn="@string/dialog_toggleButton_watched"

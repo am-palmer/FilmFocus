@@ -1,13 +1,10 @@
 package amichealpalmer.kotlin.filmfocus.model.entity
 
-import amichealpalmer.kotlin.filmfocus.R
 import amichealpalmer.kotlin.filmfocus.model.FilmThumbnail
 import android.os.Parcel
 import android.os.Parcelable
-import android.widget.ImageView
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.squareup.picasso.Picasso
 import org.joda.time.LocalDate
 
 enum class TIMELINE_ITEM_STATUS {
@@ -24,14 +21,14 @@ class TimelineItem(val film: FilmThumbnail, val rating: Float, val date: LocalDa
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 
-    fun hasReview(): Boolean {
+    private fun hasReview(): Boolean {
         return !review.isNullOrBlank()
     }
 
     fun getReview(): String {
-        if (hasReview()) {
-            return review as String
-        } else return ""
+        return if (hasReview()) {
+            review as String
+        } else ""
     }
 
     fun setReview(review: String?) {
@@ -68,11 +65,6 @@ class TimelineItem(val film: FilmThumbnail, val rating: Float, val date: LocalDa
 
     override fun describeContents(): Int {
         return 0
-    }
-
-    fun retrievePoster(imageView: ImageView, posterURL: String) {
-        Picasso.get().load(posterURL).error(R.drawable.ic_image_loading_grey_48dp)
-                .placeholder(R.drawable.ic_image_loading_grey_48dp).into(imageView)
     }
 
     companion object CREATOR : Parcelable.Creator<TimelineItem> {

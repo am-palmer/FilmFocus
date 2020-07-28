@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.fragment_watchlist_watched_dialog.*
 // This is the fragment that is displayed when a user edits an item in the history
 class EditHistoryItemDialogFragment(val adapter: HistoryRecyclerAdapter) : DialogFragment(), RatingBar.OnRatingBarChangeListener, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
-    private val TAG = "EditHistoryItemDiaFrag"
     private lateinit var callback: OnHistoryEditDialogSubmissionListener
     private var rating: Float? = null
 

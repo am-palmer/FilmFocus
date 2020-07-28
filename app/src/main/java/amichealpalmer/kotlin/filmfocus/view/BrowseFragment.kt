@@ -68,10 +68,6 @@ class BrowseFragment : Fragment(), BrowseActionListener, WatchedDialogFragment.O
             }
         })
 
-        //val sharedPrefs = requireActivity().getSharedPreferences(BROWSE_SHAREDPREF_KEY, Context.MODE_PRIVATE)
-        // todo: values are saved, but restoring doesn't work
-        //recyclerView?.post { recyclerViewscrollToPosition(sharedPrefs.getInt(SHAREDPREF_SCROLL_POSITION, 0)) }
-
     }
 
     private fun subscribeUi(adapter: BrowseRecyclerAdapter, binding: FragmentBrowseBinding) {
@@ -182,14 +178,6 @@ class BrowseFragment : Fragment(), BrowseActionListener, WatchedDialogFragment.O
         }
         Toast.makeText(requireContext(), "Marked ${timelineItem.film.title} as $status", Toast.LENGTH_SHORT).show()
         browseViewModel.markWatched(timelineItem)
-    }
-
-    companion object {
-        private const val TAG = "BrowseFragment"
-        private const val SHAREDPREF_SCROLL_POSITION = "scrollPosition"
-        private const val SHAREDPREF_QUERY = "query"
-        private const val BROWSE_SHAREDPREF_KEY = "filmFocusBrowseSharedPreferences"
-
     }
 
 }

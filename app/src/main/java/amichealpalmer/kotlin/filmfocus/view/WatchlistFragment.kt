@@ -155,7 +155,7 @@ class WatchlistFragment : Fragment(), WatchlistActionListener, WatchedDialogFrag
 
     // Called when user submits Watched dialog
     override fun onWatchedDialogSubmissionListener(timelineItem: TimelineItem) {
-        var status = when (timelineItem.status) {
+        val status = when (timelineItem.status) {
             TIMELINE_ITEM_STATUS.Dropped -> "Dropped"
             TIMELINE_ITEM_STATUS.Watched -> "Watched"
         }

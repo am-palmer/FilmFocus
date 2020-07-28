@@ -5,18 +5,21 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
+    <ProgressBar
+        android:id="@+id/film_details_progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        tools:visibility="gone"
+        android:layout_gravity="center"/>
+
     <androidx.cardview.widget.CardView
+        android:id="@+id/film_details_outer_card_view"
         android:layout_width="600dp"
         android:layout_height="380dp"
-        tools:context=".view.FilmDetailDialogFragment">
-
-        <ProgressBar
-            android:id="@+id/film_details_progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            tools:visibility="gone"
-            android:layout_gravity="center"/>
+        tools:context=".view.FilmDetailDialogFragment"
+        android:visibility="invisible"
+        tools:visibility="visible">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/film_details_constraint_layout"

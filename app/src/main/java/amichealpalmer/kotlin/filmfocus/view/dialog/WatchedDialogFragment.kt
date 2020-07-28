@@ -20,7 +20,6 @@ import org.joda.time.LocalDate
 // Dialog fragment called when a film is marked watched in the context menu
 class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListener, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
-    private val TAG = "WatchedDialogFragment"
     private lateinit var callback: OnWatchedDialogSubmissionListener
     private lateinit var film: FilmThumbnail
     private var rating: Float? = null
@@ -88,9 +87,9 @@ class WatchedDialogFragment : DialogFragment(), RatingBar.OnRatingBarChangeListe
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         if (buttonView == fragment_watchlist_watched_dialog_toggleWatched) {
             var value = TIMELINE_ITEM_STATUS.Watched
-            when (isChecked) {
-                true -> value = TIMELINE_ITEM_STATUS.Watched
-                false -> value = TIMELINE_ITEM_STATUS.Dropped
+            value = when (isChecked) {
+                true -> TIMELINE_ITEM_STATUS.Watched
+                false -> TIMELINE_ITEM_STATUS.Dropped
             }
             status = value
         }
