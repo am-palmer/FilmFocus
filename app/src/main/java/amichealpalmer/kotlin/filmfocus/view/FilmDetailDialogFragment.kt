@@ -58,13 +58,17 @@ class FilmDetailDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun subscribeUi(){
+    private fun subscribeUi() { // Todo: databinding would be nice, but need to handle the async request
         // Register observer to update fields when the film information is loaded
         detailDialogViewModel.getFilm().observe(viewLifecycleOwner) {
-            // Hide the ProgressBar // todo: no longer shows at all, due to observe. use data binding?
-            //film_details_progressBar?.visibility = View.GONE
-            // todo: databinding for this
-            // Set view fields
+
+            // Visibility
+            if (it != null) {
+                film_details_progressBar?.visibility = View.GONE
+                film_details_outer_card_view.visibility = View.VISIBLE
+            }
+
+            // View fields
             fragment_film_details_tv_title?.text = it?.title
             fragment_film_details_tv_director?.text = it?.director
             fragment_film_details_tv_year?.text = it?.year
@@ -76,10 +80,6 @@ class FilmDetailDialogFragment : DialogFragment() {
             fragment_film_details_tv_imdbScore?.text = it?.imdbRating
             fragment_film_details_tv_metacriticScore?.text = it?.metascore
             fragment_film_details_tv_language?.text = it?.language
-
-            // Visibility
-            film_details_constraint_layout.visibility = View.VISIBLE
-            film_details_progressBar.visibility = View.GONE
 
             if (fragment_film_details_iv_poster != null) {
                 Picasso.get().load(it?.posterURL).error(R.drawable.ic_image_loading_grey_48dp)
