@@ -79,7 +79,6 @@ class FilmDetailDialogFragment : DialogFragment() {
             fragment_film_details_tv_genre?.text = it?.genre
             fragment_film_details_tv_imdbScore?.text = it?.imdbRating
             fragment_film_details_tv_metacriticScore?.text = it?.metascore
-            fragment_film_details_tv_language?.text = it?.language
 
             if (fragment_film_details_iv_poster != null) {
                 Picasso.get().load(it?.posterURL).error(R.drawable.ic_image_loading_grey_48dp)

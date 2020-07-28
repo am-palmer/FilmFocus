@@ -226,19 +226,6 @@
                 app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_METACRITIC"
                 tools:text="77" />
 
-            <TextView
-                android:id="@+id/fragment_film_details_tv_language"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/fragment_film_details_tv_cast"
-                app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_IMDB"
-                app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_IMDB"
-                app:layout_constraintVertical_bias="0.0"
-                tools:text="English, Japanese, Arabic, Czech, Russian, British English, Mandarin, Korean" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

@@ -92,8 +92,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:textColor="@color/colorPrimaryDark"
                 app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_DIRECTEDBY"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_DIRECTEDBY"
                 tools:text="Rob Reiner" />
 
@@ -103,10 +105,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:textColor="@color/colorPrimaryDark"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_DIRECTEDBY"
-                tools:text="1987"
-                android:textColor="@color/colorPrimaryDark"/>
+                app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_director"
+                tools:text="1987" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -162,6 +164,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_plot"
                 app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_plot"
                 tools:text="7 wins and 9 nominations" />
@@ -193,6 +198,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_STARRING"
                 app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_cast"
                 tools:text="Adventure, Fantasy, Comedy, Family" />
@@ -259,18 +266,6 @@
                 app:layout_constraintBaseline_toBaselineOf="@+id/fragment_film_details_tv_runtime"
                 app:layout_constraintStart_toEndOf="@+id/fragment_film_details_tv_METACRITIC"
                 tools:text="77" />
-
-            <TextView
-                android:id="@+id/fragment_film_details_tv_language"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/fragment_film_details_tv_plot"
-                app:layout_constraintStart_toStartOf="@+id/fragment_film_details_tv_genre"
-                app:layout_constraintTop_toBottomOf="@+id/fragment_film_details_tv_genre"
-                tools:text="English, Japanese, Arabic, Czech, Russian, British English, Mandarin, Korean" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

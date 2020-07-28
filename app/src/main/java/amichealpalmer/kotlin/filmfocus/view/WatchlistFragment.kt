@@ -22,8 +22,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 
-// todo: databinding
-
 class WatchlistFragment : Fragment(), WatchlistActionListener, WatchedDialogFragment.OnWatchedDialogSubmissionListener {
 
     private var recyclerView: RecyclerView? = null
